@@ -1,4 +1,4 @@
-# TROJANS — CONVERGE
+# TROJANS - CONVERGE
 
 **From citizen reports to verified resolution.**
 
