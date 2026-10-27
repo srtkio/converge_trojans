@@ -6,7 +6,7 @@ import { easeInOut, easeOut, lerp, seg, useScrollStory } from "./useScrollStory"
 
 /**
  * "Follow one complaint": a scroll-driven walk through the CONVERGE loop on a stylised
- * city block (MG Road, Bengaluru). `c` is the chapter position (0 → CHAPTERS); every visual
+ * city block (GT Road by Rishihood University, Sonipat). `c` is the chapter position (0 → CHAPTERS); every visual
  * on the stage is derived from it.
  */
 const CHAPTERS = 6;
@@ -185,7 +185,7 @@ export function Stage({ c }: { c: number }) {
         ))}
         <rect x={560} y={70} width={120} height={80} rx={10} fill="#d4eadb" />
         <text x={620} y={115} textAnchor="middle" fontSize={12} fill={C.slate}>
-          Cubbon Park
+          Rishihood Univ.
         </text>
         {/* Roads */}
         <g stroke={C.roadEdge} strokeWidth={34} strokeLinecap="round">
@@ -201,9 +201,9 @@ export function Stage({ c }: { c: number }) {
           <line x1={420} y1={400} x2={800} y2={400} />
         </g>
         <g fontSize={12} fill={C.slate} fontWeight={600}>
-          <text x={190} y={238}>MG Road</text>
-          <text x={432} y={40} transform="rotate(90 432 40)">Brigade Road</text>
-          <text x={640} y={388}>Church Street</text>
+          <text x={150} y={238}>GT Road (NH-44)</text>
+          <text x={432} y={40} transform="rotate(90 432 40)">Murthal Road</text>
+          <text x={630} y={388}>Sector 15 Road</text>
         </g>
         {/* Depot */}
         <g transform={`translate(${DEPOT.x - 26} ${DEPOT.y + 22})`}>
@@ -257,7 +257,7 @@ export function Stage({ c }: { c: number }) {
           </g>
         )}
 
-        <Bubble x={470} y={140} text="Water gushing near MG Road metro" o={bubbleA} from="right" />
+        <Bubble x={470} y={140} text="Water gushing near the university gate" o={bubbleA} from="right" />
         <Bubble x={470} y={140} text="Still leaking at the same spot" o={bubbleNo} from="right" />
         <Chip x={LEAK.x} y={LEAK.y + 30} text="3 reports → 1 case" color={C.ink} o={mergedChip} />
         <Chip x={(LEAK.x + POTHOLE.x) / 2 + 40} y={(LEAK.y + POTHOLE.y) / 2 - 40} text="Shared cause · 1 repair, not 3" color={C.violet} o={causeChip} />
@@ -282,7 +282,7 @@ export function Stage({ c }: { c: number }) {
   );
 }
 
-/** Crew route: up from the depot to MG Road, then right along MG Road to the leak. */
+/** Crew route: up from the depot to GT Road, then right along GT Road to the leak. */
 function drivePoint(t: number) {
   const up = Math.min(1, t * 2);
   const right = Math.max(0, t * 2 - 1);

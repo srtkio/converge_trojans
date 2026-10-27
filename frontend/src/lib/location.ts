@@ -5,10 +5,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { distanceM } from "./citizen";
 
-/** MG Road metro, Bengaluru: the middle of the pilot area. */
-export const PILOT_CENTRE = { lat: 12.9756, lng: 77.6058 };
+/** Between Murthal and Sonipat (Haryana): the middle of the pilot area. */
+export const PILOT_CENTRE = { lat: 29.005, lng: 77.055 };
 /** Further than this from the centre, the citizen is told they're outside the pilot (not blocked). */
-export const PILOT_RADIUS_M = 3000;
+export const PILOT_RADIUS_M = 15000;
 
 export function outsidePilot(lat: number, lng: number): boolean {
   return distanceM(lat, lng, PILOT_CENTRE.lat, PILOT_CENTRE.lng) > PILOT_RADIUS_M;

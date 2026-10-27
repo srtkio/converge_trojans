@@ -8,13 +8,14 @@ import type { Category, Link } from "@/lib/types";
 
 import type { Act } from "./Dashboard";
 
-// Preset spots around the demo area (MG Road, Bengaluru) so reports land near existing incidents.
+// Preset spots around the demo area (GT Road by Rishihood University, Sonipat) so reports land near
+// existing incidents: the first two are ~60 m apart (duplicate), the third ~250 m away (related).
 const PLACES = [
-  { name: "MG Road metro exit", lat: 12.9756, lng: 77.605 },
-  { name: "MG Road, 60 m east of metro", lat: 12.9756, lng: 77.60555 },
-  { name: "MG Road, 250 m south", lat: 12.97335, lng: 77.605 },
-  { name: "Brigade Road junction", lat: 12.9719, lng: 77.6071 },
-  { name: "Cubbon Park gate (1 km away)", lat: 12.9763, lng: 77.5929 },
+  { name: "Rishihood University gate, GT Road", lat: 28.9832, lng: 77.0908 },
+  { name: "GT Road, 60 m north of the gate", lat: 28.98374, lng: 77.0908 },
+  { name: "GT Road, 250 m south of the gate", lat: 28.98095, lng: 77.0908 },
+  { name: "Murthal Chowk", lat: 29.0265, lng: 77.0737 },
+  { name: "Sonipat Junction (far away)", lat: 28.9898, lng: 77.0171 },
 ];
 
 export function ReportForm({
@@ -53,7 +54,7 @@ export function ReportForm({
           value={text}
           onChange={(e) => setText(e.target.value)}
           rows={2}
-          placeholder="e.g. Water leaking from a pipe near the metro"
+          placeholder="e.g. Water leaking from a pipe near the university gate"
           className="w-full resize-none rounded-md border border-slate-300 px-2 py-1.5 text-sm"
         />
         <div className="grid grid-cols-2 gap-2">

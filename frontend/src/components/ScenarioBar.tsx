@@ -10,7 +10,7 @@ import type { Act } from "./Dashboard";
 // Mirrors backend/app/sim.py GOLDEN and ROOTCAUSE so the stepper can preview the next step.
 const GOLDEN_STEPS = [
   "Reset; seed crews (2 roads, 1 water, 1 electrical)",
-  "Report A: water leak at MG Road → new incident, assigned to water crew",
+  "Report A: water leak on GT Road by Rishihood University → new incident, assigned to water crew",
   "Report B: same leak 60 m away → linked as duplicate",
   "Report C: pothole 250 m away → new incident, related to the leak",
   "Water crew unavailable → plan invalidated; no other crew → escalated",
@@ -23,7 +23,7 @@ const GOLDEN_STEPS = [
 
 const ROOTCAUSE_STEPS = [
   "Reset; seed crews and city services",
-  "Report A: water bubbling through MG Road → leak incident, water crew assigned",
+  "Report A: water bubbling up at Murthal Chowk → leak incident, water crew assigned",
   "Report B: pothole 120 m away → related to the leak",
   "Report C: pothole at the bus stop 280 m away → root-cause hypothesis proposed",
   "Operator confirms the leak as root cause → potholes wait on it, 2 crew visits saved",
