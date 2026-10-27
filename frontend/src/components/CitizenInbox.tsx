@@ -146,13 +146,14 @@ export function CitizenInbox({
                 <span className="font-medium">{label(item)}:</span>{" "}
                 <span className="text-slate-700">{item.text || "(no note)"}</span>
               </p>
-              {(item.photo_url || item.location_label || item.location_source === "gps") && (
+              {(item.photo_url || item.location_label || item.location_source === "gps" || item.location_source === "pin") && (
                 <div className="mt-1.5 flex items-center gap-2 text-xs text-slate-500">
                   {item.photo_url && (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={photoSrc(item.photo_url)} alt="Photo from the citizen" className="h-12 w-16 rounded-md object-cover ring-1 ring-slate-200" />
                   )}
                   {item.location_source === "gps" && <span className="rounded-full bg-sky-50 px-2 py-0.5 font-medium text-sky-700">GPS</span>}
+                  {item.location_source === "pin" && <span className="rounded-full bg-emerald-50 px-2 py-0.5 font-medium text-emerald-700">Map pin</span>}
                   {item.location_label && <span>📍 {item.location_label}</span>}
                 </div>
               )}

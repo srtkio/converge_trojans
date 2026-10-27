@@ -60,12 +60,23 @@ export default function MyCasesPage() {
           <Link href="/citizen" transitionTypes={["cz-tab"]} className={`${BIG_BUTTON} mt-5 bg-emerald-700 text-white hover:bg-emerald-800`}>
             Report a problem
           </Link>
+          <div className="mt-4 rounded-xl bg-slate-50 p-3 text-left ring-1 ring-slate-200">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Live pilot demo case</p>
+            <Link
+              href="/track/inc_001"
+              transitionTypes={["cz-forward"]}
+              className="mt-1 flex items-center justify-between text-sm font-medium text-emerald-800 hover:underline"
+            >
+              <span>inc_001 · Water leak on GT Road</span>
+              <span aria-hidden="true">→</span>
+            </Link>
+          </div>
           <Link
             href="/citizen/map"
             transitionTypes={["cz-tab"]}
             className="mt-3 inline-block text-sm text-slate-600 underline underline-offset-4"
           >
-            See issues near you
+            See issues near you on the map
           </Link>
         </section>
       ) : (

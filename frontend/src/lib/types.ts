@@ -113,7 +113,7 @@ export interface CitizenActivity {
   photo_url?: string | null;
   lat?: number | null;
   lng?: number | null;
-  location_source?: "gps" | "landmark" | null;
+  location_source?: LocationSource | null;
   location_label?: string | null;
 }
 

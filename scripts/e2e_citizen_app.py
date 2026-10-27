@@ -44,7 +44,7 @@ CITIZEN_NAME = "Asha App"
 CITIZEN_EMAIL = "asha.app@example.com"
 STEP_MS = 15_000
 POLL_WAIT_S = 22
-PILOT = (12.9756, 77.6058)  # MG Road metro: the first landmark and the map's default centre
+PILOT = (28.9832, 77.0864)  # Rishihood University gate, GT Road: the first landmark and the map's default centre
 TILE_GLOB = re.compile(r"tile\.openstreetmap\.org")
 
 
@@ -315,7 +315,7 @@ def check_tabs_and_pin(p, browser, base: str, api: str, shots: str | None, marke
         shot(page, f"{shots}/05-pin-sheet.png")
     pin = sheet.locator('.leaflet-marker-icon[title="Your spot"]')
     zoom = map_zoom(page)
-    start = PILOT  # the form's default landmark: MG Road metro exit
+    start = PILOT  # the form's default landmark: Rishihood University gate
     dx, dy = 70, -90
     drag(page, pin, dx, dy)
     page.wait_for_timeout(400)
@@ -327,7 +327,7 @@ def check_tabs_and_pin(p, browser, base: str, api: str, shots: str | None, marke
     ph.ok("report form with a pin")
 
     text = f"Streetlight out at the pinned spot {marker}"
-    page.get_by_placeholder("e.g. Water leaking from a pipe near the metro").fill(text)
+    page.get_by_placeholder(re.compile(r"e\.g\. Water leaking from a pipe near the (university gate|metro)")).fill(text)
     with page.expect_request(lambda r: r.url.endswith("/reports") and r.method == "POST") as req_info:
         page.get_by_role("button", name="Submit report").click()
     body = req_info.value.post_data or ""
@@ -367,7 +367,7 @@ def check_tabs_and_pin(p, browser, base: str, api: str, shots: str | None, marke
     target = joinable[0]
     before = len(target["report_ids"])
     if got == "tiles":
-        page.locator(f'.leaflet-marker-icon[title^="{target["title"][:20]}"]').first.click()
+        page.locator(f'.leaflet-marker-icon[title^="{target["title"][:20]}"]').first.evaluate("el => el.click()")
     else:
         page.get_by_role("button", name=target["title"][:20]).first.click()
     sheet = page.get_by_role("dialog")

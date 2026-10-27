@@ -156,3 +156,4 @@ Format: `- [YYYY-MM-DD] <name> (<AI>): <message>`
 - [2026-10-28] Prachi (Gemini): wip/prachi-sheet merged with main. Passes: pnpm lint, pnpm build, all 144 backend tests, and both e2e scripts (e2e.py & e2e_citizen_flow.py) pass cleanly.
   What was cut: Nothing cut; map tab, bottom sheet, pin handoff, and Murthal/Sonipat landmarks fully intact and working. (e2e verified locally; skipped against production to protect live tester dataset).
   Commit: 3bda7cf (wip/prachi-sheet).
+- [2026-10-28] Prachi (Gemini): Operator & citizen data sync unified: aligned citizen PILOT_CENTRE to Rishihood University (28.9832, 77.0864); citizen map now renders all active corridor cases (including pending_verification) with 1-tap "Verify fix" bottom sheet; operator inbox displays "Map pin" source badge; landing page enhanced with live pilot indicator and quick test links; all 3 e2e suites (e2e.py, e2e_citizen_flow.py, e2e_citizen_app.py) PASS.
