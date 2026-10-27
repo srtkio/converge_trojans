@@ -1,0 +1,6 @@
+[
+  {"badge_id": "OPS-WTR-01", "name": "Water Dept Officer", "department": "water",
+   "code_sha256": "81fb02759e6cf7403f1bf83463a3bec92a05d49b8f04967b709101c652c01618"},
+  {"badge_id": "OPS-RDS-01", "name": "Roads Dept Officer", "department": "roads",
+   "code_sha256": "0d03b14772807d5f225c2e507d225844967de2d2949ac568ccb9499c389c175d"}
+]

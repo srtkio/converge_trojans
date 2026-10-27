@@ -72,3 +72,16 @@ cd backend
 docker build -t converge-backend .
 docker run -p 8000:8000 -e CONVERGE_CORS_ORIGINS=http://localhost:3000 converge-backend
 ```
+
+## Portals and demo sign-in
+
+The start page asks who you are.
+
+- **Citizen:** enter a name and email at `/citizen`, then report a problem and track it.
+- **Operator:** `/operator` checks your badge ID and access code against the backend. Demo accounts
+  (demo only, not real credentials):
+  - `OPS-WTR-01` / `water-demo-2026` (water department)
+  - `OPS-RDS-01` / `roads-demo-2026` (roads department)
+
+Sign-in is demo-grade: sessions are kept in the browser tab, and operator codes are stored as
+SHA-256 hashes in `backend/app/seed/operators.json`. Production auth is planned for v2.

@@ -78,5 +78,9 @@ export const api = {
   golden: (step?: number) => post<GoldenResult>(`/sim/scenario/golden${step ? `?step=${step}` : ""}`),
   goldenStatus: () => call<GoldenResult>("/sim/scenario/golden"),
   scenarioStatus: (name: "golden" | "rootcause") => optional(call<GoldenResult>(`/sim/scenario/${name}`)),
+  operatorLogin: (body: { badge_id: string; access_code: string }) =>
+    post<{ badge_id: string; name: string; department: string }>("/auth/operator", body),
+  citizenLogin: (body: { name: string; email: string }) =>
+    post<{ name: string; email: string }>("/auth/citizen", body),
   feedback: (body: FeedbackInput) => post<{ ok?: boolean }>("/feedback", body),
 };
