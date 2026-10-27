@@ -1,6 +1,6 @@
 from sqlmodel import Session, func, select
 
-from app.models import AuditEvent, Incident, Link, Report
+from app.models import AuditEvent, Hypothesis, Incident, Link, Report
 
 
 def _count(session: Session, stmt) -> int:
@@ -27,6 +27,16 @@ def compute(session: Session) -> dict:
         "escalations": _count(session, select(func.count()).select_from(AuditEvent)
                               .where(AuditEvent.to_status == "escalated")),
         "replans": _events(session, "replanned"),
+        # v2: one coordinated repair instead of one visit per incident.
+        "crew_visits_saved": _events(session, "merged_into_parent_repair"),
+        "coordinated_vs_independent": {
+            "independent_visits": incidents,
+            "coordinated_visits": incidents - _events(session, "merged_into_parent_repair"),
+        },
+        "hypotheses": {s: _count(session, select(func.count()).select_from(Hypothesis)
+                                 .where(Hypothesis.status == s)) for s in ("proposed", "confirmed", "rejected")},
+        # v3: incidents currently flagged before breach.
+        "at_risk": _count(session, select(func.count()).select_from(Incident).where(Incident.at_risk == True)),  # noqa: E712
         # Naive system: one work order per report, every "complete" accepted as resolved.
         "baseline": {"work_orders": reports, "false_closures_accepted": false_closures},
     }

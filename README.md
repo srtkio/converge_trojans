@@ -54,4 +54,13 @@ Demo: open http://localhost:3000, press **Reset**, then **Next step →** throug
 scenario. `/?incident=inc_001` opens an incident directly.
 
 Set `ANTHROPIC_API_KEY` in `backend/.env` for LLM link explanations. Without it the system falls
-back to deterministic rules.
+back to deterministic rules. See `backend/.env.example` for all backend settings, including
+`CONVERGE_CORS_ORIGINS` (comma-separated frontend URLs, needed when the frontend is deployed).
+
+Backend via Docker (e.g. Render/Railway; honours `$PORT`):
+
+```bash
+cd backend
+docker build -t converge-backend .
+docker run -p 8000:8000 -e CONVERGE_CORS_ORIGINS=http://localhost:3000 converge-backend
+```

@@ -23,3 +23,14 @@ DEPENDENT_CATEGORIES: set[frozenset[str]] = {
 URGENT_WORDS = ("danger", "accident", "flood", "urgent", "injur", "child", "hospital", "school")
 
 SIM_START = "2026-10-27T09:00:00Z"
+
+# v2 root cause: higher rank = further upstream. A group's cause is its highest-ranked incident.
+CAUSE_RANK = {"sewage": 3, "water_leak": 2, "pothole": 1}
+CAUSE_EXPLANATION = {
+    frozenset({"water_leak", "pothole"}): "escaping water washes out the road base, so potholes form above leaks",
+    frozenset({"sewage", "water_leak"}): "sewer overflow and water-main leaks often share a failed pipe trench",
+    frozenset({"sewage", "pothole"}): "sewage seepage softens the road base",
+}
+
+# v3: flag incidents not yet started with less than this share of their SLA left.
+AT_RISK_SHARE = 0.25

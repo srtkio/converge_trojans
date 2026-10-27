@@ -40,6 +40,18 @@ export function MetricsBar({ metrics: m }: { metrics: Metrics }) {
                 )}
               </td>
             </tr>
+            {m.coordinated_vs_independent && (
+              <tr className="border-t border-slate-100">
+                <td className="py-1.5 text-slate-600">Crew visits</td>
+                <td className="font-semibold text-slate-900">{m.coordinated_vs_independent.independent_visits}</td>
+                <td className="font-semibold text-emerald-700">
+                  {m.coordinated_vs_independent.coordinated_visits}
+                  {!!m.crew_visits_saved && (
+                    <span className="ml-1 text-xs font-normal text-emerald-600">−{m.crew_visits_saved} via shared root cause</span>
+                  )}
+                </td>
+              </tr>
+            )}
             <tr className="border-t border-slate-100">
               <td className="py-1.5 text-slate-600">False closures accepted</td>
               <td className={`font-semibold ${m.baseline.false_closures_accepted ? "text-red-700" : "text-slate-900"}`}>

@@ -1,14 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { api } from "@/lib/api";
 import type { Incident } from "@/lib/types";
 
 import type { Act } from "./Dashboard";
 
-// Mirrors backend/app/sim.py GOLDEN so the stepper can preview the next step.
-const STEPS = [
+// Mirrors backend/app/sim.py GOLDEN and ROOTCAUSE so the stepper can preview the next step.
+const GOLDEN_STEPS = [
   "Reset; seed crews (2 roads, 1 water, 1 electrical)",
   "Report A: water leak at MG Road → new incident, assigned to water crew",
   "Report B: same leak 60 m away → linked as duplicate",
@@ -20,6 +20,29 @@ const STEPS = [
   "Clock +49 h with pothole untouched → SLA breach → escalated",
   "Metrics: baseline vs CONVERGE",
 ];
+
+const ROOTCAUSE_STEPS = [
+  "Reset; seed crews and city services",
+  "Report A: water bubbling through MG Road → leak incident, water crew assigned",
+  "Report B: pothole 120 m away → related to the leak",
+  "Report C: pothole at the bus stop 280 m away → root-cause hypothesis proposed",
+  "Operator confirms the leak as root cause → potholes wait on it, 2 crew visits saved",
+  "One repair: leak fixed and verified → both potholes await their own proof",
+  "Citizen and photo evidence confirm both potholes → all verified closed",
+  "Metrics: 1 coordinated repair instead of 3 visits",
+];
+
+type ScenarioName = "golden" | "rootcause";
+
+const SCENARIOS: Record<ScenarioName, { label: string; steps: string[]; focus: (step: number) => string | null }> = {
+  golden: {
+    label: "v1 · Verified loop",
+    steps: GOLDEN_STEPS,
+    // Keep the leak in focus during the story; show the pothole when it breaches.
+    focus: (n) => (n < 2 ? null : n === 9 ? "inc_002" : "inc_001"),
+  },
+  rootcause: { label: "v2 · Root cause", steps: ROOTCAUSE_STEPS, focus: (n) => (n < 2 ? null : "inc_001") },
+};
 
 export function ScenarioBar({
   busy,
@@ -33,14 +56,39 @@ export function ScenarioBar({
   incidents: Incident[];
 }) {
   const [step, setStep] = useState(0);
+  const [scenario, setScenario] = useState<ScenarioName>("golden");
+  const STEPS = SCENARIOS[scenario].steps;
+
+  // Pick up where the demo left off, so a page reload doesn't show step 0 while the backend is on step 5.
+  useEffect(() => {
+    // Resetting wipes both progress counters, so at most one scenario has a step in progress.
+    Promise.all([api.scenarioStatus("golden"), api.scenarioStatus("rootcause")])
+      .then(([g, r]) => {
+        if (r && r.step > 0) {
+          setScenario("rootcause");
+          setStep(r.step);
+        } else if (g) {
+          setStep(g.step);
+        }
+      })
+      .catch(() => {
+        // Backend unreachable or not started yet: keep the default step 0.
+      });
+  }, []);
 
   const runTo = (target: number) =>
     act(async () => {
-      const r = await api.golden(target);
+      const r = await api.scenario(scenario, target);
       setStep(r.step);
-      // Keep the leak incident in focus during the story; show the pothole when it breaches.
-      if (target >= 2) onSelect(target === 9 ? "inc_002" : "inc_001");
+      const focus = SCENARIOS[scenario].focus(target);
+      if (focus) onSelect(focus);
     });
+
+  const switchTo = (name: ScenarioName) => {
+    if (name === scenario) return;
+    setScenario(name);
+    setStep(0);
+  };
 
   const reset = () =>
     act(async () => {
@@ -54,7 +102,18 @@ export function ScenarioBar({
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="mr-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Demo scenario</span>
+        <div className="mr-1 flex rounded-md bg-slate-100 p-0.5 text-xs font-medium">
+          {(Object.keys(SCENARIOS) as ScenarioName[]).map((name) => (
+            <button
+              key={name}
+              disabled={busy}
+              onClick={() => switchTo(name)}
+              className={`rounded px-2 py-1 ${scenario === name ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
+            >
+              {SCENARIOS[name].label}
+            </button>
+          ))}
+        </div>
         <div className="flex flex-wrap gap-1">
           {STEPS.map((desc, i) => {
             const n = i + 1;
