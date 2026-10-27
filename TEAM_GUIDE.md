@@ -38,7 +38,7 @@ fewer duplicate work orders, false closures caught, deadlines enforced.
 | Sarthak (`srtkio`) | Lead, dashboard (v2 UI), integration, pitch deck | Hook, demo narration, close |
 | Prachi (`Prachivats-21`) | Backend engine, v2 root cause, v3 photo check + SLA risk | How it works + architecture |
 | Antriksh (`Antrikshcodes`) | Pitch Deck, Frontend | Drives the live demo |
-| Poorvi (`poorvig222`) | — | Market gap, results, business, future |
+| Poorvi (`poorvig222`) | Research and Development | Market gap, results, business, future |
 | Coordinator Claude | v3 citizen page + feedback widget, PR prep, keeps docs current | — |
 
 Plan for the remaining hours: [docs/ROADMAP.md](docs/ROADMAP.md). Product spec: [docs/PRD.md](docs/PRD.md).
