@@ -47,5 +47,18 @@ def test_reset_restores_seed(client):
     client.post("/sim/scenario/golden")
     client.post("/sim/reset")
     assert client.get("/incidents").json() == []
-    assert len(client.get("/resources").json()) == 4
+    assert len(client.get("/resources").json()) == 6
     assert client.get("/sim/clock").json() == {"now": "2026-10-27T09:00:00Z"}
+
+
+def test_golden_get_reports_progress_without_running(client):
+    r = client.get("/sim/scenario/golden").json()
+    assert r["step"] == 0 and r["log"] == [] and r["state"]["incidents"] == []
+    client.post("/sim/scenario/golden", params={"step": 4})
+    r = client.get("/sim/scenario/golden").json()
+    assert r["step"] == 4
+    assert [e["step"] for e in r["log"]] == [1, 2, 3, 4]
+    assert len(r["state"]["incidents"]) == 2
+    assert client.get("/sim/scenario/golden").json()["step"] == 4  # GET never advances
+    client.post("/sim/reset")
+    assert client.get("/sim/scenario/golden").json()["step"] == 0
