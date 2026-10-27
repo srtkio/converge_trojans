@@ -23,6 +23,7 @@ type MapProps = {
 /** City view: real street map by default, schematic as the offline fallback. */
 export function CityMap(props: MapProps) {
   const [view, setView] = useState<"street" | "schematic">("street");
+  const [tilesDown, setTilesDown] = useState(false);
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-2 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-2 px-1 pb-2">
@@ -48,7 +49,22 @@ export function CityMap(props: MapProps) {
           <span>dashed ring = 150 m duplicate radius</span>
         </div>
       </div>
-      {view === "street" ? <StreetMap {...props} /> : <SchematicMap {...props} />}
+      {tilesDown && view === "schematic" && (
+        <p className="mb-2 rounded-md bg-amber-50 px-3 py-1.5 text-xs text-amber-800 ring-1 ring-amber-200">
+          Street map tiles couldn’t load (no internet?), so this is the offline schematic view.
+        </p>
+      )}
+      {view === "street" ? (
+        <StreetMap
+          {...props}
+          onTilesFailed={() => {
+            setTilesDown(true);
+            setView("schematic");
+          }}
+        />
+      ) : (
+        <SchematicMap {...props} />
+      )}
     </section>
   );
 }
