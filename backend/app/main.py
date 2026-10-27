@@ -1,4 +1,5 @@
 """CONVERGE API. Contracts: docs/CONTRACTS.md. Engine logic lives in app/engine/."""
+import os
 from contextlib import asynccontextmanager
 from typing import Literal
 
@@ -32,9 +33,12 @@ async def lifespan(_app: FastAPI):
 
 
 app = FastAPI(title="CONVERGE", lifespan=lifespan)
+# Comma-separated, e.g. "http://localhost:3000,https://converge.vercel.app".
+CORS_ORIGINS = [o.strip() for o in os.environ.get("CONVERGE_CORS_ORIGINS", "http://localhost:3000").split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=CORS_ORIGINS,
     allow_methods=["*"],
     allow_headers=["*"],
 )
