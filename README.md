@@ -14,11 +14,31 @@ trail.
 > Demo credentials only. Sessions are per browser tab, and the API is not locked down. Production
 > auth is planned for v2.
 
-![Demo final state](docs/screenshots/final-state.png)
+| Citizen start page | Citizen case page |
+|---|---|
+| <img src="docs/screenshots/live-landing-phone.png" width="260" alt="Citizen start page on a phone"> | <img src="docs/screenshots/live-track-phone.png" width="260" alt="Citizen case page with status, deadline and timeline"> |
 
-![False closure caught and reopened](docs/screenshots/false-closure-reopened.png)
+![Operator overview: open cases, deadlines at risk, the escalation ladder, and naive ticketing vs CONVERGE](docs/screenshots/live-operator-overview.png)
 
-![Citizen case page on a phone](docs/screenshots/v3-track-after-still-broken.png)
+![Incidents: the queue, the street map of the Murthal–Sonipat pilot area, and an escalated case with its trust badge](docs/screenshots/live-incidents.png)
+
+Screenshots are from the live site with the Murthal–Sonipat pilot data.
+
+**Contents:** [Try it](#try-it-in-60-seconds) · [The problem](#the-problem) ·
+[What CONVERGE does](#what-converge-does) · [Pilot area](#pilot-area) · [Architecture](#architecture) ·
+[Run locally](#run-it-locally) · [Tests](#tests) · [Demo accounts](#demo-accounts) · [Deploy](#deploy) ·
+[Roadmap](#roadmap) · [Docs](#docs) · [Team](#team)
+
+## Try it in 60 seconds
+
+1. Open https://converge-backend-hnp0.onrender.com/health and wait for `{"ok":true}`. The first
+   request can take about a minute while the free host wakes up.
+2. Open https://converge-web-ten.vercel.app and choose **I'm a citizen**. Sign in with any first name,
+   report a problem with a photo or a map pin, and open your case.
+3. In a second window, open https://converge-web-ten.vercel.app/operator and sign in as `CMD-01` /
+   `command-demo-2026`. The new complaint pops up, and it is listed on the **Incidents** tab.
+4. Back on the case page, answer **Still broken** with a note. The operator sees it straight away.
+   No case closes until evidence supports the fix.
 
 ## The problem
 
@@ -32,7 +52,7 @@ deadlines slip quietly. A crew that says "fixed" closes the case, even if the wa
 | Groups reports | A repeat report within 150 m and 72 h becomes a **duplicate** of the existing incident. A connected problem within 400 m (a leak under a road) becomes **related**. |
 | Finds shared causes (v2) | Related incidents form a **hypothesis**. An operator confirms it, and one repair covers all of them. The demo cuts crew visits from 3 to 1. |
 | Assigns and replans | The nearest free crew in the right department. If a crew drops out, its jobs are reassigned automatically. |
-| Enforces deadlines | Each category has an SLA (water leak 12 h, pothole 48 h, healthcare 24 h, bin overflow 12 h). Missed deadlines escalate: officer → department head → city command centre. |
+| Enforces deadlines | Each category has an SLA (water leak and sewage 12 h, streetlight and garbage 24 h, pothole 48 h). Missed deadlines escalate: officer → department head → city command centre. |
 | Checks the fix | "Done" means *awaiting proof*. A citizen saying "still broken" reopens the case. It closes only on supporting evidence. |
 | Stops fake reports | Trust badges (unverified, corroborated, confirmed on site), a reject action for department heads and the command centre, and a per-reporter rate limit. |
 | Citizen photos and location | Citizens can attach a photo and a GPS or pinned location. Photos are stored and shown to operators. |
@@ -59,7 +79,7 @@ flowchart LR
 - **Frontend:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Leaflet maps.
 - **Backend:** Python, FastAPI, SQLModel. Rules live in `backend/app/engine/`.
 - **Database:** SQLite locally, Postgres on Render. Feedback survives resets.
-- **Flows:** every process is drawn in [docs/FLOWS.md](docs/FLOWS.md).
+- **Flows:** intake, assignment, verification, the state machine, shared-cause repair and the citizen loop are drawn in [docs/FLOWS.md](docs/FLOWS.md).
 
 ## Run it locally
 
@@ -131,7 +151,7 @@ items, not built features.
 
 ## Docs
 
-- [docs/FLOWS.md](docs/FLOWS.md): seven flowcharts, one implemented and six roadmap
+- [docs/FLOWS.md](docs/FLOWS.md): twelve flowcharts: six implemented (A1–A6, with the real rule values) and six roadmap (B–G)
 - [docs/CONTRACTS.md](docs/CONTRACTS.md): data model, rules and API (the frozen contract)
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/PRD.md](docs/PRD.md), [docs/ROADMAP.md](docs/ROADMAP.md)
 - [docs/DEMO.md](docs/DEMO.md) and [docs/PRESENTATION_SCRIPT.md](docs/PRESENTATION_SCRIPT.md): the demo
