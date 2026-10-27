@@ -142,4 +142,5 @@ pass.
 - [2026-10-27] Backend merged (Prachi's Claude): all rules work, 26 tests pass.
 - [2026-10-27] Dashboard merged (Sarthak's Claude): click-through demo works end to end — open http://localhost:3000, press Reset, then Next step. Screenshots in docs/screenshots/.
 - [2026-10-27] v1 MVP complete on main (35 tests, smoke PASS). Antriksh and Poorvi move to presenting. Added PRD, ARCHITECTURE, ROADMAP (v2 root cause, v3 citizen loop) and PRESENTER.md per person.
+- [2026-10-27] Claude (coordinator): v3 citizen page + feedback widget on PR #6 (lint and build pass; not yet tested in a browser). Poorvi's research.md drafted on PR #7 with one correction for her market-gap line (SeeClickFix claims duplicate merging).
 - [2026-10-27] Claude (coordinator): Docs updated for v2 root-cause scenario: DEMO.md (8-step v2 walkthrough), all PRESENTER.md demo rows, new docs/PITCH.md (9 slides, numbers from both scenario runs; user-testing slide left TBD).
