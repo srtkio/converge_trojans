@@ -5,8 +5,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { distanceM } from "./citizen";
 
-/** MG Road metro, Bengaluru: the middle of the pilot area. */
+/** The middle of the pilot area, and how citizens see it named. Change these three to move the pilot. */
 export const PILOT_CENTRE = { lat: 12.9756, lng: 77.6058 };
+export const PILOT_PLACE = "MG Road metro";
+export const PILOT_AREA = "around MG Road, Bengaluru";
 /** Further than this from the centre, the citizen is told they're outside the pilot (not blocked). */
 export const PILOT_RADIUS_M = 3000;
 

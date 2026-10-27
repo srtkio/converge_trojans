@@ -12,7 +12,7 @@ import { api } from "@/lib/api";
 import { CITIZEN_STATUS_LABEL, distanceM, formatMetres, joinable } from "@/lib/citizen";
 import { BIG_BUTTON } from "@/lib/citizenStyles";
 import { CATEGORY_ICON } from "@/lib/format";
-import { PILOT_CENTRE, outsidePilot, useDeviceLocation } from "@/lib/location";
+import { PILOT_AREA, PILOT_CENTRE, PILOT_PLACE, outsidePilot, useDeviceLocation } from "@/lib/location";
 import { refreshMyCases } from "@/lib/myCases";
 import { putPin, type LatLng } from "@/lib/pinHandoff";
 import { firstName } from "@/lib/session";
@@ -46,6 +46,13 @@ export default function MapPage() {
     } catch {
       setListError(true);
     }
+  }, []);
+
+  useEffect(() => {
+    // A dropped connection shouldn't hide the map for good.
+    const retry = () => setTilesFailed(false);
+    window.addEventListener("online", retry);
+    return () => window.removeEventListener("online", retry);
   }, []);
 
   useEffect(() => {
@@ -90,7 +97,8 @@ export default function MapPage() {
   };
 
   const reportHere = () => {
-    putPin(pin);
+    // Only hand over a spot the citizen actually saw on a working map.
+    if (!tilesFailed || movedPin) putPin(pin);
     router.push("/citizen", { transitionTypes: ["cz-tab"] });
   };
 
@@ -144,12 +152,12 @@ export default function MapPage() {
       </div>
       {gps.state === "failed" && (
         <p className="cz-rise rounded-xl bg-amber-50 p-3 text-sm text-amber-950 ring-1 ring-amber-200">
-          {"We couldn't use your location, so the map shows the area around MG Road metro. You can still drag the pin."}
+          {`We couldn't use your location, so the map shows the area around ${PILOT_PLACE}. You can still drag the pin.`}
         </p>
       )}
       {me && outsidePilot(me.lat, me.lng) && (
         <p className="cz-rise rounded-xl bg-sky-50 p-3 text-sm text-sky-950 ring-1 ring-sky-200">
-          {"You're outside this pilot's area (around MG Road, Bengaluru), so there may be no issues near you yet."}
+          {`You're outside this pilot's area (${PILOT_AREA}), so there may be no issues near you yet.`}
         </p>
       )}
 
@@ -158,7 +166,7 @@ export default function MapPage() {
           {nearby.length === 0 ? "Nothing open nearby" : `${nearby.length} open ${nearby.length === 1 ? "issue" : "issues"} nearby`}
         </h2>
         <p className="text-xs text-slate-500">
-          Within {formatMetres(NEARBY_M)} of {me ? "you" : "MG Road metro"}.
+          Within {formatMetres(NEARBY_M)} of {me ? "you" : PILOT_PLACE}.
           {listError ? " Can't reach the service right now, trying again…" : ""}
         </p>
         {nearby.length > 0 && (

@@ -20,12 +20,12 @@ import {
 } from "@/lib/citizen";
 import { BIG_BUTTON } from "@/lib/citizenStyles";
 import { CATEGORY_ICON, CATEGORY_LABEL } from "@/lib/format";
-import { PILOT_CENTRE, outsidePilot, useDeviceLocation } from "@/lib/location";
+import { PILOT_AREA, PILOT_CENTRE, PILOT_PLACE, outsidePilot, useDeviceLocation } from "@/lib/location";
 import { takePin, type LatLng } from "@/lib/pinHandoff";
 import { photoRejected } from "@/lib/photo";
 import type { Category, Incident, Link } from "@/lib/types";
 
-// Landmarks inside the pilot area (about 1 km around MG Road metro, Bengaluru). The points sit
+// Landmarks inside the pilot area (see PILOT_* in lib/location.ts). The points sit
 // close to the demo incidents, so a matching report joins the existing case instead of opening a
 // new one.
 const PLACES = [
@@ -49,7 +49,7 @@ const ROUGH_FIX_M = 250;
 const PINNED_LABEL = "Pinned on the map";
 const MAP_FAILED = "The map isn't loading. Pick a nearby place instead.";
 const OUTSIDE_PILOT =
-  "You're outside this pilot's area (around MG Road, Bengaluru). We'll still log your report at your real location.";
+  `You're outside this pilot's area (${PILOT_AREA}). We'll still log your report at your real location.`;
 
 export type ReportOutcome = { incident: Incident; link: Link | null };
 
@@ -152,7 +152,7 @@ export function CitizenReportForm({
   const pinnedFrom = pinned ? distanceM(PILOT_CENTRE.lat, PILOT_CENTRE.lng, pinned.lat, pinned.lng) : 0;
   // Read out by screen readers as the location changes (the visible text is above).
   const gpsAnnouncement = pinned
-    ? `${PINNED_LABEL}, ${formatMetres(pinnedFrom)} from MG Road metro.${outside ? ` ${OUTSIDE_PILOT}` : ""}`
+    ? `${PINNED_LABEL}, ${formatMetres(pinnedFrom)} from ${PILOT_PLACE}.${outside ? ` ${OUTSIDE_PILOT}` : ""}`
     : gps.state === "locating"
       ? "Finding your location…"
       : gps.state === "on"
@@ -337,7 +337,7 @@ export function CitizenReportForm({
               <PinIcon className="mt-0.5 h-4 w-4 text-emerald-700" />
               <span className="min-w-0">
                 <span className="font-medium">{PINNED_LABEL}</span>
-                <span className="block text-xs text-emerald-900">{formatMetres(pinnedFrom)} from MG Road metro</span>
+                <span className="block text-xs text-emerald-900">{formatMetres(pinnedFrom)} from {PILOT_PLACE}</span>
               </span>
             </p>
             <div className="mt-2 ml-6 flex flex-wrap gap-x-4 gap-y-1">
@@ -422,7 +422,7 @@ export function CitizenReportForm({
                   </option>
                 ))}
               </select>
-              <span className="mt-1 block text-xs text-slate-500">This pilot covers the streets around MG Road, Bengaluru.</span>
+              <span className="mt-1 block text-xs text-slate-500">This pilot covers the streets {PILOT_AREA}.</span>
             </label>
             {mapFailed ? (
               <p role="status" className="mt-2 rounded-xl bg-amber-50 p-3 text-sm text-amber-950 ring-1 ring-amber-200">

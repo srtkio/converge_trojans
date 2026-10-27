@@ -47,8 +47,8 @@ export function PinSheet({ initial, onDone }: { initial: LatLng; onDone: (r: Pin
       onAnimationEnd={onAnimationEnd}
       className={`fixed inset-0 z-[60] flex flex-col bg-white [color-scheme:light] ${closing ? "cz-sheet-out" : "cz-sheet"}`}
     >
-      <div className="mx-auto flex h-full w-full max-w-md flex-col gap-3 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))]">
-        <div className="flex items-start justify-between gap-3">
+      <div className="mx-auto flex h-full w-full max-w-md flex-col gap-3 overflow-y-auto overscroll-contain px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <div className="flex shrink-0 items-start justify-between gap-3">
           <div className="min-w-0">
             <h2 id="pin-sheet-title" ref={headingRef} tabIndex={-1} className="text-lg font-semibold outline-none">
               Adjust the spot
@@ -64,7 +64,7 @@ export function PinSheet({ initial, onDone }: { initial: LatLng; onDone: (r: Pin
           </button>
         </div>
         <CitizenMapView
-          className="min-h-64 flex-1"
+          className="min-h-[min(16rem,45dvh)] flex-1"
           label="Map. Drag the pin or tap the map to choose the spot."
           focus={spot}
           viewKey={viewKey}
@@ -86,7 +86,7 @@ export function PinSheet({ initial, onDone }: { initial: LatLng; onDone: (r: Pin
             locate();
           }}
           aria-disabled={locating || undefined}
-          className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-white px-3 text-base font-medium text-slate-800 ring-1 ring-slate-300 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 motion-safe:active:scale-[0.98]"
+          className="flex h-12 w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-3 text-base font-medium text-slate-800 ring-1 ring-slate-300 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 motion-safe:active:scale-[0.98]"
         >
           <PinIcon className={`h-5 w-5 text-sky-600 ${locating ? "motion-safe:animate-pulse" : ""}`} />
           {locating ? "Finding you…" : "Move the pin to me"}
@@ -94,7 +94,7 @@ export function PinSheet({ initial, onDone }: { initial: LatLng; onDone: (r: Pin
         <button
           type="button"
           onClick={() => finish({ kind: "picked", spot })}
-          className={`${BIG_BUTTON} bg-emerald-700 text-white hover:bg-emerald-800`}
+          className={`${BIG_BUTTON} shrink-0 bg-emerald-700 text-white hover:bg-emerald-800`}
         >
           Use this spot
         </button>

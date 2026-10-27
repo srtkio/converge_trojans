@@ -81,7 +81,7 @@ export function BottomSheet({
           aria-labelledby={labelledBy}
           tabIndex={-1}
           onAnimationEnd={onAnimationEnd}
-          className={`pointer-events-auto w-full max-w-md rounded-t-3xl bg-white px-5 pt-3 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-[0_-18px_40px_-18px_rgba(15,23,42,0.45)] outline-none ${
+          className={`pointer-events-auto max-h-[calc(100dvh-env(safe-area-inset-top)-0.5rem)] w-full max-w-md overflow-y-auto overscroll-contain rounded-t-3xl bg-white px-5 pt-3 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-[0_-18px_40px_-18px_rgba(15,23,42,0.45)] outline-none ${
             closing ? "cz-sheet-out" : "cz-sheet"
           }`}
         >
