@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { CitizenInbox } from "@/components/CitizenInbox";
 import { Dashboard } from "@/components/Dashboard";
 import { api } from "@/lib/api";
 import { clearSession, readSession, saveSession, type Session } from "@/lib/session";
@@ -40,6 +41,7 @@ export default function OperatorPage() {
             Sign out
           </button>
         </div>
+        <CitizenInbox />
         <Dashboard />
       </>
     );

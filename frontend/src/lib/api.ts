@@ -1,5 +1,6 @@
 import type {
   AuditEvent,
+  CitizenActivity,
   Category,
   EvidenceKind,
   GoldenResult,
@@ -54,6 +55,7 @@ export const api = {
   metrics: () => call<Metrics>("/metrics"),
   clock: () => call<{ now: string }>("/sim/clock"),
   audit: () => call<AuditEvent[]>("/audit"),
+  citizenActivity: (limit = 30) => call<CitizenActivity[]>(`/citizen/activity?limit=${limit}`),
 
   report: (body: { text: string; category: Category; lat: number; lng: number; reporter: string }) =>
     post<{ report: Report; incident: Incident; link: Link | null }>("/reports", body),

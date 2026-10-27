@@ -76,6 +76,20 @@ export interface Evidence {
   created_at: string;
 }
 
+// One row of the operator inbox: a citizen complaint or a citizen's follow-up evidence.
+export interface CitizenActivity {
+  id: string;
+  kind: "complaint" | "evidence";
+  at: string;
+  citizen: string;
+  text: string;
+  category: Category | null;
+  supports: boolean | null;
+  incident_id: string | null;
+  incident_title: string | null;
+  incident_status: Status | null;
+}
+
 export interface AuditEvent {
   id: string;
   incident_id: string | null;

@@ -17,7 +17,17 @@ const PLACES = [
   { name: "Cubbon Park gate (1 km away)", lat: 12.9763, lng: 77.5929 },
 ];
 
-export function ReportForm({ busy, act, onCreated }: { busy: boolean; act: Act; onCreated: (id: string) => void }) {
+export function ReportForm({
+  busy,
+  act,
+  onCreated,
+  reporter = "citizen:dashboard",
+}: {
+  busy: boolean;
+  act: Act;
+  onCreated: (id: string) => void;
+  reporter?: string;
+}) {
   const [text, setText] = useState("");
   const [category, setCategory] = useState<Category>("water_leak");
   const [place, setPlace] = useState(0);
@@ -28,7 +38,7 @@ export function ReportForm({ busy, act, onCreated }: { busy: boolean; act: Act; 
     if (!text.trim()) return;
     const p = PLACES[place];
     void act(async () => {
-      const r = await api.report({ text: text.trim(), category, lat: p.lat, lng: p.lng, reporter: "citizen:dashboard" });
+      const r = await api.report({ text: text.trim(), category, lat: p.lat, lng: p.lng, reporter });
       setResult({ incidentId: r.incident.id, link: r.link });
       setText("");
       onCreated(r.incident.id);
