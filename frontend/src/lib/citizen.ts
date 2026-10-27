@@ -224,14 +224,12 @@ export type CasePhoto = { id: string; path: string; caption: string; alt: string
 
 const isPhotoPath = (u: string | null | undefined): u is string => typeof u === "string" && u.startsWith("/photos/");
 
-const clip = (s: string, n = 80) => (s.length > n ? `${s.slice(0, n - 1).trimEnd()}…` : s);
-
 /** Photos on a case, newest first: report photos and evidence photos (AI photo checks are skipped). */
 export function casePhotos(reports: Report[], evidence: Evidence[]): CasePhoto[] {
   const out: CasePhoto[] = [];
   for (const r of reports) {
     if (!isPhotoPath(r.photo_url)) continue;
-    out.push({ id: r.id, path: r.photo_url, caption: "Reported", alt: `Photo sent with the report: ${clip(r.text)}`, at: r.created_at });
+    out.push({ id: r.id, path: r.photo_url, caption: "Reported", alt: "Photo sent with a report", at: r.created_at });
   }
   for (const e of evidence) {
     if (e.signal_only || !isPhotoPath(e.photo_url)) continue;
@@ -239,9 +237,9 @@ export function casePhotos(reports: Report[], evidence: Evidence[]): CasePhoto[]
     out.push({
       id: e.id,
       path: e.photo_url,
-      caption: followUp ? (e.supports_resolution ? "Follow-up: fixed" : "Follow-up: still broken") : "Evidence",
+      caption: followUp ? (e.supports_resolution ? "Follow-up: looks repaired" : "Follow-up: not fixed yet") : "Evidence",
       alt: followUp
-        ? `Follow-up photo from someone who says it is ${e.supports_resolution ? "fixed" : "still broken"}`
+        ? `Follow-up photo: ${e.supports_resolution ? "looks repaired" : "not fixed yet"}`
         : "Evidence photo",
       at: e.created_at,
     });

@@ -351,7 +351,9 @@ export function CitizenReportForm({
             Already reported nearby
           </h2>
           <p className="mt-0.5 text-xs text-slate-600">
-            {"Is it one of these? Tap “Me too” to add your voice instead of opening a new case."}
+            {photo.photo
+              ? "Is it one of these? Tap “Me too” to add your voice (and your photo) instead of opening a new case."
+              : "Is it one of these? Tap “Me too” to add your voice instead of opening a new case."}
           </p>
           <ul className="mt-2 space-y-2">
             {suggestions.map(({ incident, d }) => (

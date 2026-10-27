@@ -1,7 +1,7 @@
 // "Use my current location" for the citizen report form. The position is asked for only when the
 // citizen taps the button, kept in memory for this form, and sent only with the report. It is
 // never written to localStorage.
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { distanceM } from "./citizen";
 
@@ -29,6 +29,9 @@ export type DeviceLocation =
   | { state: "failed"; message: string };
 
 const OPTIONS: PositionOptions = { enableHighAccuracy: true, timeout: 12_000, maximumAge: 60_000 };
+// OPTIONS.timeout doesn't count time spent on an unanswered permission prompt (common on iOS and in
+// in-app browsers), so give up ourselves after this long and leave the landmark list in charge.
+const WATCHDOG_MS = 15_000;
 
 // GeolocationPositionError codes.
 const PERMISSION_DENIED = 1;
@@ -38,6 +41,16 @@ const TIMEOUT = 3;
 export function useDeviceLocation() {
   const [location, setLocation] = useState<DeviceLocation>({ state: "off" });
   const request = useRef(0);
+  const watchdog = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  // Answers arriving after the form is gone are ignored.
+  useEffect(
+    () => () => {
+      request.current += 1;
+      clearTimeout(watchdog.current);
+    },
+    [],
+  );
 
   const locate = useCallback(() => {
     const mine = (request.current += 1);
@@ -50,13 +63,21 @@ export function useDeviceLocation() {
       return;
     }
     setLocation({ state: "locating" });
+    clearTimeout(watchdog.current);
+    watchdog.current = setTimeout(() => {
+      if (mine !== request.current) return;
+      request.current += 1;
+      setLocation({ state: "failed", message: LOCATION_MESSAGE.timeout });
+    }, WATCHDOG_MS);
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
         if (mine !== request.current) return;
+        clearTimeout(watchdog.current);
         setLocation({ state: "on", lat: coords.latitude, lng: coords.longitude, accuracy: coords.accuracy });
       },
       (err) => {
         if (mine !== request.current) return;
+        clearTimeout(watchdog.current);
         const message =
           err.code === PERMISSION_DENIED
             ? LOCATION_MESSAGE.denied
@@ -71,6 +92,7 @@ export function useDeviceLocation() {
 
   const stop = useCallback(() => {
     request.current += 1;
+    clearTimeout(watchdog.current);
     setLocation({ state: "off" });
   }, []);
 

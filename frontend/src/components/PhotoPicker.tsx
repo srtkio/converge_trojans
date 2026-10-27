@@ -79,12 +79,23 @@ export function PhotoPicker({
   const inputId = useId();
   const hintId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
+  const removeRef = useRef<HTMLButtonElement>(null);
+  const focusAfterPick = useRef(false);
   const { photo, preparing, error } = field;
+
+  useEffect(() => {
+    // The input disappears when the preview replaces it; hand focus to "Remove photo" instead of <body>.
+    if (photo && focusAfterPick.current) removeRef.current?.focus();
+    focusAfterPick.current = false;
+  }, [photo]);
 
   const pick = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     e.target.value = ""; // choosing the same file again still fires a change
-    if (file) void field.choose(file);
+    if (file) {
+      focusAfterPick.current = document.activeElement === e.target;
+      void field.choose(file);
+    }
   };
 
   const remove = () => {
@@ -107,10 +118,13 @@ export function PhotoPicker({
             className="h-16 w-16 shrink-0 rounded-lg bg-slate-100 object-cover ring-1 ring-slate-900/5"
           />
           <p className="min-w-0 flex-1 text-sm">
-            <span className="block font-medium text-slate-900">Photo ready, {formatPhotoSize(photo.bytes)}</span>
-            <span className="block text-xs text-slate-500">Hidden details like GPS are removed.</span>
+            <span className="block font-medium text-slate-900">Photo ready to send</span>
+            <span className="block text-xs text-slate-500">
+              {"We remove the photo's hidden location data before sending."}
+            </span>
           </p>
           <button
+            ref={removeRef}
             type="button"
             onClick={remove}
             disabled={disabled}
@@ -146,7 +160,7 @@ export function PhotoPicker({
         </>
       )}
       <p className="sr-only" role="status" aria-live="polite">
-        {preparing ? "Preparing photo…" : photo ? `Photo ready, ${formatPhotoSize(photo.bytes)}` : ""}
+        {preparing ? "Preparing photo…" : photo ? "Photo ready to send" : ""}
       </p>
       {error && (
         <p role="alert" className="cz-rise mt-2 rounded-xl bg-rose-50 p-3 text-sm text-rose-800 ring-1 ring-rose-200">
