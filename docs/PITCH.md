@@ -4,6 +4,8 @@ Nine slides, in the running order from the presenter files (5 minutes plus Q&A).
 comes from a scenario run on the backend `/metrics` endpoint. Re-run the scenarios before the pitch
 and update any figure that changed.
 
+**Last checked on `main` at commit 47a9ed9:** both scenarios re-run, numbers unchanged.
+
 Numbers are from these runs:
 - **v1 · Golden** (10 steps): `POST /sim/scenario/golden?step=10`
 - **v2 · Root cause** (8 steps): `POST /sim/scenario/rootcause?step=8`
