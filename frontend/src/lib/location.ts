@@ -7,6 +7,8 @@ import { distanceM } from "./citizen";
 
 /** Between Murthal and Sonipat (Haryana): the middle of the pilot area. */
 export const PILOT_CENTRE = { lat: 29.005, lng: 77.055 };
+export const PILOT_PLACE = "Rishihood University";
+export const PILOT_AREA = "Murthal–Sonipat, Haryana";
 /** Further than this from the centre, the citizen is told they're outside the pilot (not blocked). */
 export const PILOT_RADIUS_M = 15000;
 

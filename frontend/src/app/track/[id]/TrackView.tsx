@@ -28,6 +28,7 @@ import {
   type CasePhoto,
 } from "@/lib/citizen";
 import { CATEGORY_ICON, CATEGORY_LABEL, STATUS_STYLE, formatTime, hoursLeft } from "@/lib/format";
+import { refreshMyCases } from "@/lib/myCases";
 import { photoRejected } from "@/lib/photo";
 import { firstName, readSession } from "@/lib/session";
 import type { Incident, IncidentDetail, Resource } from "@/lib/types";
@@ -106,6 +107,7 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
         photo: upload,
       });
       rememberCase(id);
+      void refreshMyCases();
       lastStatus.current = r.incident.status; // the citizen's own change: no "status changed" toast
       setNote("");
       photo.clear();
@@ -190,10 +192,11 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
           <div className="flex items-center gap-2">
             <ShareButton id={incident.id} />
             <Link
-              href="/citizen"
+              href="/citizen/cases"
+              transitionTypes={["cz-back"]}
               className="rounded-lg px-3 py-2 text-sm font-medium text-emerald-800 ring-1 ring-emerald-200 transition hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
             >
-              My reports
+              <span aria-hidden="true">← </span>All my cases
             </Link>
           </div>
         </div>
@@ -522,6 +525,7 @@ function MeToo({ incident, reporter, onAdded }: { incident: Incident; reporter: 
       });
       markMeToo(incident.id);
       rememberCase(r.incident.id);
+      void refreshMyCases();
       // Normally this joins the same case; an old case (over 3 days) gets a fresh one instead.
       setOtherCase(r.incident.id === incident.id ? null : r.incident.id);
       setState("done");

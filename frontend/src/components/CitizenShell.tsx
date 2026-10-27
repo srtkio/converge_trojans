@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { createContext, use, useEffect, useState, type ReactNode } from "react";
 
 import { api } from "@/lib/api";
+
+/** Set by the citizen app shell (CitizenApp), which already draws the frame, banner and wake-up. */
+export const InAppShellContext = createContext(false);
 
 /**
  * Light, phone-first frame for every citizen page. It fixes the colours (the global theme turns
@@ -10,6 +13,11 @@ import { api } from "@/lib/api";
  * real request is quick.
  */
 export function CitizenShell({ children }: { children: ReactNode }) {
+  // Inside the app shell this is a pass-through, so pages never draw a second frame.
+  return use(InAppShellContext) ? <>{children}</> : <StandaloneShell>{children}</StandaloneShell>;
+}
+
+function StandaloneShell({ children }: { children: ReactNode }) {
   const [offline, setOffline] = useState(false);
 
   useEffect(() => {

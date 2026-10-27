@@ -14,8 +14,9 @@ export type Status =
 
 export type EvidenceKind = "photo" | "sensor" | "citizen_followup" | "inspector";
 
-/** Where a report's lat/lng came from: the device's GPS or a landmark the citizen picked. */
-export type LocationSource = "gps" | "landmark";
+/** Where a report's lat/lng came from: the device's GPS, a landmark the citizen picked, or a spot
+ * they pinned on the map. */
+export type LocationSource = "gps" | "landmark" | "pin";
 
 export interface Report {
   id: string;
@@ -29,7 +30,7 @@ export interface Report {
   /** Citizen photo as an API path ("/photos/ph_…"); build the full URL with photoSrc() from lib/api. */
   photo_url?: string | null;
   location_source?: LocationSource | null;
-  /** GPS accuracy radius in metres (null for landmarks). */
+  /** GPS accuracy radius in metres (null for landmarks and pins). */
   location_accuracy_m?: number | null;
   /** Landmark name, "Current location", or "Same spot as case inc_…". */
   location_label?: string | null;
