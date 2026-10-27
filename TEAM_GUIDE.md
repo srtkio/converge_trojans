@@ -30,14 +30,19 @@ fewer duplicate work orders, false closures caught, deadlines enforced.
 
 ## 2. Who does what
 
-| Person | AI helper | Owns | Branch |
-|---|---|---|---|
-| Sarthak (`srtkio`) | Claude | Team lead, plan, frontend dashboard, integration, demo | `feat/frontend` |
-| Prachi (`Prachivats-21`) | Claude + Gemini | Backend engine: data, grouping, assignment, deadlines, verification | `feat/backend` |
-| Antriksh (`Antrikshcodes`) | — | Seed data, testing the demo, pitch support | `docs/*` |
-| Poorvi (`poorvig222`) | — | Pitch deck, demo script, presentation | `docs/*` |
+**Builders:** Sarthak and Prachi, each with Claude, plus a coordinator Claude session (`trojans-a0`).
+**Presenters:** all four. Each person's script and Q&A prep is in `team/<name>/PRESENTER.md`.
 
-Antriksh and Poorvi: adjust your roles in CHANNEL.md if you want something different.
+| Person | Builds | Presents |
+|---|---|---|
+| Sarthak (`srtkio`) | Lead, dashboard (v2 UI), integration, pitch deck | Hook, demo narration, close |
+| Prachi (`Prachivats-21`) | Backend engine, v2 root cause, v3 photo check + SLA risk | How it works + architecture |
+| Antriksh (`Antrikshcodes`) | Pitch Deck, Frontend | Drives the live demo |
+| Poorvi (`poorvig222`) | Research and Development | Market gap, results, business, future |
+| Coordinator Claude | v3 citizen page + feedback widget, PR prep, keeps docs current | — |
+
+Plan for the remaining hours: [docs/ROADMAP.md](docs/ROADMAP.md). Product spec: [docs/PRD.md](docs/PRD.md).
+Architecture explained: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## 3. Timeline (about 9 hours)
 
@@ -136,3 +141,4 @@ pass.
 - [2026-10-27] Backend done (Prachi, Claude): all CONTRACTS.md endpoints, rule engine, golden scenario end-to-end; `cd backend && pytest` = 26 passed. Merged into main.
 - [2026-10-27] Backend merged (Prachi's Claude): all rules work, 26 tests pass.
 - [2026-10-27] Dashboard merged (Sarthak's Claude): click-through demo works end to end — open http://localhost:3000, press Reset, then Next step. Screenshots in docs/screenshots/.
+- [2026-10-27] v1 MVP complete on main (35 tests, smoke PASS). Antriksh and Poorvi move to presenting. Added PRD, ARCHITECTURE, ROADMAP (v2 root cause, v3 citizen loop) and PRESENTER.md per person.
