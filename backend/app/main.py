@@ -19,7 +19,8 @@ from app.engine import feedback, impact, ladder, llm, metrics, photos, rootcause
 from app.engine.intake import submit_report  # noqa: E402
 from app.models import AuditEvent, Evidence, Incident, Link, Report, Resource, Service, photo_url  # noqa: E402
 
-Category = Literal["pothole", "streetlight", "water_leak", "garbage", "sewage", "other"]
+Category = Literal["pothole", "streetlight", "water_leak", "garbage", "sewage", "other",
+                    "health_service", "bin_overflow"]
 EvidenceKind = Literal["photo", "sensor", "citizen_followup", "inspector"]
 STATUSES = {"open", "assigned", "in_progress", "pending_verification", "verified_closed", "reopened", "escalated",
             "rejected"}

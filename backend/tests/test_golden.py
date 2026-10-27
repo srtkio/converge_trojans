@@ -47,7 +47,7 @@ def test_reset_restores_seed(client):
     client.post("/sim/scenario/golden")
     client.post("/sim/reset")
     assert client.get("/incidents").json() == []
-    assert len(client.get("/resources").json()) == 6
+    assert len(client.get("/resources").json()) == 7
     assert client.get("/sim/clock").json() == {"now": "2026-10-27T09:00:00Z"}
 
 

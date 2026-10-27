@@ -13,6 +13,8 @@ strings with a prefix (`inc_`, `rep_`, `res_`, `ev_`, `aud_`). The app uses a **
 | `water_leak` | `water` | 12 |
 | `garbage` | `sanitation` | 24 |
 | `sewage` | `water` | 12 |
+| `health_service` | `health` | 24 |
+| `bin_overflow` | `sanitation` | 12 |
 | `other` | `general` | 72 |
 
 ## Entities
@@ -43,7 +45,7 @@ verified_closed ─new duplicate report→ reopened
 Rules (deterministic, in engine code, never in the LLM):
 1. **Dedup**: a new report links as `duplicate` to an open incident with same category, within
    **150 m**, created within **72 h**. Otherwise `related` if within **400 m** and in a
-   dependent category (e.g. `water_leak`↔`pothole`, `sewage`↔`water_leak`). Otherwise new incident.
+   dependent category (e.g. `water_leak`↔`pothole`, `sewage`↔`water_leak`, `bin_overflow`↔`sewage`). Otherwise new incident.
    The LLM may only refine the `reason` text and confidence, not the decision.
 2. **Assign**: nearest available resource in the incident's department. None available →
    status stays `open`, audit `no_resource`, escalate.
