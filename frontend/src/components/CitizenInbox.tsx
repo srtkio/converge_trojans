@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { api } from "@/lib/api";
+import { api, photoSrc } from "@/lib/api";
 import { CATEGORY_LABEL, STATUS_LABEL, formatTime } from "@/lib/format";
 import type { CitizenActivity } from "@/lib/types";
 
@@ -45,20 +45,37 @@ function label(item: CitizenActivity): string {
 export function CitizenInbox({
   onUnreadChange,
   onOpenIncident,
+  onNewItems,
 }: {
   onUnreadChange?: (count: number) => void;
   onOpenIncident?: (id: string) => void;
+  /** Items that arrived after the inbox first loaded (for live toasts). */
+  onNewItems?: (items: CitizenActivity[]) => void;
 } = {}) {
   const [items, setItems] = useState<CitizenActivity[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [fresh, setFresh] = useState<Set<string>>(new Set());
   const seenRef = useRef<Set<string> | null>(null);
+  // Ids already announced as toasts; null until the first load, so old items stay quiet.
+  const announcedRef = useRef<Set<string> | null>(null);
+  const onNewRef = useRef(onNewItems);
+  useEffect(() => {
+    onNewRef.current = onNewItems;
+  }, [onNewItems]);
 
   const load = useCallback(async () => {
     try {
       const next = await api.citizenActivity();
       setItems(next);
       setError(null);
+      if (announcedRef.current === null) {
+        announcedRef.current = new Set(next.map((i) => i.id));
+      } else {
+        const announced = announcedRef.current;
+        const fresh = next.filter((i) => !announced.has(i.id));
+        for (const i of fresh) announced.add(i.id);
+        if (fresh.length) onNewRef.current?.(fresh);
+      }
       if (seenRef.current === null) {
         seenRef.current = readSeen() ?? new Set(next.map((i) => i.id));
         writeSeen(seenRef.current);
@@ -94,7 +111,7 @@ export function CitizenInbox({
   };
 
   return (
-    <section aria-labelledby="inbox-heading" className="rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm">
+    <section aria-labelledby="inbox-heading" className="rounded-2xl bg-white ring-1 ring-slate-900/5 px-5 py-4 shadow-[0_1px_2px_rgba(15,23,42,0.05)]">
       <div className="flex items-center justify-between gap-3">
         <h2 id="inbox-heading" className="text-sm font-semibold text-slate-900">
           Citizen activity{fresh.size > 0 ? ` · ${fresh.size} new` : ""}
@@ -129,6 +146,16 @@ export function CitizenInbox({
                 <span className="font-medium">{label(item)}:</span>{" "}
                 <span className="text-slate-700">{item.text || "(no note)"}</span>
               </p>
+              {(item.photo_url || item.location_label || item.location_source === "gps") && (
+                <div className="mt-1.5 flex items-center gap-2 text-xs text-slate-500">
+                  {item.photo_url && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={photoSrc(item.photo_url)} alt="Photo from the citizen" className="h-12 w-16 rounded-md object-cover ring-1 ring-slate-200" />
+                  )}
+                  {item.location_source === "gps" && <span className="rounded-full bg-sky-50 px-2 py-0.5 font-medium text-sky-700">GPS</span>}
+                  {item.location_label && <span>📍 {item.location_label}</span>}
+                </div>
+              )}
               {item.incident_id && (
                 <a
                   href={`/operator?incident=${item.incident_id}`}

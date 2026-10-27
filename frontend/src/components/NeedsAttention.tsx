@@ -1,6 +1,7 @@
-import { CATEGORY_ICON, formatHours, hoursLeft } from "@/lib/format";
+import { CATEGORY_ICON } from "@/lib/format";
 import type { Incident } from "@/lib/types";
 
+import { SlaTimer } from "./SlaTimer";
 import { StatusBadge } from "./StatusBadge";
 
 /** Overview list: the incidents an operator should look at first. */
@@ -31,7 +32,7 @@ export function NeedsAttention({
   const open = incidents.filter((i) => i.status !== "verified_closed").length;
 
   return (
-    <section className="rounded-lg border border-slate-200 bg-white shadow-sm">
+    <section className="rounded-2xl bg-white ring-1 ring-slate-900/5 shadow-[0_1px_2px_rgba(15,23,42,0.05)] overflow-hidden">
       <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
         <h2 className="text-sm font-semibold">Needs attention</h2>
         <span className="text-xs text-slate-500">
@@ -45,7 +46,6 @@ export function NeedsAttention({
       ) : (
         <ul className="divide-y divide-slate-100">
           {items.map(({ i, why }) => {
-            const left = now ? hoursLeft(i.deadline, now) : null;
             return (
               <li key={i.id}>
                 <button type="button" onClick={() => onOpen(i.id)} className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50">
@@ -54,9 +54,9 @@ export function NeedsAttention({
                     <span className="block truncate text-sm font-medium">{i.title}</span>
                     <span className="text-xs text-slate-500">
                       {why} · {i.department}
-                      {left !== null && i.status !== "verified_closed" && ` · ${formatHours(left)}`}
                     </span>
                   </span>
+                  <SlaTimer incident={i} now={now} />
                   <StatusBadge status={i.status} />
                 </button>
               </li>

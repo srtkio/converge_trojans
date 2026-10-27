@@ -8,6 +8,7 @@ export const STATUS_LABEL: Record<Status, string> = {
   verified_closed: "Verified closed",
   reopened: "Reopened",
   escalated: "Escalated",
+  rejected: "Rejected",
 };
 
 // Tailwind classes per status: badge background/text and the dot colour on the map.
@@ -19,6 +20,7 @@ export const STATUS_STYLE: Record<Status, { badge: string; dot: string }> = {
   verified_closed: { badge: "bg-emerald-50 text-emerald-700 ring-emerald-200", dot: "#059669" },
   reopened: { badge: "bg-rose-50 text-rose-700 ring-rose-300", dot: "#e11d48" },
   escalated: { badge: "bg-red-600 text-white ring-red-700", dot: "#dc2626" },
+  rejected: { badge: "bg-slate-200 text-slate-600 ring-slate-300 line-through", dot: "#94a3b8" },
 };
 
 export const CATEGORY_LABEL: Record<Category, string> = {
@@ -64,4 +66,28 @@ export function formatHours(h: number): string {
 
 export function humanize(s: string): string {
   return s.replace(/_/g, " ");
+}
+
+const EVENT_TITLE: Record<string, string> = {
+  sla_breach: "SLA breach",
+  sla_at_risk: "SLA at risk",
+  no_resource: "No crew available",
+  false_closure_detected: "False closure caught",
+  plan_invalidated: "Plan invalidated",
+  rejected_invalid: "Rejected as invalid",
+};
+
+/** Human title for an audit event type, e.g. "sla_breach" → "SLA breach". */
+export function eventTitle(type: string): string {
+  if (EVENT_TITLE[type]) return EVENT_TITLE[type];
+  const h = humanize(type);
+  return h.charAt(0).toUpperCase() + h.slice(1);
+}
+
+/** Replace raw ISO timestamps inside backend text with "27 Oct 21:00". */
+export function prettyText(text: string): string {
+  return text.replace(/\b(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::\d{2})?Z?\b/g, (_m, _y, mo, d, h, mi) => {
+    const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][Number(mo) - 1];
+    return `${Number(d)} ${month} ${h}:${mi}`;
+  });
 }

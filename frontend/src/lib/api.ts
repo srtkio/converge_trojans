@@ -16,6 +16,8 @@ import type {
   Resource,
 } from "./types";
 
+export type RejectReason = "fake" | "not_civic" | "cannot_locate" | "duplicate_elsewhere";
+
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 /** Full URL of a stored photo, from the API path in `photo_url` ("/photos/ph_…"). */
@@ -76,6 +78,8 @@ export const api = {
   metrics: () => call<Metrics>("/metrics"),
   clock: () => call<{ now: string }>("/sim/clock"),
   audit: () => call<AuditEvent[]>("/audit"),
+  rejectIncident: (id: string, body: { reason: RejectReason; note: string; by_badge: string }) =>
+    post<{ incident: Incident }>(`/incidents/${id}/reject`, body),
   citizenActivity: (limit = 30) => call<CitizenActivity[]>(`/citizen/activity?limit=${limit}`),
 
   report: (body: {

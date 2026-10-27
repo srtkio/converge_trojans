@@ -100,7 +100,7 @@ export function ScenarioBar({
   const next = Math.min(step + 1, STEPS.length);
 
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
+    <section className="px-1">
       <div className="flex flex-wrap items-center gap-2">
         <div className="mr-1 flex rounded-md bg-slate-100 p-0.5 text-xs font-medium">
           {(Object.keys(SCENARIOS) as ScenarioName[]).map((name) => (

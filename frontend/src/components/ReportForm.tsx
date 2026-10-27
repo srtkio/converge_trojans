@@ -46,7 +46,7 @@ export function ReportForm({
   };
 
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
+    <section className="rounded-2xl bg-white ring-1 ring-slate-900/5 p-4 shadow-[0_1px_2px_rgba(15,23,42,0.05)]">
       <h2 className="text-sm font-semibold">File a citizen report</h2>
       <form onSubmit={submit} className="mt-2 space-y-2">
         <textarea
