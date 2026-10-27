@@ -1,7 +1,7 @@
 // Citizen-facing wording and small browser helpers. The operator side keeps the raw audit trail.
 import { useEffect, useState } from "react";
 
-import type { AuditEvent, Category, Incident, Status } from "./types";
+import type { AuditEvent, Category, Evidence, Incident, Report, Status } from "./types";
 
 export const STATUS_EXPLAINER: Record<Status, string> = {
   open: "We've logged it and are finding a crew.",
@@ -196,6 +196,59 @@ export function distanceM(aLat: number, aLng: number, bLat: number, bLng: number
   const dLng = rad(bLng - aLng);
   const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(aLat)) * Math.cos(rad(bLat)) * Math.sin(dLng / 2) ** 2;
   return 2 * 6_371_000 * Math.asin(Math.sqrt(h));
+}
+
+/** "12 m", "1.5 km", "25 km": a GPS accuracy rounded for people. */
+export function formatMetres(m: number): string {
+  const r = Math.round(m);
+  if (r < 1000) return `${Math.max(1, r)} m`;
+  const km = m / 1000;
+  return `${km < 10 ? km.toFixed(1) : Math.round(km)} km`;
+}
+
+/** Where a case was reported, for the /track header; null when the report carries no location info. */
+export function reportedWhere(r: Report | undefined): string | null {
+  if (r?.location_source === "gps") {
+    return typeof r.location_accuracy_m === "number"
+      ? `Reported with phone location (accurate to about ${formatMetres(r.location_accuracy_m)})`
+      : "Reported with phone location";
+  }
+  const label = r?.location_label?.trim();
+  if (r?.location_source !== "landmark" || !label) return null;
+  // "Me too" reports are labelled "Same spot as case inc_001".
+  const same = /^same spot as (.+)$/i.exec(label);
+  return same ? `Reported at the same spot as ${same[1]}` : `Reported near ${label}`;
+}
+
+export type CasePhoto = { id: string; path: string; caption: string; alt: string; at: string };
+
+const isPhotoPath = (u: string | null | undefined): u is string => typeof u === "string" && u.startsWith("/photos/");
+
+/** Photos on a case, newest first: report photos and evidence photos (AI photo checks are skipped). */
+export function casePhotos(reports: Report[], evidence: Evidence[]): CasePhoto[] {
+  const out: CasePhoto[] = [];
+  for (const r of reports) {
+    if (!isPhotoPath(r.photo_url)) continue;
+    out.push({ id: r.id, path: r.photo_url, caption: "Reported", alt: "Photo sent with a report", at: r.created_at });
+  }
+  for (const e of evidence) {
+    if (e.signal_only || !isPhotoPath(e.photo_url)) continue;
+    const followUp = e.kind === "citizen_followup";
+    out.push({
+      id: e.id,
+      path: e.photo_url,
+      caption: followUp ? (e.supports_resolution ? "Follow-up: looks repaired" : "Follow-up: not fixed yet") : "Evidence",
+      alt: followUp
+        ? `Follow-up photo: ${e.supports_resolution ? "looks repaired" : "not fixed yet"}`
+        : "Evidence photo",
+      at: e.created_at,
+    });
+  }
+  // The simulated clock can give several items the same minute: later entries are newer.
+  return out
+    .map((p, i) => ({ p, i }))
+    .sort((a, b) => b.p.at.localeCompare(a.p.at) || b.i - a.i)
+    .map(({ p }) => p);
 }
 
 // Target fix time per category, mirrored from the SLA table in docs/CONTRACTS.md.
