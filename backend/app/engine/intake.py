@@ -3,7 +3,7 @@ from sqlmodel import Session, select
 
 from app import config
 from app.db import next_id, now
-from app.engine import llm
+from app.engine import llm, rootcause
 from app.engine.assign import assign
 from app.engine.audit import record, transition
 from app.engine.dedup import classify
@@ -95,6 +95,8 @@ def submit_report(session: Session, text: str, category: str, lat: float, lng: f
             session.add(other)
             for a, b in ((inc, other), (other, inc)):
                 record(session, a.id, "related_linked", f"Related to {b.id}: {match.reason}")
+            session.flush()
+            rootcause.refresh(session)
     session.add(report)
     session.flush()
     return report, inc, link

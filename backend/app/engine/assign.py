@@ -3,6 +3,7 @@ from sqlmodel import Session, select
 
 from app.engine.audit import record, transition
 from app.engine.geo import haversine_m
+from app.engine.hierarchy import waiting_on_parent
 from app.models import Incident, Resource
 
 CLOSED = "verified_closed"
@@ -103,6 +104,8 @@ def assign_waiting(session: Session, department: str) -> list[Incident]:
     ).all()
     done = []
     for inc in waiting:
+        if waiting_on_parent(session, inc):
+            continue
         if assign(session, inc, escalate_if_none=False):
             done.append(inc)
     return done

@@ -5,6 +5,7 @@ from sqlmodel import Session, select
 from app.db import next_id, now
 from app.engine.assign import assign, release
 from app.engine.audit import record, transition
+from app.engine.hierarchy import waiting_on_parent
 from app.models import Evidence, Incident, Report, Resource
 from app.timeutil import parse
 
@@ -16,6 +17,8 @@ def _awaiting_verification(inc: Incident) -> bool:
 
 
 def start(session: Session, inc: Incident) -> Incident:
+    if waiting_on_parent(session, inc):
+        raise HTTPException(409, f"{inc.id} waits on root-cause repair of {inc.parent_incident_id}")
     if inc.status not in STARTABLE or not inc.assigned_resource_id or inc.completed_at:
         raise HTTPException(409, f"Cannot start incident in status {inc.status}"
                                  + ("" if inc.assigned_resource_id else " without an assigned crew"))
@@ -46,7 +49,8 @@ def reopen(session: Session, inc: Incident, event_type: str, detail: str,
 def _contradicted_since(session: Session, inc: Incident, exclude_id: str) -> bool:
     since = parse(inc.completed_at)
     ev = session.exec(select(Evidence).where(Evidence.incident_id == inc.id)).all()
-    return any(e.id != exclude_id and not e.supports_resolution and parse(e.created_at) > since for e in ev)
+    return any(e.id != exclude_id and not e.signal_only and not e.supports_resolution
+               and parse(e.created_at) > since for e in ev)
 
 
 def _duplicate_since(session: Session, inc: Incident) -> bool:
@@ -74,7 +78,30 @@ def add_evidence(session: Session, inc: Incident, kind: str, supports: bool, not
         else:
             transition(session, inc, "verified_closed", "verified_closed", label, actor, [ev.id])
             release(session, inc)
+            if inc.child_incident_ids:
+                from app.engine.rootcause import on_parent_closed
+
+                on_parent_closed(session, inc)
+            from app.engine.rootcause import refresh
+
+            refresh(session)
     else:
         record(session, inc.id, "evidence_added", label + " (no verification pending)", actor,
                evidence_ids=[ev.id])
+    return ev
+
+
+def record_ai_check(session: Session, inc: Incident, check: dict, submitted: Evidence) -> Evidence:
+    """Store an AI photo verdict as signal-only evidence. It never changes the incident's status."""
+    verdict = "appears fixed" if check["appears_fixed"] else "does not appear fixed"
+    ev = Evidence(id=next_id(session, "ev"), incident_id=inc.id, kind="photo",
+                  supports_resolution=check["appears_fixed"], signal_only=True, source="ai-check",
+                  note=f"AI photo check: {verdict} ({check['confidence']:.2f}). {check['explanation']}",
+                  created_at=now(session))
+    session.add(ev)
+    session.flush()
+    detail = ev.note
+    if submitted.supports_resolution and not check["appears_fixed"]:
+        detail += " Disagrees with the submitted evidence; human review advised."
+    record(session, inc.id, "ai_photo_check", detail, actor="llm", evidence_ids=[submitted.id, ev.id])
     return ev

@@ -6,11 +6,11 @@ from sqlmodel import Session, select
 
 from app import config
 from app.db import now, set_now, wipe_db
-from app.engine import metrics
+from app.engine import impact, metrics, rootcause
 from app.engine.assign import assign_waiting, replan_for_unavailable
 from app.engine.audit import record
 from app.engine.intake import submit_report
-from app.engine.sla import check_breaches
+from app.engine.sla import check_at_risk, check_breaches
 from app.engine.verify import add_evidence, complete, start
 from app.models import Counter, Incident, Report, Resource
 from app.timeutil import add_hours
@@ -21,6 +21,7 @@ SEED = Path(__file__).parent / "seed" / "resources.json"
 def seed(session: Session) -> None:
     for r in json.loads(SEED.read_text()):
         session.add(Resource(**r))
+    impact.seed(session)
     set_now(session, config.SIM_START)
     session.flush()
 
@@ -34,7 +35,9 @@ def reset(session: Session) -> None:
 def tick(session: Session, minutes: float) -> list[Incident]:
     t = add_hours(now(session), minutes / 60)
     set_now(session, t)
-    return check_breaches(session, t)
+    escalated = check_breaches(session, t)
+    check_at_risk(session, t)
+    return escalated
 
 
 def set_unavailable(session: Session, res: Resource) -> list[Incident]:
@@ -139,13 +142,72 @@ GOLDEN = [
 ]
 
 
-def _progress(session: Session) -> int:
-    row = session.get(Counter, "golden")
+# --- root-cause scenario (v2) -----------------------------------------------------------------
+
+
+def _r2(s):
+    submit_report(s, "Water bubbling up through the road on MG Road near the junction",
+                  "water_leak", *MG_ROAD, "citizen:asha")
+
+
+def _r3(s):
+    tick(s, 20)
+    submit_report(s, "Road surface sinking and a pothole opening near the MG Road junction",
+                  "pothole", MG_ROAD[0] + 0.00108, MG_ROAD[1], "citizen:ravi")
+
+
+def _r4(s):
+    tick(s, 20)
+    submit_report(s, "Pothole at the MG Road bus stop, buses swerving around it",
+                  "pothole", MG_ROAD[0] - 0.00252, MG_ROAD[1], "citizen:meera")
+
+
+def _r5(s):
+    tick(s, 10)
+    [hyp] = [h for h in rootcause.refresh(s) if h.status == "proposed"]
+    rootcause.confirm(s, hyp.id, "Operator: one leaking main under the junction")
+
+
+def _r6(s):
+    tick(s, 15)
+    leak = _incident_of(s, "rep_001")
+    start(s, leak)
+    tick(s, 150)
+    complete(s, leak, "Main repaired, trench backfilled and road base re-compacted")
+    tick(s, 20)
+    add_evidence(s, leak, "inspector", True, "Inspector: no water, road base firm", "inspector:kumar")
+
+
+def _r7(s):
+    tick(s, 60)
+    add_evidence(s, _incident_of(s, "rep_002"), "citizen_followup", True,
+                 "Road is level again at the junction", "citizen:ravi")
+    add_evidence(s, _incident_of(s, "rep_003"), "photo", True,
+                 "Photo: bus stop surface patched and level", "citizen:meera")
+
+
+ROOTCAUSE = [
+    (_s1, "Reset; seed crews and city services"),
+    (_r2, "Report A: water bubbling through MG Road -> leak incident, water crew assigned"),
+    (_r3, "Report B: pothole 120 m away -> new incident, related to the leak"),
+    (_r4, "Report C: pothole at the bus stop 280 m away -> related; root-cause hypothesis proposed"),
+    (_r5, "Operator confirms: the leak is the root cause -> potholes wait on it, 2 crew visits saved"),
+    (_r6, "One repair: leak fixed and verified -> both potholes move to pending_verification"),
+    (_r7, "Citizen and photo evidence confirm both potholes resolved -> all verified_closed"),
+    (_s10, "Metrics: 1 coordinated repair instead of 3 visits"),
+]
+
+SCENARIOS = {"golden": GOLDEN, "rootcause": ROOTCAUSE}
+
+
+def _progress(session: Session, name: str = "golden") -> int:
+    row = session.get(Counter, "golden" if name == "golden" else f"scenario:{name}")
     return row.value if row else 0
 
 
-def _set_progress(session: Session, n: int) -> None:
-    row = session.get(Counter, "golden") or Counter(key="golden")
+def _set_progress(session: Session, n: int, name: str = "golden") -> None:
+    key = "golden" if name == "golden" else f"scenario:{name}"
+    row = session.get(Counter, key) or Counter(key=key)
     row.value = n
     session.add(row)
 
@@ -159,29 +221,39 @@ def state(session: Session) -> dict:
     }
 
 
-def golden_status(session: Session) -> dict:
-    """Current golden progress without running anything, so the UI can recover after a reload."""
-    done = _progress(session)
+def scenario_status(session: Session, name: str = "golden") -> dict:
+    """Current progress without running anything, so the UI can recover after a reload."""
+    steps = SCENARIOS[name]
+    done = _progress(session, name)
     return {
         "step": done,
-        "description": GOLDEN[done - 1][1] if done else "Not started",
-        "log": [{"step": n, "description": GOLDEN[n - 1][1]} for n in range(1, done + 1)],
+        "description": steps[done - 1][1] if done else "Not started",
+        "log": [{"step": n, "description": steps[n - 1][1]} for n in range(1, done + 1)],
         "state": state(session),
     }
 
 
-def run_golden(session: Session, step: int | None) -> dict:
-    """Run the demo up to `step` (default: all). Steps already done are skipped; asking for an
+def run_scenario(session: Session, step: int | None, name: str = "golden") -> dict:
+    """Run a scenario up to `step` (default: all). Steps already done are skipped; asking for an
     earlier step replays from a reset, so the UI can step forward or jump back freely."""
-    target = len(GOLDEN) if step is None else step
-    done = _progress(session)
+    steps = SCENARIOS[name]
+    target = len(steps) if step is None else step
+    done = _progress(session, name)
     if target <= done:
         done = 0
     log = []
     for n in range(done + 1, target + 1):
-        fn, desc = GOLDEN[n - 1]
+        fn, desc = steps[n - 1]
         fn(session)
-        _set_progress(session, n)
+        _set_progress(session, n, name)
         session.commit()
         log.append({"step": n, "description": desc})
-    return {"step": target, "description": GOLDEN[target - 1][1], "log": log, "state": state(session)}
+    return {"step": target, "description": steps[target - 1][1], "log": log, "state": state(session)}
+
+
+def golden_status(session: Session) -> dict:
+    return scenario_status(session, "golden")
+
+
+def run_golden(session: Session, step: int | None) -> dict:
+    return run_scenario(session, step, "golden")

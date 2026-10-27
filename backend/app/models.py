@@ -35,9 +35,16 @@ class Incident(SQLModel, table=True):
     escalation_level: int = 0
     # Not in the contract's required fields; set when a department marks work complete.
     completed_at: str | None = None
+    # v2: root-cause coordination. Children wait on the parent's repair.
+    parent_incident_id: str | None = None
+    child_incident_ids: list[str] = Field(default_factory=list, sa_column=Column(JSON))
+    # v3: flagged before an SLA breach; at_risk_deadline makes the alert fire once per deadline.
+    at_risk: bool = False
+    at_risk_deadline: str | None = None
 
     def to_api(self) -> dict:
-        d = self.model_dump()
+        d = self.model_dump(exclude={"at_risk_deadline"})
+        d["child_incident_ids"] = list(self.child_incident_ids or [])
         d["report_ids"] = list(self.report_ids or [])
         d["related_incident_ids"] = list(self.related_incident_ids or [])
         return d
@@ -83,6 +90,8 @@ class Evidence(SQLModel, table=True):
     note: str = ""
     source: str = ""
     created_at: str
+    # v3: AI photo checks are recorded as evidence but never drive status changes.
+    signal_only: bool = False
 
     def to_api(self) -> dict:
         return self.model_dump()
@@ -111,3 +120,51 @@ class Counter(SQLModel, table=True):
     key: str = Field(primary_key=True)
     value: int = 0
     text: str | None = None
+
+
+class Hypothesis(SQLModel, table=True):
+    """v2: several related incidents likely share one upstream cause."""
+    id: str = Field(primary_key=True)
+    cause_incident_id: str = Field(index=True)
+    member_ids: list[str] = Field(default_factory=list, sa_column=Column(JSON))
+    evidence_for: list[str] = Field(default_factory=list, sa_column=Column(JSON))
+    evidence_against: list[str] = Field(default_factory=list, sa_column=Column(JSON))
+    confidence: float
+    status: str = "proposed"  # proposed | confirmed | rejected
+    summary: str = ""
+    created_at: str
+    decided_at: str | None = None
+
+    def to_api(self) -> dict:
+        d = self.model_dump()
+        for k in ("member_ids", "evidence_for", "evidence_against"):
+            d[k] = list(getattr(self, k) or [])
+        return d
+
+
+class Service(SQLModel, table=True):
+    """v2: simulated city services that an incident can disrupt."""
+    id: str = Field(primary_key=True)
+    name: str
+    kind: str  # transport | school | health
+    lat: float
+    lng: float
+    radius_m: float
+
+    def to_api(self) -> dict:
+        return {"id": self.id, "name": self.name, "kind": self.kind,
+                "location": {"lat": self.lat, "lng": self.lng}, "radius_m": self.radius_m}
+
+
+class Feedback(SQLModel, table=True):
+    """v3: real tester feedback. Survives /sim/reset; timestamps are wall-clock."""
+    id: str = Field(primary_key=True)
+    rating: int
+    comment: str = ""
+    role: str
+    page: str | None = None
+    incident_id: str | None = None
+    created_at: str
+
+    def to_api(self) -> dict:
+        return self.model_dump()

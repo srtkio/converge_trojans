@@ -18,8 +18,13 @@ def init_db() -> None:
     SQLModel.metadata.create_all(engine)
 
 
+# Real user feedback must survive demo resets.
+KEEP_ON_RESET = {"feedback"}
+
+
 def wipe_db() -> None:
-    SQLModel.metadata.drop_all(engine)
+    tables = [t for t in SQLModel.metadata.sorted_tables if t.name not in KEEP_ON_RESET]
+    SQLModel.metadata.drop_all(engine, tables=tables)
     SQLModel.metadata.create_all(engine)
 
 
