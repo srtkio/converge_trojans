@@ -3,6 +3,8 @@ import type {
   Category,
   EvidenceKind,
   GoldenResult,
+  Hypothesis,
+  Impact,
   Incident,
   IncidentDetail,
   Link,
@@ -12,6 +14,13 @@ import type {
 } from "./types";
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+
+// Shape agreed for POST /feedback (backend adds the route; the UI handles 404 until then).
+export interface FeedbackInput {
+  rating: number;
+  role: string;
+  comment: string;
+}
 
 async function call<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
@@ -24,6 +33,15 @@ async function call<T>(path: string, init?: RequestInit): Promise<T> {
     throw new Error(`${res.status} ${path}: ${body}`);
   }
   return res.json() as Promise<T>;
+}
+
+async function optional<T>(p: Promise<T>): Promise<T | null> {
+  try {
+    return await p;
+  } catch (e) {
+    if (e instanceof Error && e.message.startsWith("404 ")) return null;
+    throw e;
+  }
 }
 
 const post = <T>(path: string, body?: unknown) =>
@@ -48,7 +66,17 @@ export const api = {
   setAvailable: (id: string, available: boolean) =>
     post(`/resources/${id}/${available ? "available" : "unavailable"}`),
 
+  /** v2 endpoints return null when the backend doesn't have them yet (404). */
+  hypotheses: () => optional(call<Hypothesis[]>("/hypotheses")),
+  decideHypothesis: (id: string, decision: "confirm" | "reject") => post<Hypothesis>(`/hypotheses/${id}/${decision}`),
+  impact: (id: string) => optional(call<Impact>(`/incidents/${id}/impact`)),
+
   tick: (minutes: number) => post<{ now: string; escalated: Incident[] }>(`/sim/tick?minutes=${minutes}`),
   reset: () => post<{ ok: boolean }>("/sim/reset"),
+  scenario: (name: "golden" | "rootcause", step?: number) =>
+    post<GoldenResult>(`/sim/scenario/${name}${step ? `?step=${step}` : ""}`),
   golden: (step?: number) => post<GoldenResult>(`/sim/scenario/golden${step ? `?step=${step}` : ""}`),
+  goldenStatus: () => call<GoldenResult>("/sim/scenario/golden"),
+  scenarioStatus: (name: "golden" | "rootcause") => optional(call<GoldenResult>(`/sim/scenario/${name}`)),
+  feedback: (body: FeedbackInput) => post<{ ok?: boolean }>("/feedback", body),
 };
