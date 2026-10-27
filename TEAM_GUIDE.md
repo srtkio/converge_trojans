@@ -1,0 +1,135 @@
+# CONVERGE Team Guide
+
+Plain-language guide to what we're building, who's doing what, and how to share work.
+Maintained by Sarthak's Claude. Every AI that does meaningful work adds a line under
+"Progress log" at the bottom.
+
+---
+
+## 1. What we're building (in one minute)
+
+Citizens report city problems (potholes, water leaks, broken streetlights, garbage).
+Today, most city systems:
+- open a separate ticket for every report, even if 10 people report the same leak,
+- close a ticket the moment a department says "done", even if the problem is still there,
+- let deadlines slip quietly.
+
+**CONVERGE fixes that.** It:
+1. **Groups reports.** Same problem reported twice → one incident. A nearby connected problem
+   (a leak causing a pothole) → linked as "related".
+2. **Assigns work.** Picks the right department and the nearest available crew.
+3. **Replans.** If that crew becomes unavailable, it reassigns automatically.
+4. **Watches deadlines.** Each problem type has a deadline (e.g. water leak = 12 hours). Missed →
+   escalated.
+5. **Checks the fix is real.** "Done" only means *waiting for proof*. If a citizen says "still
+   leaking", the case reopens. It closes only when evidence (photo, inspector) confirms the fix.
+6. **Records everything.** Every step is written to an audit trail anyone can review.
+
+We prove it works by running the same demo against a "naive" system and showing the numbers:
+fewer duplicate work orders, false closures caught, deadlines enforced.
+
+## 2. Who does what
+
+| Person | AI helper | Owns | Branch |
+|---|---|---|---|
+| Sarthak (`srtkio`) | Claude | Team lead, plan, frontend dashboard, integration, demo | `feat/frontend` |
+| Prachi (`Prachivats-21`) | Claude + Gemini | Backend engine: data, grouping, assignment, deadlines, verification | `feat/backend` |
+| Antriksh (`Antrikshcodes`) | — | Seed data, testing the demo, pitch support | `docs/*` |
+| Poorvi (`poorvig222`) | — | Pitch deck, demo script, presentation | `docs/*` |
+
+Antriksh and Poorvi: adjust your roles in CHANNEL.md if you want something different.
+
+## 3. Timeline (about 9 hours)
+
+| When | What |
+|---|---|
+| 0:00 – 0:45 | Plan, rules, and starter code pushed ✅ |
+| 0:45 – 4:00 | Backend and frontend built in parallel |
+| 4:00 – 5:30 | Connect them; run the full demo |
+| 5:30 – 6:30 | AI-written link explanations; before/after numbers |
+| **6:30** | **Scope freeze: bug fixes only after this** |
+| 6:30 – 7:30 | Polish, backup screen recording |
+| 7:30 – 9:00 | Pitch deck, rehearse twice |
+
+## 4. Where things are
+
+| Path | What it is |
+|---|---|
+| `README.md` | Problem statement, how to run |
+| `TEAM_GUIDE.md` | This file |
+| `CHANNEL.md` | Message board for people and AIs |
+| `docs/PLAN.md` | Detailed plan |
+| `docs/CONTRACTS.md` | The exact rules and API both sides code against (developers) |
+| `docs/CONVERGE_Hackathon_Blueprint.pdf` | Original research blueprint |
+| `backend/` | Python API (FastAPI) |
+| `frontend/` | Web dashboard (Next.js) |
+| `team/<name>/` | Your personal folder for sharing files |
+
+## 5. Sharing files (your team folder)
+
+Everyone has a folder: `team/sarthak`, `team/prachi`, `team/antriksh`, `team/poorvi`.
+Put anything you want others (or the AIs) to see there: notes, research, screenshots, slides,
+PDFs, data.
+
+**First time only (get the repo on your computer):**
+```bash
+cd ~/Desktop
+git clone https://github.com/srtkio/converge_trojans.git converge
+```
+
+**Every time you share something:**
+```bash
+cd ~/Desktop/converge
+git pull                                   # get everyone's latest
+# copy your file into team/<your-name>/
+git add team/<your-name>
+git commit -m "Add <what it is>"
+git push
+```
+Others get it with `git pull`. Or just ask your AI: *"put this file in my team folder and
+push it."*
+
+Rules:
+- Only edit your own folder. Read anyone's.
+- No passwords, API keys, or `.env` files, ever.
+- Keep files under ~50 MB (GitHub limit is 100 MB).
+
+## 6. Talking to each other's AIs
+
+AIs don't talk directly across laptops. They use **`CHANNEL.md`**:
+- Before starting: pull and read it.
+- After a step: add one line, e.g.
+  `- [2026-10-27] Prachi (Claude): dedup rule done, 6 tests passing. Next: SLA engine.`
+- Push right away.
+
+To hand an AI a task, write it in the channel with: what to build, which branch, and what must
+pass.
+
+## 7. How code gets in
+
+- Shared docs and team folders → straight to `main`.
+- Code → your feature branch → Pull Request into `main` → Sarthak merges after it runs.
+- Never force-push `main`.
+
+## 8. Words you'll hear
+
+| Term | Meaning |
+|---|---|
+| Incident | One real-world problem, possibly reported by many people |
+| Duplicate | Another report of the same incident |
+| Related | A different problem that's probably connected (leak → pothole) |
+| SLA / deadline | How long a department has to fix it |
+| Escalation | Deadline missed → flagged higher up and reassigned |
+| Pending verification | Department said "done"; waiting for proof |
+| False closure | "Done" was claimed but evidence says it isn't |
+| Replan | Crew unavailable → automatically reassigned |
+| Audit trail | Log of every change and why |
+| Golden scenario | The fixed 10-step demo we replay for judges |
+| Baseline | A naive system we compare against to show improvement |
+
+---
+
+## Progress log
+
+- [2026-10-27] Repo set up; problem statement locked; plan, contracts, backend + frontend starters pushed.
+- [2026-10-27] Repo renamed to `srtkio/converge_trojans`; team folders and this guide added.

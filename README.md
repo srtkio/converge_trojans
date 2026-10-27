@@ -24,6 +24,7 @@ incident when evidence backs it. Every step is audited.
 - [docs/CONTRACTS.md](docs/CONTRACTS.md) — data model, states, API (code against this)
 - [docs/CONVERGE_Hackathon_Blueprint.pdf](docs/CONVERGE_Hackathon_Blueprint.pdf) — original research blueprint
 - [CHANNEL.md](CHANNEL.md) — team + AI message board
+- [TEAM_GUIDE.md](TEAM_GUIDE.md) — plain-language guide, roles, how to share files
 
 ## Run
 

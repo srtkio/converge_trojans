@@ -19,3 +19,9 @@ This repo is worked on by several people, each with their own AI assistant
   unless the team agrees.
 - Do not commit secrets (`.env`, API keys, tokens).
 - Keep the README current with how to run the project.
+
+## Team guide and folders
+
+- `TEAM_GUIDE.md` explains the project in plain language for humans. When you finish a
+  meaningful step, add one line to its "Progress log".
+- `team/<name>/` holds each member's shared files. Only write to your own human's folder.
