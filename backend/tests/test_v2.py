@@ -145,3 +145,10 @@ def test_v1_golden_unaffected_by_v2(client):
     assert (m["duplicate_work_orders_avoided"], m["false_closures_caught"], m["verified_closures"],
             m["sla_breaches"]) == (1, 1, 1, 1)
     assert m["crew_visits_saved"] == 0
+
+
+def test_decide_accepts_empty_json_body_like_the_ui(client):
+    leak_with_two_potholes(client)
+    hid = client.get("/hypotheses").json()[0]["id"]
+    r = client.post(f"/hypotheses/{hid}/confirm", headers={"Content-Type": "application/json"}, content=b"")
+    assert r.status_code == 200 and r.json()["hypothesis"]["status"] == "confirmed"
