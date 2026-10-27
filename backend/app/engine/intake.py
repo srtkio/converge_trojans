@@ -62,12 +62,14 @@ def submit_report(session: Session, text: str, category: str, lat: float, lng: f
         inc.report_ids = [*inc.report_ids, report.id]
         inc.severity = max(inc.severity, severity_for(category, text))
         session.add(inc)
-        reason = llm.explain_link("duplicate", text, inc.title, match.reason, match.reason)
+        reason, conf, used_llm = llm.refine_link("duplicate", text, inc.title, match.reason,
+                                                 match.reason, match.confidence)
         link = Link(id=next_id(session, "lnk"), report_id=report.id, incident_id=inc.id,
-                    kind="duplicate", reason=reason, confidence=match.confidence)
+                    kind="duplicate", reason=reason, confidence=conf)
         session.add(link)
-        record(session, inc.id, "duplicate_linked", f"{report.id}: {match.reason}",
-               actor="llm" if reason != match.reason else "system")
+        record(session, inc.id, "duplicate_linked", f"{report.id}: {match.reason}")
+        if used_llm:
+            record(session, inc.id, "link_explained", reason, actor="llm")
         if inc.status == "pending_verification" or (inc.status == "escalated" and inc.completed_at):
             reopen(session, inc, "false_closure_detected",
                    f"New duplicate report {report.id} after work was marked complete", actor="citizen")
@@ -81,10 +83,13 @@ def submit_report(session: Session, text: str, category: str, lat: float, lng: f
         report.incident_id = inc.id
         if match:  # related
             other = match.incident
-            reason = llm.explain_link("related", text, other.title, match.reason, match.reason)
+            reason, conf, used_llm = llm.refine_link("related", text, other.title, match.reason,
+                                                     match.reason, match.confidence)
             link = Link(id=next_id(session, "lnk"), report_id=report.id, incident_id=other.id,
-                        kind="related", reason=reason, confidence=match.confidence)
+                        kind="related", reason=reason, confidence=conf)
             session.add(link)
+            if used_llm:
+                record(session, other.id, "link_explained", reason, actor="llm")
             inc.related_incident_ids = [*inc.related_incident_ids, other.id]
             other.related_incident_ids = [*other.related_incident_ids, inc.id]
             session.add(other)

@@ -39,6 +39,18 @@ fewer duplicate work orders, false closures caught, deadlines enforced.
 
 Antriksh and Poorvi: adjust your roles in CHANNEL.md if you want something different.
 
+### Current tasks
+
+| Who | Task | Where | Deadline |
+|---|---|---|---|
+| Antriksh | Break the app, log bugs | `team/antriksh/BUGS.md` | 90 min |
+| Antriksh | Two realistic scenarios | `team/antriksh/scenarios.md` | 2 h |
+| Poorvi | Research four existing systems | `team/poorvi/research.md` | 90 min |
+| Poorvi | Pitch deck outline and slides | `team/poorvi/pitch_outline.md` | 2.5 h (final slides by hour 7.5) |
+| Coordinator (Claude) | Merge queue: PR #1, `feat/llm`, `fix/stepper-reload` | CHANNEL.md | Scope freeze at hour 6:30 |
+
+Task details: `team/antriksh/TASKS.md` and `team/poorvi/TASKS.md`.
+
 ## 3. Timeline (about 9 hours)
 
 | When | What |
