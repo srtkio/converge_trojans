@@ -18,6 +18,17 @@ resolved* as different things. It links duplicate and related reports, assigns t
 department and crew, replans when a crew drops out, escalates on missed SLAs, and only closes an
 incident when evidence backs it. Every step is audited.
 
+## Live demo
+
+- **App:** https://converge-web-ten.vercel.app (start page → citizen or operator portal)
+- **Operator dashboard:** https://converge-web-ten.vercel.app/operator (demo badges in "Portals and demo sign-in" below)
+- **Citizen tracking (phones):** https://converge-web-ten.vercel.app/track/inc_001 after running a scenario
+- **Backend API:** https://converge-backend-hnp0.onrender.com (`/health`)
+
+The backend is on Render's free plan and sleeps after ~15 minutes idle; the first request then takes
+about a minute. Open `/health` a few minutes before judging or testing. Check the whole flow with
+`python3 scripts/e2e.py --base https://converge-web-ten.vercel.app`.
+
 ## Docs
 
 - [docs/PLAN.md](docs/PLAN.md) — scope, timeline, who owns what
