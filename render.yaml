@@ -9,6 +9,10 @@ services:
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
     healthCheckPath: /health
+    # Only rebuild when backend code changes, not on every docs/CHANNEL.md push to main.
+    buildFilter:
+      paths:
+        - backend/**
     envVars:
       - key: CONVERGE_DB_URL
         fromDatabase:

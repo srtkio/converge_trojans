@@ -15,6 +15,7 @@ Usage:
 """
 
 import argparse
+import re
 import sys
 import uuid
 
@@ -83,6 +84,10 @@ def operator_sees(page, base: str, marker: str) -> None:
         page.get_by_label("Access code").fill(DEMO_CODE)
         page.get_by_role("button", name="Sign in").click()
     try:
+        # The citizen inbox lives in the Notifications tab of the operator dashboard.
+        notifications = page.get_by_role("tab", name=re.compile(r"^Notifications"))
+        notifications.wait_for(timeout=STEP_MS)
+        notifications.click()
         page.get_by_role("heading", name="Citizen activity").wait_for(timeout=STEP_MS)
     except PlaywrightTimeout as e:
         raise Check("operator dashboard with the Citizen activity panel did not load") from e
