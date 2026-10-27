@@ -188,3 +188,92 @@ export function prefersReducedMotion(): boolean {
     return false;
   }
 }
+
+/** Metres between two points (haversine); good enough for "nearby" at city scale. */
+export function distanceM(aLat: number, aLng: number, bLat: number, bLng: number): number {
+  const rad = (d: number) => (d * Math.PI) / 180;
+  const dLat = rad(bLat - aLat);
+  const dLng = rad(bLng - aLng);
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(aLat)) * Math.cos(rad(bLat)) * Math.sin(dLng / 2) ** 2;
+  return 2 * 6_371_000 * Math.asin(Math.sqrt(h));
+}
+
+// Target fix time per category, mirrored from the SLA table in docs/CONTRACTS.md.
+const FIX_HOURS: Record<Category, number> = {
+  pothole: 48,
+  streetlight: 24,
+  water_leak: 12,
+  garbage: 24,
+  sewage: 12,
+  other: 72,
+};
+
+export function fixTimeText(c: Category): string {
+  const h = FIX_HOURS[c];
+  return h < 24 ? `Usually fixed within ${h} hours.` : `Usually fixed within ${h / 24} day${h === 24 ? "" : "s"}.`;
+}
+
+/** The crew says it's done and the case is waiting for someone to confirm. */
+export function needsCheck(inc: Incident): boolean {
+  return !!inc.completed_at && (inc.status === "pending_verification" || inc.status === "escalated");
+}
+
+/** Open cases a citizen can join with "Me too" (not closed, not already waiting for confirmation). */
+export function joinable(inc: Incident): boolean {
+  return inc.status !== "verified_closed" && !inc.completed_at;
+}
+
+function readList(key: string): string[] {
+  try {
+    const raw = window.localStorage.getItem(key);
+    const v = raw ? (JSON.parse(raw) as unknown) : [];
+    return Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
+const ME_TOO_KEY = "converge.meToo";
+
+export function hasMeToo(id: string): boolean {
+  return readList(ME_TOO_KEY).includes(id);
+}
+
+export function markMeToo(id: string): void {
+  try {
+    window.localStorage.setItem(ME_TOO_KEY, JSON.stringify([id, ...readList(ME_TOO_KEY).filter((x) => x !== id)].slice(0, 50)));
+  } catch {
+    // Not remembered on this device; the backend still links the report.
+  }
+}
+
+const DRAFT_KEY = "converge.draft";
+
+export function readDraft(): string {
+  try {
+    return window.localStorage.getItem(DRAFT_KEY) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+export function saveDraft(text: string): void {
+  try {
+    if (text.trim()) window.localStorage.setItem(DRAFT_KEY, text);
+    else window.localStorage.removeItem(DRAFT_KEY);
+  } catch {
+    // Drafts are a convenience; ignore blocked storage.
+  }
+}
+
+/** First name pre-filled on the sign-in form next time (never the email). */
+export const NAME_KEY = "converge.lastName";
+
+/** "Sign out" on a shared phone: forget this person's name, cases, "Me too" marks and draft. */
+export function forgetDevice(): void {
+  try {
+    for (const key of [NAME_KEY, CASES_KEY, ME_TOO_KEY, DRAFT_KEY]) window.localStorage.removeItem(key);
+  } catch {
+    // Storage blocked: nothing was kept anyway.
+  }
+}

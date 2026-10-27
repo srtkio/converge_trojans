@@ -115,7 +115,7 @@ export function FeedbackWidget({ incidentId, page, knownRole }: { incidentId?: s
       )}
 
       <label className="mt-4 block text-sm font-medium text-slate-700">
-        Comment <span className="font-normal text-slate-400">(optional)</span>
+        Comment <span className="font-normal text-slate-500">(optional)</span>
         <textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
