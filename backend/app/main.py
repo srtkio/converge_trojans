@@ -15,13 +15,14 @@ load_dotenv()
 
 from app import auth, sim  # noqa: E402
 from app.db import engine, get_session, init_db, now  # noqa: E402
-from app.engine import feedback, impact, llm, metrics, rootcause, verify  # noqa: E402
+from app.engine import feedback, impact, ladder, llm, metrics, rootcause, trust, verify  # noqa: E402
 from app.engine.intake import submit_report  # noqa: E402
 from app.models import AuditEvent, Evidence, Incident, Link, Report, Resource, Service  # noqa: E402
 
 Category = Literal["pothole", "streetlight", "water_leak", "garbage", "sewage", "other"]
 EvidenceKind = Literal["photo", "sensor", "citizen_followup", "inspector"]
-STATUSES = {"open", "assigned", "in_progress", "pending_verification", "verified_closed", "reopened", "escalated"}
+STATUSES = {"open", "assigned", "in_progress", "pending_verification", "verified_closed", "reopened", "escalated",
+            "rejected"}
 
 
 @asynccontextmanager
@@ -84,6 +85,12 @@ class DecisionIn(BaseModel):
     note: str = ""
 
 
+class RejectIn(BaseModel):
+    reason: Literal["fake", "not_civic", "cannot_locate", "duplicate_elsewhere"]
+    note: str = Field("", max_length=500)
+    by_badge: str = Field(min_length=1, max_length=40)
+
+
 class FeedbackIn(BaseModel):
     rating: int = Field(ge=1, le=5)
     comment: str = Field("", max_length=2000)
@@ -124,6 +131,9 @@ def health():
 
 @app.post("/reports")
 def post_report(body: ReportIn, s: Session = Depends(get_session)):
+    # Wall-clock, per-reporter limit. Lives here (not in submit_report) so scenarios are never throttled.
+    if not trust.report_limiter.allow(body.reporter):
+        raise HTTPException(429, trust.RATE_LIMIT_MESSAGE)
     report, inc, link = submit_report(s, body.text, body.category, body.lat, body.lng, body.reporter)
     s.commit()
     return {"report": report.to_api(), "incident": inc.to_api(), "link": link.to_api() if link else None}
@@ -148,9 +158,10 @@ def get_incident(incident_id: str, s: Session = Depends(get_session)):
     evidence = s.exec(select(Evidence).where(Evidence.incident_id == inc.id).order_by(Evidence.created_at)).all()
     audit = s.exec(select(AuditEvent).where(AuditEvent.incident_id == inc.id).order_by(AuditEvent.seq)).all()
     res = s.get(Resource, inc.assigned_resource_id) if inc.assigned_resource_id else None
+    flags = trust.reporter_flags(s, {r.reporter for r in reports}, inc.id)
     return {
         "incident": inc.to_api(),
-        "reports": [r.to_api() for r in reports],
+        "reports": [{**r.to_api(), "reporter_flags": flags.get(r.reporter, 0)} for r in reports],
         "links": [link.to_api() for link in links],
         "evidence": [e.to_api() for e in evidence],
         "audit": [a.to_api() for a in audit],
@@ -187,6 +198,15 @@ def post_evidence(incident_id: str, body: EvidenceIn, s: Session = Depends(get_s
             ai_check = {**check, "evidence_id": ai_ev.id}
     s.commit()
     return {"incident": inc.to_api(), "evidence": ev.to_api(), "ai_check": ai_check}
+
+
+@app.post("/incidents/{incident_id}/reject")
+def reject_incident(incident_id: str, body: RejectIn, s: Session = Depends(get_session)):
+    """Fake-complaint countermeasure: a department head (own department) or command closes it as invalid."""
+    inc = _incident(s, incident_id)
+    ev = trust.reject(s, inc, body.reason, body.note.strip(), auth.operator_by_badge(body.by_badge))
+    s.commit()
+    return {"incident": inc.to_api(), "audit": ev.to_api()}
 
 
 @app.get("/incidents/{incident_id}/impact")
@@ -281,6 +301,12 @@ def operator_login(body: OperatorLogin):
     return profile
 
 
+@app.get("/operators/ladder")
+def operators_ladder():
+    """Who is notified at each escalation level (static)."""
+    return ladder.LADDER
+
+
 @app.post("/auth/citizen")
 def citizen_login(body: CitizenLogin):
     if not auth.valid_email(body.email):
@@ -304,6 +330,7 @@ def sim_tick(minutes: float = Query(60, ge=0), s: Session = Depends(get_session)
 def sim_reset(s: Session = Depends(get_session)):
     sim.reset(s)
     s.commit()
+    trust.report_limiter.clear()
     return {"ok": True}
 
 

@@ -1,5 +1,6 @@
 """SQLModel tables. Shapes follow docs/CONTRACTS.md; `to_api` methods produce the JSON contract."""
 from sqlalchemy import JSON, Column
+from sqlalchemy.orm import object_session
 from sqlmodel import Field, SQLModel
 
 
@@ -47,6 +48,16 @@ class Incident(SQLModel, table=True):
         d["child_incident_ids"] = list(self.child_incident_ids or [])
         d["report_ids"] = list(self.report_ids or [])
         d["related_incident_ids"] = list(self.related_incident_ids or [])
+        # Computed (never stored): trust level and SLA state, from the session this row belongs to.
+        session = object_session(self)
+        if session is not None:
+            from app.engine import trust
+
+            d["verification"] = trust.verification(session, self)
+            d["sla_state"] = trust.sla_state(session, self)
+        else:
+            d["verification"] = None
+            d["sla_state"] = None
         return d
 
 

@@ -4,7 +4,8 @@ from app.auth import verify_operator, valid_email
 def test_operator_with_correct_badge_and_code_is_verified(client):
     r = client.post("/auth/operator", json={"badge_id": "OPS-WTR-01", "access_code": "water-demo-2026"})
     assert r.status_code == 200
-    assert r.json() == {"badge_id": "OPS-WTR-01", "name": "Water Dept Officer", "department": "water"}
+    assert r.json() == {"badge_id": "OPS-WTR-01", "name": "Water Dept Officer", "department": "water",
+                        "role": "officer"}
 
 
 def test_operator_with_wrong_code_is_refused(client):
