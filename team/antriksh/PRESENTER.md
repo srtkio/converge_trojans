@@ -4,7 +4,8 @@
 - Driving the live demo smoothly (clicks), and the backup video if the network fails.
 
 ## What to do before the pitch
-1. `git pull`, start the backend and frontend (README), open http://localhost:3000.
+1. `git pull`, start the backend and frontend (README), open http://localhost:3000/operator and sign in
+   with the demo operator badge (README › Portals and demo sign-in). Run `python3 scripts/e2e.py`; it must say PASS.
 2. Practise `docs/DEMO.md` three times: Reset → Next step ×10. Know what appears after each step.
 3. Know where the backup recording is (`team/sarthak/` once recorded).
 

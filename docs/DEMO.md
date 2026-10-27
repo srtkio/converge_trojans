@@ -8,7 +8,8 @@ number to point at.
 1. Backend running: `cd backend && uvicorn app.main:app --port 8000`
    (if 8000 is taken by another project, use `--port 8001` and set
    `NEXT_PUBLIC_API_URL=http://localhost:8001` in `frontend/.env.local`).
-2. Frontend running: `cd frontend && pnpm dev`, then open http://localhost:3000.
+2. Frontend running: `cd frontend && pnpm dev`, then open http://localhost:3000/operator and sign in
+   as `OPS-WTR-01` / `water-demo-2026` (demo account; see README › Portals and demo sign-in).
 3. Press **Reset**. The dashboard should show no incidents.
 4. Optional check: `scripts/smoke.sh` should print `PASS` (use `CONVERGE_URL=http://localhost:8001`
    if the backend is on 8001). Run it, then press **Reset** again before presenting.

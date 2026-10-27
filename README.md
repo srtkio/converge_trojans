@@ -50,8 +50,9 @@ pnpm dev
 If port 8000 is taken, run the backend with `--port 8001` and put
 `NEXT_PUBLIC_API_URL=http://localhost:8001` in `frontend/.env.local`.
 
-Demo: open http://localhost:3000, press **Reset**, then **Next step →** through the 10-step golden
-scenario. `/?incident=inc_001` opens an incident directly.
+Demo: open http://localhost:3000/operator, sign in with a demo operator account (see "Portals and
+demo sign-in" below), press **Reset**, then **Next step →** through the 10-step golden scenario.
+`/operator?incident=inc_001` opens an incident directly. Before presenting, run `python3 scripts/e2e.py`.
 
 Set `ANTHROPIC_API_KEY` in `backend/.env` for LLM link explanations. Without it the system falls
 back to deterministic rules. See `backend/.env.example` for all backend settings, including
