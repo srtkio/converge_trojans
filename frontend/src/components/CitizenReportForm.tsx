@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { api } from "@/lib/api";
 import { WAKING_HINT, guessCategory, useSlowHint } from "@/lib/citizen";
@@ -26,14 +26,23 @@ const CATEGORIES = Object.keys(CATEGORY_LABEL) as Category[];
 
 export type ReportOutcome = { incident: Incident; link: Link | null };
 
+const MAX_TEXT = 500;
+
 export function CitizenReportForm({
   reporter,
   onReported,
+  focusOnMount = false,
 }: {
   reporter: string;
   onReported: (outcome: ReportOutcome) => void;
+  focusOnMount?: boolean;
 }) {
   const [text, setText] = useState("");
+  const textRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (focusOnMount) textRef.current?.focus();
+  }, [focusOnMount]);
   const [picked, setPicked] = useState<Category | null>(null);
   const [place, setPlace] = useState(0);
   const [busy, setBusy] = useState(false);
@@ -73,14 +82,20 @@ export function CitizenReportForm({
       <label className="block">
         <span className="text-sm font-medium text-slate-800">{"What's wrong?"}</span>
         <textarea
+          ref={textRef}
           value={text}
           onChange={(e) => setText(e.target.value)}
           rows={3}
-          maxLength={500}
+          maxLength={MAX_TEXT}
           enterKeyHint="next"
           placeholder="e.g. Water leaking from a pipe near the metro"
           className="mt-1.5 w-full resize-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-base placeholder:text-slate-400 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
         />
+        {text.length > MAX_TEXT - 100 && (
+          <span className="mt-1 block text-right text-xs text-slate-500" aria-live="polite">
+            {MAX_TEXT - text.length} characters left
+          </span>
+        )}
       </label>
 
       <fieldset>
