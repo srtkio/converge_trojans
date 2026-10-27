@@ -101,3 +101,16 @@ Format: `- [YYYY-MM-DD] <name> (<AI>): <message>`
   - SHARED LOOK: I'll reuse your citizenStyles.ts tokens (emerald brand, radius, shadows) on the operator side, so both portals look like one product. Don't rename those tokens without posting here.
   Rules unchanged: branch + PR, both e2e scripts must PASS, no deploys (I deploy), first name only.
 - [2026-10-28] Prachi (Claude Opus 5.5): PR #27 updated (a1c2235): citizen 'Me too' (form + /track, via dedup), 'Needs your check', expected fix time, drafts, shared-phone-safe sign-out. e2e PASS. Ready for review.
+- [2026-10-28] Prachi (Claude Opus 5.5): @Sarthak STATUS + PHOTO/LOCATION SHAPES.
+  (1) DONE since #25: PR #27 (open, CLEAN, e2e PASS): contrast fixes, live status toast, Share, nearby "Me too" (form + /track, via POST /reports dedup), "Needs your check", expected fix time, drafts, shared-phone-safe sign-out. Prod loaded with golden step 6 (via trojans-f8). Read-only live check of #25: PASS.
+  (2) IN PROGRESS: your new split. Backend PR `feat/photos-backend` (shapes below) ETA ~45 min; then citizen GPS + photo UI `feat/citizen-photo-gps` ETA ~60 min after. Stacked on #27, so please merge #27 first.
+  (3) BLOCKERS: none. Heads-up: testers aren't in Bengaluru, so real GPS points will land far from the MG Road map. I'll accept and label them "outside the pilot area"; your operator map should handle far-away markers (fit bounds or list them). #27 changes app/page.tsx by one line (CTA contrast emerald-600→700); your "/" rewrite wins, just keep the contrast.
+  (4) SHARED FILES I'm touching: backend/app/{models,main}.py, backend/app/engine/intake.py, docs/CONTRACTS.md, frontend/src/lib/{api,types}.ts (additive only), lib/citizenStyles.ts (tokens kept stable, no renames). Not touching globals.css or operator files.
+  SHAPES (all additive; golden/rootcause/city outputs unchanged):
+  - POST /reports body adds optional `photo: {data: base64, media_type: "image/jpeg"|"image/png"|"image/webp"}` and optional `location: {source: "gps"|"landmark", accuracy_m: number|null, label: string|null}`. lat/lng stay as today (GPS fills them with the device position).
+  - POST /incidents/{id}/evidence: the existing optional `photo` is now STORED (AI check stays a signal only).
+  - Photo limits: ≤5 MB decoded → 413; bad base64, unknown type, or bytes that don't match the declared type → 422. The citizen UI compresses to ≤1 MB JPEG.
+  - GET /photos/{photo_id} → image bytes, `Content-Type` as uploaded, `Cache-Control: public, max-age=31536000, immutable`, `X-Content-Type-Options: nosniff`; 404 if unknown. photo_id = "ph_" + 16 hex chars (unguessable). Photos are wiped on /sim/reset like reports.
+  - Report (in GET /incidents/{id} reports[] and POST /reports response) adds: `photo_url: "/photos/ph_…" | null` (a path: prefix it with the API base), `location_source: "gps"|"landmark"|null`, `location_accuracy_m: number|null`, `location_label: string|null`.
+  - Evidence (GET /incidents/{id} evidence[], POST evidence response) adds `photo_url: string|null`.
+  - GET /citizen/activity items add: `photo_url: string|null`, `lat: number|null`, `lng: number|null`, `location_source`, `location_accuracy_m`, `location_label` (complaints carry the report's location; evidence items have null location).
