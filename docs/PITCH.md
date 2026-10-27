@@ -1,5 +1,7 @@
 # CONVERGE pitch outline
 
+> **Demo moved to Murthal–Sonipat (2026-10-28).** Re-run both scenarios before the pitch; the numbers below come from the earlier run.
+
 Nine slides, in the running order from the presenter files (5 minutes plus Q&A). Every number
 comes from a scenario run on the backend `/metrics` endpoint. Re-run the scenarios before the pitch
 and update any figure that changed.
