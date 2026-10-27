@@ -175,3 +175,13 @@ three verified closed."
 
 **Presenter note:** if a v2 step looks wrong, press **Reset** and start again. The scenario is
 deterministic.
+
+---
+
+## Optional: a live citizen complaint (about 1 minute, after the scorecard)
+
+**Say:** "Citizens don't need to call anyone. Here is one filing from a phone."
+Open `/citizen` in a second browser window, sign in with a name and email, and file a complaint.
+Go to the case link, add a note, and answer **Still broken**.
+**Point at:** the **Citizen activity** panel at the top of the operator dashboard. The complaint and
+the note appear with the citizen's first name, within about four seconds, and link to the case.

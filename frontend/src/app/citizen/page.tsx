@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 import { ReportForm } from "@/components/ReportForm";
 import { api } from "@/lib/api";
-import { clearSession, readSession, saveSession, type Session } from "@/lib/session";
+import { clearSession, firstName, readSession, saveSession, type Session } from "@/lib/session";
 
 type Citizen = Extract<Session, { kind: "citizen" }>;
 
@@ -56,7 +56,12 @@ function CitizenHome({ citizen, onSignOut }: { citizen: Citizen; onSignOut: () =
         <h1 className="text-xl font-semibold text-slate-900">Report a problem</h1>
         <p className="mt-1 text-sm text-slate-600">Tell us what is wrong and where. We will follow it until it is fixed.</p>
         <div className="mt-4">
-          <ReportForm busy={busy} act={act} onCreated={(id) => setTrackId(id)} />
+          <ReportForm
+            busy={busy}
+            act={act}
+            onCreated={(id) => setTrackId(id)}
+            reporter={`citizen:${firstName(citizen.name)}`}
+          />
         </div>
       </section>
 

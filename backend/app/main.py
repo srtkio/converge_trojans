@@ -346,6 +346,29 @@ def get_audit(incident_id: str | None = None, s: Session = Depends(get_session))
     return [a.to_api() for a in s.exec(q).all()]
 
 
+@app.get("/citizen/activity")
+def citizen_activity(limit: int = Query(50, ge=1, le=200), s: Session = Depends(get_session)):
+    """Citizen complaints and citizen evidence, newest first. Read-only; feeds the operator inbox."""
+    incidents = {i.id: i for i in s.exec(select(Incident)).all()}
+    items = []
+    for r in s.exec(select(Report)).all():
+        inc = incidents.get(r.incident_id) if r.incident_id else None
+        items.append({"id": r.id, "kind": "complaint", "at": r.created_at, "citizen": r.reporter,
+                      "text": r.text, "category": r.category, "supports": None,
+                      "incident_id": r.incident_id, "incident_title": inc.title if inc else None,
+                      "incident_status": inc.status if inc else None})
+    for e in s.exec(select(Evidence).where(Evidence.kind == "citizen_followup")).all():
+        inc = incidents.get(e.incident_id)
+        items.append({"id": e.id, "kind": "evidence", "at": e.created_at, "citizen": e.source,
+                      "text": e.note, "category": inc.category if inc else None,
+                      "supports": e.supports_resolution, "incident_id": e.incident_id,
+                      "incident_title": inc.title if inc else None,
+                      "incident_status": inc.status if inc else None})
+    # The simulated clock can give many items the same timestamp, so ties fall back to arrival order (id).
+    items.sort(key=lambda x: (x["at"], x["id"]), reverse=True)
+    return items[:limit]
+
+
 @app.get("/metrics")
 def get_metrics(s: Session = Depends(get_session)):
     return metrics.compute(s)

@@ -15,6 +15,7 @@ import {
   hoursLeft,
   humanize,
 } from "@/lib/format";
+import { firstName, readSession } from "@/lib/session";
 import type { IncidentDetail } from "@/lib/types";
 
 const REFRESH_MS = 4000;
@@ -26,6 +27,8 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [note, setNote] = useState("");
+  const [citizenName, setCitizenName] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -46,16 +49,26 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
     return () => clearInterval(timer);
   }, [load]);
 
+  useEffect(() => {
+    // The signed-in citizen's name, so the operator inbox can show who answered. Storage is browser-only.
+    const name = readSession("citizen")?.name;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCitizenName(name ? firstName(name) : null);
+  }, []);
+
   const answer = async (fixed: boolean) => {
     setBusy(true);
     setNotice(null);
+    const base = fixed ? "Citizen says the problem is fixed" : "Citizen says the problem is still broken";
+    const extra = note.trim();
     try {
       await api.evidence(id, {
         kind: "citizen_followup",
         supports_resolution: fixed,
-        note: fixed ? "Citizen says the problem is fixed" : "Citizen says the problem is still broken",
-        source: "citizen:web",
+        note: extra ? `${base}: ${extra}` : base,
+        source: `citizen:${citizenName ?? "web"}`,
       });
+      setNote("");
       setNotice("Thanks. Your answer is recorded and the team will review it.");
       await load();
     } catch (e) {
@@ -118,6 +131,17 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
           Is it fixed?
         </h2>
         <p className="mt-1 text-sm text-slate-600">Your answer helps us check the repair before we close the case.</p>
+        <label className="mt-4 block text-sm font-medium text-slate-700">
+          Add a note <span className="font-normal text-slate-400">(optional)</span>
+          <textarea
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            rows={2}
+            maxLength={500}
+            placeholder="e.g. Water is still running near the bus stop"
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-base"
+          />
+        </label>
         <div className="mt-4 grid gap-3">
           <button
             type="button"

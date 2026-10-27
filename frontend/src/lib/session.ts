@@ -24,6 +24,11 @@ export function saveSession(s: Session): void {
   }
 }
 
+// Only the first name ever leaves the browser (in reports and evidence). The email never does.
+export function firstName(full: string): string {
+  return full.trim().split(/\s+/)[0] ?? "";
+}
+
 export function clearSession(): void {
   try {
     window.sessionStorage.removeItem(KEY);

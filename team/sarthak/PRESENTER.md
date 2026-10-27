@@ -9,6 +9,8 @@
 When a crew says *fixed*, the ticket closes, even if the water is still flowing. We built CONVERGE to
 close that gap."
 
+**Citizen activity:** complaints and citizen evidence show in the Citizen activity panel at the top of the operator dashboard.
+
 **Demo narration:** follow `docs/DEMO.md`. Use v1 golden for the naive-vs-CONVERGE table; use v2 root cause for the hypothesis and crew-visit moment (steps 4 and 5).
 
 **Close:** "Same reports, fewer work orders, zero false closures accepted, every decision auditable.
