@@ -13,6 +13,13 @@ import type {
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
+// Shape agreed for POST /feedback (backend adds the route; the UI handles 404 until then).
+export interface FeedbackInput {
+  rating: number;
+  role: string;
+  comment: string;
+}
+
 async function call<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
     ...init,
@@ -51,4 +58,6 @@ export const api = {
   tick: (minutes: number) => post<{ now: string; escalated: Incident[] }>(`/sim/tick?minutes=${minutes}`),
   reset: () => post<{ ok: boolean }>("/sim/reset"),
   golden: (step?: number) => post<GoldenResult>(`/sim/scenario/golden${step ? `?step=${step}` : ""}`),
+  goldenStatus: () => call<GoldenResult>("/sim/scenario/golden"),
+  feedback: (body: FeedbackInput) => post<{ ok?: boolean }>("/feedback", body),
 };
