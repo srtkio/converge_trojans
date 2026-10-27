@@ -7,7 +7,7 @@ import type { Act } from "./Dashboard";
 
 export function ResourcesPanel({ resources, busy, act }: { resources: Resource[]; busy: boolean; act: Act }) {
   return (
-    <section className="rounded-lg border border-slate-200 bg-white shadow-sm">
+    <section className="rounded-2xl bg-white ring-1 ring-slate-900/5 shadow-[0_1px_2px_rgba(15,23,42,0.05)] overflow-hidden">
       <div className="border-b border-slate-100 px-3 py-2">
         <h2 className="text-sm font-semibold">Crews</h2>
         <p className="text-xs text-slate-500">Take a crew offline to see automatic replanning.</p>

@@ -2,13 +2,31 @@
 
 import { useState } from "react";
 
-import { api } from "@/lib/api";
-import { CATEGORY_ICON, CATEGORY_LABEL, formatHours, formatTime, hoursLeft, humanize } from "@/lib/format";
+import { api, photoSrc, type RejectReason } from "@/lib/api";
+import { CATEGORY_ICON, CATEGORY_LABEL, eventTitle, formatTime, humanize, prettyText } from "@/lib/format";
 import type { AuditEvent, EvidenceKind, Impact, Incident, IncidentDetail } from "@/lib/types";
 
-import type { Act } from "./Dashboard";
+import type { Act, Operator } from "./Dashboard";
 import { ImpactPanel } from "./ImpactPanel";
+import { SlaTimer } from "./SlaTimer";
 import { StatusBadge } from "./StatusBadge";
+import { VerificationBadge } from "./VerificationBadge";
+
+const REJECT_REASONS: { id: RejectReason; label: string }[] = [
+  { id: "fake", label: "Fake or prank report" },
+  { id: "not_civic", label: "Not a city issue" },
+  { id: "cannot_locate", label: "Can't find it on site" },
+  { id: "duplicate_elsewhere", label: "Already handled elsewhere" },
+];
+
+// MG Road metro: reports further than this are outside the pilot area.
+const PILOT = { lat: 12.9756, lng: 77.605, radiusKm: 5 };
+function kmFromPilot(lat: number, lng: number): number {
+  const dLat = ((lat - PILOT.lat) * Math.PI) / 180;
+  const dLng = ((lng - PILOT.lng) * Math.PI) / 180;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos((PILOT.lat * Math.PI) / 180) * Math.cos((lat * Math.PI) / 180) * Math.sin(dLng / 2) ** 2;
+  return 6371 * 2 * Math.asin(Math.sqrt(a));
+}
 
 // Same guards as backend/app/engine/verify.py, so buttons only show when the call will succeed.
 const STARTABLE = new Set(["assigned", "reopened", "escalated"]);
@@ -42,10 +60,10 @@ function AuditRow({ e }: { e: AuditEvent }) {
   return (
     <li className={`rounded-md border-l-4 px-3 py-1.5 ${EVENT_TONE[e.event_type] ?? "border-slate-200 bg-white"}`}>
       <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-        <span className="font-semibold text-slate-800">{humanize(e.event_type)}</span>
+        <span className="font-semibold text-slate-800">{eventTitle(e.event_type)}</span>
         <span className="font-mono text-slate-500">{formatTime(e.timestamp)}</span>
       </div>
-      {e.detail && <p className="text-sm text-slate-700">{e.detail}</p>}
+      {e.detail && <p className="text-sm text-slate-700">{prettyText(e.detail)}</p>}
       <div className="mt-0.5 flex flex-wrap gap-x-3 text-[11px] text-slate-500">
         <span>by {e.actor}</span>
         {e.from_status !== e.to_status && e.to_status && (
@@ -66,6 +84,7 @@ export function IncidentDetailPanel({
   busy,
   act,
   incidents,
+  operator,
 }: {
   detail: IncidentDetail;
   impact: Impact | null;
@@ -73,6 +92,7 @@ export function IncidentDetailPanel({
   busy: boolean;
   act: Act;
   incidents: Incident[];
+  operator?: Operator;
 }) {
   const { incident: inc, reports, links, evidence, audit, resource } = detail;
   const [evKind, setEvKind] = useState<EvidenceKind>("citizen_followup");
@@ -81,7 +101,11 @@ export function IncidentDetailPanel({
   const canStart = STARTABLE.has(inc.status) && !!inc.assigned_resource_id && !inc.completed_at;
   const canComplete = inc.status === "in_progress";
   const awaitingProof = !!inc.completed_at && (inc.status === "pending_verification" || inc.status === "escalated");
-  const left = now ? hoursLeft(inc.deadline, now) : null;
+  const [rejecting, setRejecting] = useState(false);
+  const [rejectReason, setRejectReason] = useState<RejectReason>("fake");
+  const [rejectNote, setRejectNote] = useState("");
+  const [zoomPhoto, setZoomPhoto] = useState<string | null>(null);
+  const canReject = !!operator && (operator.role === "head" || operator.role === "command") && !["verified_closed", "rejected"].includes(inc.status);
   const linkByReport = new Map(links.map((l) => [l.report_id, l]));
   const related = incidents.filter((i) => inc.related_incident_ids.includes(i.id));
 
@@ -97,7 +121,7 @@ export function IncidentDetailPanel({
     });
 
   return (
-    <section className="space-y-5 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+    <section className="space-y-6 rounded-2xl bg-white p-6 shadow-[0_1px_2px_rgba(15,23,42,0.05)] ring-1 ring-slate-900/5">
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
@@ -106,6 +130,7 @@ export function IncidentDetailPanel({
               {CATEGORY_ICON[inc.category]} {inc.title}
             </h2>
             <StatusBadge status={inc.status} />
+            <VerificationBadge level={inc.verification} />
             {inc.escalation_level > 0 && (
               <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
                 Escalation level {inc.escalation_level}
@@ -117,13 +142,52 @@ export function IncidentDetailPanel({
             {inc.plan_version}
           </p>
         </div>
-        <div className="text-right text-sm">
-          <div className="text-slate-500">Deadline {formatTime(inc.deadline)}</div>
-          {inc.status !== "verified_closed" && left !== null && (
-            <div className={left < 0 ? "font-semibold text-red-700" : "text-slate-700"}>{formatHours(left)}</div>
+        <div className="flex flex-col items-end gap-2 text-sm">
+          <SlaTimer incident={inc} now={now} size="lg" />
+          <span className="text-xs text-slate-500">Deadline {formatTime(inc.deadline)} UTC</span>
+          {canReject && !rejecting && (
+            <button type="button" onClick={() => setRejecting(true)} className="rounded-lg px-3 py-1.5 text-xs font-medium text-rose-700 ring-1 ring-rose-200 hover:bg-rose-50">
+              Reject as invalid…
+            </button>
           )}
         </div>
       </div>
+
+      {rejecting && operator && (
+        <div className="rounded-xl bg-rose-50/60 p-4 ring-1 ring-rose-200">
+          <p className="text-sm font-semibold text-rose-900">Reject this complaint</p>
+          <p className="mt-0.5 text-xs text-rose-800">Closes the case without a repair, frees the crew, and is recorded on the audit trail under your badge.</p>
+          <div className="mt-3 grid gap-2 sm:grid-cols-[220px_minmax(0,1fr)]">
+            <select value={rejectReason} onChange={(e) => setRejectReason(e.target.value as RejectReason)} className="rounded-lg border border-rose-200 bg-white px-2 py-1.5 text-sm">
+              {REJECT_REASONS.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.label}
+                </option>
+              ))}
+            </select>
+            <input value={rejectNote} onChange={(e) => setRejectNote(e.target.value)} placeholder="What did you check? (required)" className="rounded-lg border border-rose-200 bg-white px-3 py-1.5 text-sm" />
+          </div>
+          <div className="mt-3 flex gap-2">
+            <button
+              type="button"
+              disabled={busy || rejectNote.trim().length < 3}
+              onClick={() =>
+                act(async () => {
+                  await api.rejectIncident(inc.id, { reason: rejectReason, note: rejectNote.trim(), by_badge: operator.badge_id });
+                  setRejecting(false);
+                  setRejectNote("");
+                })
+              }
+              className="rounded-lg bg-rose-600 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-40"
+            >
+              Reject complaint
+            </button>
+            <button type="button" onClick={() => setRejecting(false)} className="rounded-lg px-3 py-1.5 text-sm text-slate-600 ring-1 ring-slate-200">
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Assignment + actions */}
       <div className="grid gap-3 md:grid-cols-2">
@@ -228,10 +292,32 @@ export function IncidentDetailPanel({
                     <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">first report</span>
                   )}
                 </div>
-                <div className="mt-0.5 text-xs text-slate-500">
-                  {r.id} · {r.reporter} · {formatTime(r.created_at)}
+                <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500">
+                  <span>
+                    {r.id} · {r.reporter.replace(/^citizen:/, "")} · {formatTime(r.created_at)}
+                  </span>
+                  {r.location_source === "gps" && (
+                    <span className="rounded-full bg-sky-50 px-2 py-0.5 font-medium text-sky-700">
+                      GPS{r.location_accuracy_m ? ` ±${Math.round(r.location_accuracy_m)} m` : ""}
+                    </span>
+                  )}
+                  {r.location_label && <span className="text-slate-600">📍 {r.location_label}</span>}
+                  {kmFromPilot(r.lat, r.lng) > PILOT.radiusKm && (
+                    <span className="rounded-full bg-amber-50 px-2 py-0.5 font-medium text-amber-800">outside pilot area</span>
+                  )}
+                  {!!r.reporter_flags && (
+                    <span className="rounded-full bg-rose-50 px-2 py-0.5 font-medium text-rose-700">
+                      {r.reporter_flags} earlier report{r.reporter_flags > 1 ? "s" : ""} rejected
+                    </span>
+                  )}
                 </div>
                 {link && <p className="mt-1 text-xs text-violet-800">Why linked: {link.reason}</p>}
+                {r.photo_url && (
+                  <button type="button" onClick={() => setZoomPhoto(photoSrc(r.photo_url!))} className="mt-2 block overflow-hidden rounded-lg ring-1 ring-slate-200">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={photoSrc(r.photo_url)} alt={`Photo attached to report ${r.id}`} className="h-28 w-40 object-cover transition hover:scale-105" />
+                  </button>
+                )}
               </li>
             );
           })}
@@ -270,6 +356,12 @@ export function IncidentDetailPanel({
                 <span className="text-xs text-slate-500">
                   {e.source} · {formatTime(e.created_at)}
                 </span>
+                {e.photo_url && (
+                  <button type="button" onClick={() => setZoomPhoto(photoSrc(e.photo_url!))} className="overflow-hidden rounded-md ring-1 ring-slate-200">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={photoSrc(e.photo_url)} alt={`Evidence photo ${e.id}`} className="h-12 w-16 object-cover" />
+                  </button>
+                )}
               </li>
             ))}
           </ul>
@@ -283,6 +375,12 @@ export function IncidentDetailPanel({
           ))}
         </ol>
       </Section>
+      {zoomPhoto && (
+        <div role="dialog" aria-label="Photo" onClick={() => setZoomPhoto(null)} className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-6 backdrop-blur-sm motion-safe:animate-[fadeUp_.2s_ease-out]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={zoomPhoto} alt="Citizen photo, enlarged" className="max-h-[85vh] max-w-full rounded-2xl shadow-2xl" />
+        </div>
+      )}
     </section>
   );
 }

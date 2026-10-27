@@ -11,6 +11,7 @@ export const STATUS_EXPLAINER: Record<Status, string> = {
   verified_closed: "Fixed and confirmed. Thank you for reporting it.",
   reopened: "Someone said it isn't fixed yet, so it's back with the crew.",
   escalated: "It's taking longer than it should, so a supervisor is now involved.",
+  rejected: "A department head reviewed this report and closed it as not valid.",
 };
 
 export function explainStatus(incident: Incident): string {
@@ -137,6 +138,7 @@ export const CITIZEN_STATUS_LABEL: Record<Status, string> = {
   verified_closed: "Fixed",
   reopened: "Reopened",
   escalated: "Delayed",
+  rejected: "Not accepted",
 };
 
 export const STAGES = ["Reported", "Crew assigned", "Being fixed", "Checking", "Fixed"] as const;

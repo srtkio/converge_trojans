@@ -14,6 +14,11 @@ import type {
   Resource,
 } from "./types";
 
+export type RejectReason = "fake" | "not_civic" | "cannot_locate" | "duplicate_elsewhere";
+
+/** Absolute URL for a photo path returned by the API (e.g. "/photos/ph_…"). */
+export const photoSrc = (path: string) => (path.startsWith("http") ? path : `${API_URL}${path}`);
+
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 // Shape agreed for POST /feedback (backend adds the route; the UI handles 404 until then).
@@ -58,6 +63,8 @@ export const api = {
   metrics: () => call<Metrics>("/metrics"),
   clock: () => call<{ now: string }>("/sim/clock"),
   audit: () => call<AuditEvent[]>("/audit"),
+  rejectIncident: (id: string, body: { reason: RejectReason; note: string; by_badge: string }) =>
+    post<{ incident: Incident }>(`/incidents/${id}/reject`, body),
   citizenActivity: (limit = 30) => call<CitizenActivity[]>(`/citizen/activity?limit=${limit}`),
 
   report: (body: { text: string; category: Category; lat: number; lng: number; reporter: string }) =>

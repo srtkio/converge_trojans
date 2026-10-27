@@ -47,6 +47,13 @@ def sign_in_if_needed(page, base: str, dashboard_path: str) -> None:
         page.get_by_label("Access code").fill(DEMO_CODE)
         page.get_by_role("button", name="Sign in").click()
     try:
+        # Demo controls live in a floating dock; open it if it's collapsed.
+        dock = page.get_by_role("button", name="Demo controls")
+        try:
+            dock.wait_for(timeout=5000)
+            dock.click()
+        except PlaywrightTimeout:
+            pass  # older build without the dock, or the dock is already open
         page.get_by_role("button", name="Reset").wait_for(timeout=TIMEOUT_MS)
     except PlaywrightTimeout as e:
         raise Check(f"dashboard did not load at {base + dashboard_path}") from e
