@@ -91,8 +91,8 @@
     "department": "electrical",
     "escalation_level": 0,
     "id": "inc_004",
-    "lat": 28.983553,
-    "lng": 77.0904885,
+    "lat": 28.9835593,
+    "lng": 77.0860919,
     "parent_incident_id": null,
     "plan_version": 1,
     "related_incident_ids": [],
@@ -167,8 +167,8 @@
     "department": "water",
     "escalation_level": 0,
     "id": "inc_007",
-    "lat": 28.9809479,
-    "lng": 77.0904885,
+    "lat": 28.9809542,
+    "lng": 77.0860919,
     "parent_incident_id": null,
     "plan_version": 1,
     "related_incident_ids": [],
@@ -558,8 +558,8 @@
       "department": "electrical",
       "escalation_level": 0,
       "id": "inc_004",
-      "lat": 28.983553,
-      "lng": 77.0904885,
+      "lat": 28.9835593,
+      "lng": 77.0860919,
       "parent_incident_id": null,
       "plan_version": 1,
       "related_incident_ids": [],
@@ -634,8 +634,8 @@
       "department": "water",
       "escalation_level": 0,
       "id": "inc_007",
-      "lat": 28.9809479,
-      "lng": 77.0904885,
+      "lat": 28.9809542,
+      "lng": 77.0860919,
       "parent_incident_id": null,
       "plan_version": 1,
       "related_incident_ids": [],
@@ -912,8 +912,8 @@
       "department": "electrical",
       "id": "res_elec_1",
       "location": {
-       "lat": 28.9875937,
-       "lng": 77.0907966
+       "lat": 28.9876,
+       "lng": 77.0864
       },
       "name": "Electrical Crew E1"
      },
@@ -927,8 +927,8 @@
       "department": "general",
       "id": "res_gen_1",
       "location": {
-       "lat": 28.9775937,
-       "lng": 77.0829988
+       "lat": 28.9776,
+       "lng": 77.0786022
       },
       "name": "General Works Crew G1"
      },
@@ -940,8 +940,8 @@
       "department": "roads",
       "id": "res_roads_1",
       "location": {
-       "lat": 28.9815937,
-       "lng": 77.0852267
+       "lat": 28.9816,
+       "lng": 77.0808301
       },
       "name": "Roads Crew R1"
      },
@@ -965,8 +965,8 @@
       "department": "sanitation",
       "id": "res_sanit_1",
       "location": {
-       "lat": 28.9855937,
-       "lng": 77.0796568
+       "lat": 28.9856,
+       "lng": 77.0752602
       },
       "name": "Sanitation Crew S1"
      },
@@ -983,8 +983,8 @@
       "department": "water",
       "id": "res_water_1",
       "location": {
-       "lat": 28.9795937,
-       "lng": 77.0963665
+       "lat": 28.9796,
+       "lng": 77.0919699
       },
       "name": "Water Crew W1"
      }
@@ -1006,8 +1006,8 @@
     "department": "water",
     "escalation_level": 1,
     "id": "inc_001",
-    "lat": 28.9831937,
-    "lng": 77.0907966,
+    "lat": 28.9832,
+    "lng": 77.0864,
     "parent_incident_id": null,
     "plan_version": 2,
     "related_incident_ids": [
@@ -1034,8 +1034,8 @@
     "department": "roads",
     "escalation_level": 1,
     "id": "inc_002",
-    "lat": 28.9809437,
-    "lng": 77.0907966,
+    "lat": 28.98095,
+    "lng": 77.0864,
     "parent_incident_id": null,
     "plan_version": 1,
     "related_incident_ids": [
@@ -1134,8 +1134,8 @@
       "department": "water",
       "escalation_level": 1,
       "id": "inc_001",
-      "lat": 28.9831937,
-      "lng": 77.0907966,
+      "lat": 28.9832,
+      "lng": 77.0864,
       "parent_incident_id": null,
       "plan_version": 2,
       "related_incident_ids": [
@@ -1162,8 +1162,8 @@
       "department": "roads",
       "escalation_level": 1,
       "id": "inc_002",
-      "lat": 28.9809437,
-      "lng": 77.0907966,
+      "lat": 28.98095,
+      "lng": 77.0864,
       "parent_incident_id": null,
       "plan_version": 1,
       "related_incident_ids": [
@@ -1213,8 +1213,8 @@
       "department": "electrical",
       "id": "res_elec_1",
       "location": {
-       "lat": 28.9875937,
-       "lng": 77.0907966
+       "lat": 28.9876,
+       "lng": 77.0864
       },
       "name": "Electrical Crew E1"
      },
@@ -1224,8 +1224,8 @@
       "department": "general",
       "id": "res_gen_1",
       "location": {
-       "lat": 28.9775937,
-       "lng": 77.0829988
+       "lat": 28.9776,
+       "lng": 77.0786022
       },
       "name": "General Works Crew G1"
      },
@@ -1237,8 +1237,8 @@
       "department": "roads",
       "id": "res_roads_1",
       "location": {
-       "lat": 28.9815937,
-       "lng": 77.0852267
+       "lat": 28.9816,
+       "lng": 77.0808301
       },
       "name": "Roads Crew R1"
      },
@@ -1259,8 +1259,8 @@
       "department": "sanitation",
       "id": "res_sanit_1",
       "location": {
-       "lat": 28.9855937,
-       "lng": 77.0796568
+       "lat": 28.9856,
+       "lng": 77.0752602
       },
       "name": "Sanitation Crew S1"
      },
@@ -1270,8 +1270,8 @@
       "department": "water",
       "id": "res_water_1",
       "location": {
-       "lat": 28.9795937,
-       "lng": 77.0963665
+       "lat": 28.9796,
+       "lng": 77.0919699
       },
       "name": "Water Crew W1"
      }
@@ -1585,8 +1585,8 @@
       "department": "roads",
       "id": "res_roads_2",
       "location": {
-       "lat": 29.0409284,
-       "lng": 77.0458296
+       "lat": 29.0409221,
+       "lng": 77.0502281
       },
       "name": "Roads Crew R2"
      },

@@ -6,7 +6,7 @@ are exact and the engine makes the same decisions wherever a scenario is centred
 """
 
 PLACES: dict[str, dict] = {
-    "rishihood": {"label": "Rishihood University, GT Road (NH-44)", "lat": 28.9831937, "lng": 77.0907966},
+    "rishihood": {"label": "Rishihood University, GT Road (NH-44)", "lat": 28.9832, "lng": 77.0864},
     "murthal": {"label": "Murthal dhabas, GT Road", "lat": 29.0396149, "lng": 77.0894535},
     "murthal_chowk": {"label": "Murthal Chowk", "lat": 29.0265284, "lng": 77.0736908},
     "bahalgarh": {"label": "Bahalgarh", "lat": 28.9586835, "lng": 77.0950598},

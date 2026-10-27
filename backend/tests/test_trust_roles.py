@@ -6,7 +6,7 @@ import pytest
 
 from app.engine.trust import RateLimiter
 
-GT = (28.9831937, 77.0907966)  # GT Road (NH-44) at Rishihood University
+GT = (28.9832, 77.0864)  # GT Road (NH-44) at Rishihood University
 NEW_INCIDENT_FIELDS = {"verification", "sla_state"}
 BASELINE = json.loads((Path(__file__).parent / "fixtures" / "scenario_baseline.json").read_text())
 RATE_MSG = "You've sent a lot of reports in a short time. Please wait a bit and try again."

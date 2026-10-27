@@ -19,7 +19,7 @@ import type { Incident, Report, Resource } from "@/lib/types";
  */
 
 const DUPLICATE_RADIUS_M = 150;
-const DEFAULT_CENTER: [number, number] = [28.9832, 77.0908]; // Rishihood University, GT Road, Sonipat
+const DEFAULT_CENTER: [number, number] = [28.9832, 77.0864]; // Rishihood University, GT Road, Sonipat
 // If tiles keep failing with none loaded, tell CityMap to fall back to the schematic map.
 const TILE_FAILURES_BEFORE_FALLBACK = 6;
 

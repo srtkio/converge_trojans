@@ -1,7 +1,7 @@
 """One or more tests per rule in docs/CONTRACTS.md "Rules"."""
 from app.timeutil import add_hours
 
-BASE = (28.9831937, 77.0907966)  # GT Road (NH-44) at Rishihood University, the seed origin
+BASE = (28.9832, 77.0864)  # GT Road (NH-44) at Rishihood University, the seed origin
 M_LAT = 1 / 111_195  # degrees of latitude per metre
 
 
