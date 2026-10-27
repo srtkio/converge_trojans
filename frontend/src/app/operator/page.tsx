@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { CitizenPopups } from "@/components/CitizenPopups";
 import { Dashboard } from "@/components/Dashboard";
 import { api } from "@/lib/api";
 import { clearSession, readSession, saveSession, type Session } from "@/lib/session";
@@ -24,13 +25,16 @@ export default function OperatorPage() {
 
   if (operator) {
     return (
-      <Dashboard
-        operator={operator}
-        onSignOut={() => {
-          clearSession();
-          setOperator(null);
-        }}
-      />
+      <>
+        <Dashboard
+          operator={operator}
+          onSignOut={() => {
+            clearSession();
+            setOperator(null);
+          }}
+        />
+        <CitizenPopups />
+      </>
     );
   }
 
