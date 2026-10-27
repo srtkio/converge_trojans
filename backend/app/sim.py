@@ -6,30 +6,37 @@ from sqlmodel import Session, select
 
 from app import config
 from app.db import now, set_now, wipe_db
-from app.engine import impact, metrics, rootcause
+from app.engine import impact, metrics, photos, rootcause
 from app.engine.assign import assign_waiting, replan_for_unavailable
 from app.engine.audit import record
+from app.engine.geo import place, relocate
 from app.engine.intake import submit_report
 from app.engine.sla import check_at_risk, check_breaches
 from app.engine.verify import add_evidence, complete, start
 from app.models import Counter, Incident, Report, Resource
+from app.places import MURTHAL_CHOWK, PLACES, RISHIHOOD_GT_ROAD
 from app.timeutil import add_hours, parse
 
-SEED = Path(__file__).parent / "seed" / "resources.json"
+SEED_DIR = Path(__file__).parent / "seed"
+SEED = SEED_DIR / "resources.json"
 
 
-def seed(session: Session) -> None:
+def seed(session: Session, origin: tuple[float, float] = RISHIHOOD_GT_ROAD) -> None:
+    """Crew depots are stored around Rishihood University (GT Road). A scenario centred elsewhere
+    seeds them at the same metres from its own origin, so nearest-crew decisions do not change.
+    City services are fixed places (both demo sites are in services.json)."""
     for r in json.loads(SEED.read_text()):
+        r["lat"], r["lng"] = relocate(r["lat"], r["lng"], RISHIHOOD_GT_ROAD, origin)
         session.add(Resource(**r))
     impact.seed(session)
     set_now(session, config.SIM_START)
     session.flush()
 
 
-def reset(session: Session) -> None:
+def reset(session: Session, origin: tuple[float, float] = RISHIHOOD_GT_ROAD) -> None:
     session.close()
     wipe_db()
-    seed(session)
+    seed(session, origin)
 
 
 def tick(session: Session, minutes: float) -> list[Incident]:
@@ -56,7 +63,18 @@ def set_available(session: Session, res: Resource) -> list[Incident]:
 
 # --- golden scenario -------------------------------------------------------------------------
 
-MG_ROAD = (12.97560, 77.60500)
+# Points are metres (north, east) from the scenario origin, the same metres as the original
+# layout, so every duplicate / related / nearest-crew / impact decision is unchanged.
+
+
+def gt_road(north_m: float = 0.0, east_m: float = 0.0) -> tuple[float, float]:
+    """Golden scenario: GT Road (NH-44) at the Rishihood University gate."""
+    return place(RISHIHOOD_GT_ROAD, north_m, east_m)
+
+
+def murthal_chowk(north_m: float = 0.0, east_m: float = 0.0) -> tuple[float, float]:
+    """Root-cause scenario: Murthal Chowk (SH20)."""
+    return place(MURTHAL_CHOWK, north_m, east_m)
 
 
 def _incident_of(session: Session, report_id: str) -> Incident:
@@ -76,20 +94,20 @@ def _s1(s):
 
 
 def _s2(s):
-    submit_report(s, "Water gushing from a broken pipe on MG Road near the metro exit",
-                  "water_leak", *MG_ROAD, "citizen:asha")
+    submit_report(s, "Water gushing from a broken pipe on GT Road near the Rishihood University gate",
+                  "water_leak", *gt_road(), "citizen:asha")
 
 
 def _s3(s):
     tick(s, 10)
-    submit_report(s, "Big water leak flooding the footpath outside MG Road metro",
-                  "water_leak", MG_ROAD[0] + 0.00054, MG_ROAD[1], "citizen:ravi")
+    submit_report(s, "Big water leak flooding the service lane outside the university gate",
+                  "water_leak", *gt_road(60.11), "citizen:ravi")
 
 
 def _s4(s):
     tick(s, 10)
-    submit_report(s, "Deep pothole forming on MG Road, road surface sinking",
-                  "pothole", MG_ROAD[0] - 0.00225, MG_ROAD[1], "citizen:meera")
+    submit_report(s, "Deep pothole forming on GT Road (NH-44), road surface sinking",
+                  "pothole", *gt_road(-250.47), "citizen:meera")
 
 
 def _s5(s):
@@ -130,7 +148,7 @@ def _s10(s):
 
 GOLDEN = [
     (_s1, "Reset; seed crews (2 roads, 1 water, 1 electrical)"),
-    (_s2, "Report A: water leak at MG Road -> new incident I1, assigned to water crew W1"),
+    (_s2, "Report A: water leak on GT Road (NH-44) by Rishihood University -> new incident I1, assigned to water crew W1"),
     (_s3, "Report B: same leak 60 m away -> linked as duplicate of I1"),
     (_s4, "Report C: pothole 250 m away -> new incident I2, related to I1"),
     (_s5, "W1 unavailable -> I1 replanned; no other water crew -> escalated"),
@@ -145,21 +163,25 @@ GOLDEN = [
 # --- root-cause scenario (v2) -----------------------------------------------------------------
 
 
+def _r1(s):
+    reset(s, MURTHAL_CHOWK)
+
+
 def _r2(s):
-    submit_report(s, "Water bubbling up through the road on MG Road near the junction",
-                  "water_leak", *MG_ROAD, "citizen:asha")
+    submit_report(s, "Water bubbling up through the road at Murthal Chowk",
+                  "water_leak", *murthal_chowk(), "citizen:asha")
 
 
 def _r3(s):
     tick(s, 20)
-    submit_report(s, "Road surface sinking and a pothole opening near the MG Road junction",
-                  "pothole", MG_ROAD[0] + 0.00108, MG_ROAD[1], "citizen:ravi")
+    submit_report(s, "Road surface sinking and a pothole opening near Murthal Chowk",
+                  "pothole", *murthal_chowk(120.23), "citizen:ravi")
 
 
 def _r4(s):
     tick(s, 20)
-    submit_report(s, "Pothole at the MG Road bus stop, buses swerving around it",
-                  "pothole", MG_ROAD[0] - 0.00252, MG_ROAD[1], "citizen:meera")
+    submit_report(s, "Pothole at the Murthal Chowk bus stop, buses swerving around it",
+                  "pothole", *murthal_chowk(-280.53), "citizen:meera")
 
 
 def _r5(s):
@@ -187,8 +209,8 @@ def _r7(s):
 
 
 ROOTCAUSE = [
-    (_s1, "Reset; seed crews and city services"),
-    (_r2, "Report A: water bubbling through MG Road -> leak incident, water crew assigned"),
+    (_r1, "Reset; seed crews and city services"),
+    (_r2, "Report A: water bubbling through the road at Murthal Chowk -> leak incident, water crew assigned"),
     (_r3, "Report B: pothole 120 m away -> new incident, related to the leak"),
     (_r4, "Report C: pothole at the bus stop 280 m away -> related; root-cause hypothesis proposed"),
     (_r5, "Operator confirms: the leak is the root cause -> potholes wait on it, 2 crew visits saved"),
@@ -210,11 +232,19 @@ def _at_minute(s, minute: int) -> None:
         tick(s, gap_min)
 
 
+def city_point(r: dict) -> tuple[float, float]:
+    p = PLACES[r["place"]]
+    return place((p["lat"], p["lng"]), r["north_m"], r["east_m"])
+
+
 def _city_area(index: int):
     def run(s):
         for r in CITY[index]["reports"]:
             _at_minute(s, r["t"])
-            submit_report(s, r["text"], r["category"], r["lat"], r["lng"], r["reporter"])
+            # Same photo path as POST /reports (validated, metadata stripped, served at /photos/{id}).
+            photo = photos.store_seed_file(s, SEED_DIR / "photos" / r["photo"])
+            submit_report(s, r["text"], r["category"], *city_point(r), r["reporter"], photo_id=photo.id,
+                          location_source="landmark", location_label=PLACES[r["place"]]["label"])
     return run
 
 
@@ -224,7 +254,7 @@ def _c1(s):
 
 
 def _c7(s):
-    _at_minute(s, 70)
+    _at_minute(s, 120)
     leak = _incident_of(s, "rep_001")
     start(s, leak)
     lights = _incident_of(s, "rep_004")
@@ -234,14 +264,14 @@ def _c7(s):
 
 
 def _c8(s):
-    _at_minute(s, 9 * 60 + 45)  # 18:45: the Residency Road sewage overflow is now at risk
+    _at_minute(s, 9 * 60 + 45)  # 18:45: the Sonipat bus stand sewage overflow is now at risk
 
 
 CITY_STEPS = [
     (_c1, "Reset; seed crews and services; sanitation crew S1 on leave"),
     *[(_city_area(i), a["title"]) for i, a in enumerate(CITY)],
-    (_c7, "Morning work: MG Road main repaired (awaiting proof); Church Street lights crew starts"),
-    (_c8, "Clock to 18:45: Residency Road sewage overflow flagged at risk before its deadline"),
+    (_c7, "Morning work: Civil Hospital main repaired (awaiting proof); university-gate lights crew starts"),
+    (_c8, "Clock to 18:45: Sonipat bus stand sewage overflow flagged at risk before its deadline"),
 ]
 
 SCENARIOS = {"golden": GOLDEN, "rootcause": ROOTCAUSE, "city": CITY_STEPS}

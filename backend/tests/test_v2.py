@@ -119,13 +119,13 @@ def test_unknown_hypothesis_404(client):
 def test_impact_lists_services_including_via_children(client):
     leak, _, p2 = leak_with_two_potholes(client)
     direct = {s["id"] for s in client.get(f"/incidents/{leak}/impact").json()["services"]}
-    assert "svc_school_mg" in direct and "svc_bus_335e" not in direct
+    assert "svc_school_bahalgarh" in direct and "svc_bus_rishihood" not in direct
     client.post(f"/hypotheses/{client.get('/hypotheses').json()[0]['id']}/confirm")
     r = client.get(f"/incidents/{leak}/impact").json()
     assert r["simulated"] is True
-    bus = next(s for s in r["services"] if s["id"] == "svc_bus_335e")
+    bus = next(s for s in r["services"] if s["id"] == "svc_bus_rishihood")
     assert bus["via_incident_id"] == p2 and bus["kind"] == "transport" and bus["impact"]
-    assert len(client.get("/services").json()) == 3
+    assert len(client.get("/services").json()) == 6  # 3 by Rishihood University, 3 at Murthal Chowk
 
 
 def test_rootcause_scenario_end_to_end(client):

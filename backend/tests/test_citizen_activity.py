@@ -1,20 +1,20 @@
 def _report(client, text, reporter):
     return client.post("/reports", json={"text": text, "category": "water_leak",
-                                         "lat": 12.9756, "lng": 77.605, "reporter": reporter}).json()
+                                         "lat": 28.9831937, "lng": 77.0907966, "reporter": reporter}).json()
 
 
 def test_citizen_complaint_appears_with_the_citizen_name(client):
-    res = _report(client, "Water gushing near the metro exit", "citizen:Asha")
+    res = _report(client, "Water gushing near the university gate", "citizen:Asha")
     items = client.get("/citizen/activity").json()
     assert items[0]["kind"] == "complaint"
     assert items[0]["citizen"] == "citizen:Asha"
-    assert items[0]["text"] == "Water gushing near the metro exit"
+    assert items[0]["text"] == "Water gushing near the university gate"
     assert items[0]["incident_id"] == res["incident"]["id"]
     assert items[0]["incident_title"] == res["incident"]["title"]
 
 
 def test_citizen_evidence_appears_with_its_note_and_answer(client):
-    res = _report(client, "Water gushing near the metro exit", "citizen:Asha")
+    res = _report(client, "Water gushing near the university gate", "citizen:Asha")
     inc_id = res["incident"]["id"]
     client.post(f"/incidents/{inc_id}/evidence", json={
         "kind": "citizen_followup", "supports_resolution": False,

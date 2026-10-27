@@ -109,9 +109,9 @@ def test_reset_wipes_photos_but_keeps_feedback(client):
 
 def test_location_fields_round_trip(client):
     gps = {"source": "gps", "accuracy_m": 18.5, "label": "Current location"}
-    r = post_report(client, location=gps, lat=12.97612, lng=77.60643).json()
+    r = post_report(client, location=gps, lat=28.98371, lng=77.09098).json()
     rep = r["report"]
-    assert (rep["lat"], rep["lng"]) == (12.97612, 77.60643)
+    assert (rep["lat"], rep["lng"]) == (28.98371, 77.09098)
     assert (rep["location_source"], rep["location_accuracy_m"], rep["location_label"]) == ("gps", 18.5, "Current location")
     assert post_report(client, location={"source": "satellite"}).status_code == 422
     assert post_report(client, location={"source": "gps", "accuracy_m": -1}).status_code == 422
@@ -119,7 +119,7 @@ def test_location_fields_round_trip(client):
 
 def test_citizen_activity_carries_photo_and_location(client):
     r = post_report(client, photo={"data": b64(jpeg()), "media_type": "image/jpeg"},
-                    location={"source": "landmark", "accuracy_m": None, "label": "MG Road metro exit"}).json()
+                    location={"source": "landmark", "accuracy_m": None, "label": "Rishihood University gate"}).json()
     inc = r["incident"]["id"]
     finish_work(client, inc)
     client.post(f"/incidents/{inc}/evidence", json={
@@ -128,7 +128,7 @@ def test_citizen_activity_carries_photo_and_location(client):
     items = {i["kind"]: i for i in client.get("/citizen/activity").json()}
     c, e = items["complaint"], items["evidence"]
     assert c["photo_url"] == r["report"]["photo_url"]
-    assert (c["lat"], c["lng"], c["location_source"], c["location_label"]) == (BASE[0], BASE[1], "landmark", "MG Road metro exit")
+    assert (c["lat"], c["lng"], c["location_source"], c["location_label"]) == (BASE[0], BASE[1], "landmark", "Rishihood University gate")
     assert e["photo_url"].startswith("/photos/ph_")
     assert (e["lat"], e["lng"], e["location_source"]) == (None, None, None)
 
@@ -140,7 +140,7 @@ def test_migration_adds_missing_columns_to_an_old_database(tmp_path):
         conn.execute(text("CREATE TABLE report (id VARCHAR PRIMARY KEY, text VARCHAR NOT NULL, category VARCHAR NOT NULL, "
                           "lat FLOAT NOT NULL, lng FLOAT NOT NULL, reporter VARCHAR NOT NULL, created_at VARCHAR NOT NULL, "
                           "incident_id VARCHAR)"))
-        conn.execute(text("INSERT INTO report VALUES ('rep_001', 'old report', 'pothole', 12.9, 77.6, 'citizen:Ravi', "
+        conn.execute(text("INSERT INTO report VALUES ('rep_001', 'old report', 'pothole', 28.98, 77.09, 'citizen:Ravi', "
                           "'2026-10-27T09:00:00Z', 'inc_001')"))
     added = db.add_missing_columns(eng)
     assert {"report.photo_id", "report.location_source", "report.location_accuracy_m", "report.location_label"} <= set(added)

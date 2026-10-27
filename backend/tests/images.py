@@ -6,7 +6,7 @@ def _seg(marker: int, payload: bytes) -> bytes:
 
 
 JFIF = _seg(0xE0, b"JFIF\x00\x01\x01\x00\x00\x01\x00\x01\x00\x00")
-EXIF_GPS = _seg(0xE1, b"Exif\x00\x00MM\x00*GPSLatitude=12.9756N;GPSLongitude=77.6058E;Model=PhoneX")
+EXIF_GPS = _seg(0xE1, b"Exif\x00\x00MM\x00*GPSLatitude=28.9832N;GPSLongitude=77.0908E;Model=PhoneX")
 ICC = _seg(0xE2, b"ICC_PROFILE\x00\x01\x01" + b"\x00" * 16)
 MPF = _seg(0xE2, b"MPF\x00secondary-image-index")
 COMMENT = _seg(0xFE, b"owner: Asha Test")
@@ -33,7 +33,7 @@ def png(*, text: bool = False) -> bytes:
 
     ihdr = chunk(b"IHDR", (1).to_bytes(4, "big") * 2 + b"\x08\x02\x00\x00\x00")
     idat = chunk(b"IDAT", zlib.compress(b"\x00\xff\x00\x00"))
-    meta = chunk(b"tEXt", b"GPS\x0012.97,77.60") + chunk(b"eXIf", b"MM\x00*GPS") if text else b""
+    meta = chunk(b"tEXt", b"GPS\x0028.98,77.09") + chunk(b"eXIf", b"MM\x00*GPS") if text else b""
     return b"\x89PNG\r\n\x1a\n" + ihdr + meta + idat + chunk(b"IEND", b"")
 
 
