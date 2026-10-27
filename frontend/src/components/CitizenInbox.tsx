@@ -42,7 +42,13 @@ function label(item: CitizenActivity): string {
 }
 
 // Operator inbox: every citizen complaint and every citizen follow-up, newest first.
-export function CitizenInbox() {
+export function CitizenInbox({
+  onUnreadChange,
+  onOpenIncident,
+}: {
+  onUnreadChange?: (count: number) => void;
+  onOpenIncident?: (id: string) => void;
+} = {}) {
   const [items, setItems] = useState<CitizenActivity[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [fresh, setFresh] = useState<Set<string>>(new Set());
@@ -76,6 +82,10 @@ export function CitizenInbox() {
     return () => clearInterval(timer);
   }, [load]);
 
+  useEffect(() => {
+    onUnreadChange?.(fresh.size);
+  }, [fresh, onUnreadChange]);
+
   const markAllRead = () => {
     if (!items) return;
     seenRef.current = new Set(items.map((i) => i.id));
@@ -84,7 +94,7 @@ export function CitizenInbox() {
   };
 
   return (
-    <section aria-labelledby="inbox-heading" className="border-b border-slate-200 bg-white px-4 py-3">
+    <section aria-labelledby="inbox-heading" className="rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm">
       <div className="flex items-center justify-between gap-3">
         <h2 id="inbox-heading" className="text-sm font-semibold text-slate-900">
           Citizen activity{fresh.size > 0 ? ` · ${fresh.size} new` : ""}
@@ -104,7 +114,7 @@ export function CitizenInbox() {
       )}
 
       {items && items.length > 0 && (
-        <ul className="mt-2 max-h-60 divide-y divide-slate-100 overflow-y-auto">
+        <ul className="mt-2 max-h-[32rem] divide-y divide-slate-100 overflow-y-auto">
           {items.map((item) => (
             <li key={item.id} className={`py-2 ${fresh.has(item.id) ? "bg-amber-50" : ""}`}>
               <div className="flex flex-wrap items-center gap-x-2 text-xs text-slate-500">
@@ -120,7 +130,15 @@ export function CitizenInbox() {
                 <span className="text-slate-700">{item.text || "(no note)"}</span>
               </p>
               {item.incident_id && (
-                <a href={`/operator?incident=${item.incident_id}`} className="text-xs text-blue-700 underline">
+                <a
+                  href={`/operator?incident=${item.incident_id}`}
+                  onClick={(e) => {
+                    if (!onOpenIncident) return;
+                    e.preventDefault();
+                    onOpenIncident(item.incident_id!);
+                  }}
+                  className="text-xs text-blue-700 underline"
+                >
                   {item.incident_title ?? item.incident_id}
                   {item.incident_status ? ` · ${STATUS_LABEL[item.incident_status]}` : ""}
                 </a>
