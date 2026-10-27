@@ -1,8 +1,10 @@
 """Citizen photos: validate, store, look up. Served by GET /photos/{id}."""
 import base64
 import binascii
+import hashlib
 import re
 import uuid
+from pathlib import Path
 
 from fastapi import HTTPException
 from sqlmodel import Session
@@ -38,8 +40,13 @@ def decode(data_b64: str, media_type: str) -> bytes:
         raw = base64.b64decode(data_b64, validate=True)
     except (binascii.Error, ValueError):
         raise HTTPException(422, "photo.data is not valid base64") from None
+    return validate(raw, media_type)
+
+
+def validate(raw: bytes, media_type: str) -> bytes:
+    """413 if over 5 MB, 422 if the bytes are not the declared image type."""
     if len(raw) > MAX_PHOTO_BYTES:
-        raise HTTPException(413, too_big)
+        raise HTTPException(413, f"Photo too large (max {MAX_PHOTO_BYTES // (1024 * 1024)} MB)")
     if not _matches(raw, media_type):
         raise HTTPException(422, f"photo.data is not a valid {media_type} image")
     return raw
@@ -140,13 +147,26 @@ def strip_metadata(raw: bytes, media_type: str) -> bytes:
         raise HTTPException(422, f"photo.data is not a valid {media_type} image") from None
 
 
-def store(session: Session, raw: bytes, media_type: str) -> Photo:
+def store(session: Session, raw: bytes, media_type: str, stable_id: bool = False) -> Photo:
+    """Strip metadata and save. `stable_id` (demo seed data) derives the id from the content, so a
+    replayed scenario gets the same photo ids and the same file is stored once."""
     raw = strip_metadata(raw, media_type)
-    photo = Photo(id=f"ph_{uuid.uuid4().hex[:16]}", media_type=media_type, size_bytes=len(raw), data=raw,
-                  created_at=now(session))
+    photo_id = f"ph_{hashlib.sha256(raw).hexdigest()[:16]}" if stable_id else f"ph_{uuid.uuid4().hex[:16]}"
+    if stable_id and (existing := session.get(Photo, photo_id)):
+        return existing
+    photo = Photo(id=photo_id, media_type=media_type, size_bytes=len(raw), data=raw, created_at=now(session))
     session.add(photo)
     session.flush()
     return photo
+
+
+SEED_MEDIA_TYPES = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".webp": "image/webp"}
+
+
+def store_seed_file(session: Session, path: Path) -> Photo:
+    """Demo data: store a committed photo through the same checks as an upload, with a stable id."""
+    media_type = SEED_MEDIA_TYPES[path.suffix.lower()]
+    return store(session, validate(path.read_bytes(), media_type), media_type, stable_id=True)
 
 
 def get(session: Session, photo_id: str) -> Photo | None:

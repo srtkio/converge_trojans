@@ -1,31 +1,49 @@
 {
-  "_note": "Live-city demo data for user testing and the map: 10 reports within ~1 km of MG Road. Not used for pitch metrics. Minutes are offsets from the sim start (09:00).",
+  "_note": "Live-city demo data for user testing and the map: 18 photo-backed complaints along the Murthal-Sonipat corridor (Haryana). Not used for pitch metrics. 't' is minutes after the sim start (09:00). Each point is 'north_m'/'east_m' metres from a real place in app/places.py (OpenStreetMap), at most 300 m. Photos are CC-licensed stock photos in seed/photos (see ATTRIBUTION.md), not pictures of these places.",
   "areas": [
-    {"step": 2, "title": "MG Road: burst main, a duplicate report, and a related pothole at Brigade Road", "reports": [
-      {"t": 0,  "category": "water_leak", "lat": 12.97560, "lng": 77.60660, "reporter": "citizen:asha",
-       "text": "Water main burst near the MG Road metro station exit, water flowing onto the road"},
-      {"t": 5,  "category": "water_leak", "lat": 12.97590, "lng": 77.60640, "reporter": "citizen:vikram",
-       "text": "Water gushing onto the MG Road footpath by the metro"},
-      {"t": 10, "category": "pothole", "lat": 12.97380, "lng": 77.60700, "reporter": "citizen:nisha",
-       "text": "Road caving in on MG Road near the Brigade Road junction"}
+    {"step": 2, "title": "Sonipat city: burst main outside Civil Hospital; sewage overflow at the bus stand and a related pothole", "reports": [
+      {"t": 0, "category": "water_leak", "place": "civil_hospital", "north_m": 0, "east_m": 40, "reporter": "citizen:asha", "photo": "water_leak_1.jpg",
+       "text": "Water pipeline burst on the road outside Civil Hospital, water gushing across SH20"},
+      {"t": 5, "category": "sewage", "place": "sonipat_bus_stand", "north_m": 0, "east_m": 0, "reporter": "citizen:fatima", "photo": "sewage_1.jpg",
+       "text": "Sewage overflowing from a manhole at the Sonipat bus stand entrance"},
+      {"t": 12, "category": "pothole", "place": "sonipat_bus_stand", "north_m": 0, "east_m": 180, "reporter": "citizen:nisha", "photo": "pothole_1.jpg",
+       "text": "Road caving in on NH352A just past the Sonipat bus stand, buses swerving around it"}
     ]},
-    {"step": 3, "title": "Church Street lights out (two reports); Brigade Road garbage with no sanitation crew", "reports": [
-      {"t": 15, "category": "streetlight", "lat": 12.97540, "lng": 77.60380, "reporter": "citizen:rahul",
-       "text": "Streetlights out along Church Street"},
-      {"t": 20, "category": "streetlight", "lat": 12.97560, "lng": 77.60330, "reporter": "citizen:divya",
-       "text": "Church Street is dark near the bookshops, lights not working"},
-      {"t": 25, "category": "garbage", "lat": 12.97200, "lng": 77.60750, "reporter": "citizen:arjun",
-       "text": "Garbage piling up on Brigade Road for three days"}
+    {"step": 3, "title": "GT Road (NH-44): lights out at the Rishihood University gate (two reports); fallen tree and potholes at Bahalgarh; a leak on the service lane", "reports": [
+      {"t": 15, "category": "streetlight", "place": "rishihood", "north_m": 40, "east_m": -30, "reporter": "citizen:rahul", "photo": "streetlight_1.jpg",
+       "text": "Streetlights out on the GT Road service lane by the Rishihood University gate, one pole bent"},
+      {"t": 20, "category": "streetlight", "place": "rishihood", "north_m": 120, "east_m": -30, "reporter": "citizen:divya", "photo": "streetlight_2.jpg",
+       "text": "Service lane near the university gate is completely dark at night, lights not working"},
+      {"t": 30, "category": "other", "place": "bahalgarh", "north_m": 100, "east_m": 0, "reporter": "citizen:hari", "photo": "other_1.jpg",
+       "text": "Tree fallen across the Bahalgarh road after last night's storm, blocking one lane"},
+      {"t": 40, "category": "pothole", "place": "bahalgarh", "north_m": 50, "east_m": 150, "reporter": "citizen:arjun", "photo": "pothole_2.jpg",
+       "text": "Row of potholes on the GT Road stretch at Bahalgarh, water filling them"},
+      {"t": 55, "category": "water_leak", "place": "rishihood", "north_m": -250, "east_m": -30, "reporter": "citizen:meera", "photo": "water_leak_3.jpg",
+       "text": "Water line leaking under the GT Road service lane south of the university, lane waterlogged"}
     ]},
-    {"step": 4, "title": "Residency Road sewage with a related leak; St Marks Road bins (no crew); Kasturba Road slab", "reports": [
-      {"t": 30, "category": "sewage", "lat": 12.96980, "lng": 77.60420, "reporter": "citizen:fatima",
-       "text": "Sewage overflowing on Residency Road near the junction"},
-      {"t": 55, "category": "water_leak", "lat": 12.97060, "lng": 77.60480, "reporter": "citizen:imran",
-       "text": "Water leaking from a pipe on Residency Road"},
-      {"t": 60, "category": "garbage", "lat": 12.97280, "lng": 77.60100, "reporter": "citizen:meena",
-       "text": "Overflowing bins on St Marks Road"},
-      {"t": 65, "category": "other", "lat": 12.97450, "lng": 77.59850, "reporter": "citizen:hari",
-       "text": "Broken footpath slab on Kasturba Road near Cubbon Park"}
+    {"step": 4, "title": "Murthal: garbage behind the dhabas (two reports, sanitation crew on leave), a choked drain, a pothole at Murthal Chowk", "reports": [
+      {"t": 60, "category": "garbage", "place": "murthal", "north_m": 0, "east_m": 0, "reporter": "citizen:vikram", "photo": "garbage_1.jpg",
+       "text": "Garbage dumped behind the Murthal dhabas on GT Road for three days"},
+      {"t": 65, "category": "garbage", "place": "murthal", "north_m": 70, "east_m": 15, "reporter": "citizen:meena", "photo": "garbage_2.jpg",
+       "text": "Heap of food waste and plastic next to the dhaba parking in Murthal"},
+      {"t": 70, "category": "sewage", "place": "murthal", "north_m": -150, "east_m": -40, "reporter": "citizen:imran", "photo": "sewage_2.jpg",
+       "text": "Drain choked behind the Murthal dhabas, dirty water spilling onto the lane"},
+      {"t": 75, "category": "pothole", "place": "murthal_chowk", "north_m": 0, "east_m": 60, "reporter": "citizen:ravi", "photo": "pothole_3.jpg",
+       "text": "Deep pothole at Murthal Chowk on SH20, a scooter nearly had an accident here"}
+    ]},
+    {"step": 5, "title": "Sonipat: railway station garbage (no sanitation crew) and open drain; Sector 15 lights, leak and a fallen tree; broken drain cover in the city centre", "reports": [
+      {"t": 80, "category": "garbage", "place": "sonipat_junction", "north_m": 0, "east_m": 60, "reporter": "citizen:kavya", "photo": "garbage_3.jpg",
+       "text": "Garbage piled along the road outside Sonipat Junction railway station"},
+      {"t": 85, "category": "sewage", "place": "sonipat_junction", "north_m": -80, "east_m": 40, "reporter": "citizen:sunil", "photo": "sewage_3.jpg",
+       "text": "Open drain overflowing next to the station road, smell everywhere"},
+      {"t": 90, "category": "streetlight", "place": "sector_15", "north_m": 0, "east_m": 0, "reporter": "citizen:pooja", "photo": "streetlight_3.jpg",
+       "text": "Streetlights not working on the Sector 15 market road for a week"},
+      {"t": 95, "category": "water_leak", "place": "sector_15", "north_m": 120, "east_m": -60, "reporter": "citizen:anil", "photo": "water_leak_2.jpg",
+       "text": "Supply line leaking near the Sector 15 park, water standing on the lane by the hand pump"},
+      {"t": 100, "category": "other", "place": "sector_15", "north_m": -100, "east_m": 80, "reporter": "citizen:neha", "photo": "other_2.jpg",
+       "text": "Big tree uprooted on the Sector 15 inner road, branches on parked cars"},
+      {"t": 105, "category": "other", "place": "sonipat_centre", "north_m": 0, "east_m": 30, "reporter": "citizen:deepak", "photo": "other_3.jpg",
+       "text": "Drain cover broken in the Sonipat city centre footpath, open hole full of rubbish"}
     ]}
   ]
 }

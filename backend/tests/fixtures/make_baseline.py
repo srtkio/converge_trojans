@@ -1,7 +1,9 @@
 """Records the scenario outputs used by test_trust_roles.test_scenarios_unchanged_vs_main.
 
-The committed scenario_baseline.json was generated from origin/main BEFORE the trust/roles change.
-Do not regenerate it to make that test pass: the point is to prove the outputs did not change.
+First generated from origin/main BEFORE the trust/roles change. Regenerated ONCE for the move from
+Bengaluru to Murthal/Sonipat (coordinates, wording and the new 18-complaint city dataset changed on
+purpose); tests/test_relocation.py proves that move changed no engine decision against the old run.
+Do not regenerate it to make a test pass: the point is to prove the outputs did not change.
 Usage (from backend/): python3 tests/fixtures/make_baseline.py tests/fixtures/scenario_baseline.json
 """
 import json

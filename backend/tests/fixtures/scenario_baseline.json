@@ -12,45 +12,73 @@
     "department": "water",
     "escalation_level": 0,
     "id": "inc_001",
-    "lat": 12.9756,
-    "lng": 77.6066,
+    "lat": 28.9906486,
+    "lng": 77.0367249,
+    "parent_incident_id": null,
+    "plan_version": 1,
+    "related_incident_ids": [],
+    "report_ids": [
+     "rep_001"
+    ],
+    "severity": 5,
+    "sla_state": "on_track",
+    "status": "pending_verification",
+    "title": "Water pipeline burst on the road outside Civil Hospital,...",
+    "verification": "unverified"
+   },
+   {
+    "assigned_resource_id": "res_water_1",
+    "at_risk": true,
+    "category": "sewage",
+    "child_incident_ids": [],
+    "completed_at": null,
+    "created_at": "2026-10-27T09:05:00Z",
+    "deadline": "2026-10-27T21:05:00Z",
+    "department": "water",
+    "escalation_level": 0,
+    "id": "inc_002",
+    "lat": 28.9973644,
+    "lng": 77.0233632,
+    "parent_incident_id": null,
+    "plan_version": 1,
+    "related_incident_ids": [
+     "inc_003"
+    ],
+    "report_ids": [
+     "rep_002"
+    ],
+    "severity": 4,
+    "sla_state": "at_risk",
+    "status": "assigned",
+    "title": "Sewage overflowing from a manhole at the Sonipat bus stan...",
+    "verification": "unverified"
+   },
+   {
+    "assigned_resource_id": "res_roads_2",
+    "at_risk": false,
+    "category": "pothole",
+    "child_incident_ids": [],
+    "completed_at": null,
+    "created_at": "2026-10-27T09:12:00Z",
+    "deadline": "2026-10-29T09:12:00Z",
+    "department": "roads",
+    "escalation_level": 0,
+    "id": "inc_003",
+    "lat": 28.9973644,
+    "lng": 77.0252119,
     "parent_incident_id": null,
     "plan_version": 1,
     "related_incident_ids": [
      "inc_002"
     ],
     "report_ids": [
-     "rep_001",
-     "rep_002"
-    ],
-    "severity": 4,
-    "status": "pending_verification",
-    "title": "Water main burst near the MG Road metro station exit, wat..."
-   },
-   {
-    "assigned_resource_id": "res_roads_1",
-    "at_risk": false,
-    "category": "pothole",
-    "child_incident_ids": [],
-    "completed_at": null,
-    "created_at": "2026-10-27T09:10:00Z",
-    "deadline": "2026-10-29T09:10:00Z",
-    "department": "roads",
-    "escalation_level": 0,
-    "id": "inc_002",
-    "lat": 12.9738,
-    "lng": 77.607,
-    "parent_incident_id": null,
-    "plan_version": 1,
-    "related_incident_ids": [
-     "inc_001"
-    ],
-    "report_ids": [
      "rep_003"
     ],
     "severity": 3,
+    "sla_state": "on_track",
     "status": "assigned",
-    "title": "Road caving in on MG Road near the Brigade Road junction"
+    "title": "Road caving in on NH352A just past the Sonipat bus stand,...",
+    "verification": "unverified"
    },
    {
     "assigned_resource_id": "res_elec_1",
@@ -62,9 +90,9 @@
     "deadline": "2026-10-28T09:15:00Z",
     "department": "electrical",
     "escalation_level": 0,
-    "id": "inc_003",
-    "lat": 12.9754,
-    "lng": 77.6038,
+    "id": "inc_004",
+    "lat": 28.983553,
+    "lng": 77.0904885,
     "parent_incident_id": null,
     "plan_version": 1,
     "related_incident_ids": [],
@@ -73,22 +101,24 @@
      "rep_005"
     ],
     "severity": 2,
+    "sla_state": "on_track",
     "status": "in_progress",
-    "title": "Streetlights out along Church Street"
+    "title": "Streetlights out on the GT Road service lane by the Rishi...",
+    "verification": "corroborated"
    },
    {
-    "assigned_resource_id": null,
+    "assigned_resource_id": "res_gen_1",
     "at_risk": false,
-    "category": "garbage",
+    "category": "other",
     "child_incident_ids": [],
     "completed_at": null,
-    "created_at": "2026-10-27T09:25:00Z",
-    "deadline": "2026-10-28T09:25:00Z",
-    "department": "sanitation",
-    "escalation_level": 1,
-    "id": "inc_004",
-    "lat": 12.972,
-    "lng": 77.6075,
+    "created_at": "2026-10-27T09:30:00Z",
+    "deadline": "2026-10-30T09:30:00Z",
+    "department": "general",
+    "escalation_level": 0,
+    "id": "inc_005",
+    "lat": 28.9595818,
+    "lng": 77.0950598,
     "parent_incident_id": null,
     "plan_version": 1,
     "related_incident_ids": [],
@@ -96,33 +126,35 @@
      "rep_006"
     ],
     "severity": 2,
-    "status": "escalated",
-    "title": "Garbage piling up on Brigade Road for three days"
+    "sla_state": "on_track",
+    "status": "assigned",
+    "title": "Tree fallen across the Bahalgarh road after last night's...",
+    "verification": "unverified"
    },
    {
-    "assigned_resource_id": "res_water_1",
-    "at_risk": true,
-    "category": "sewage",
+    "assigned_resource_id": "res_roads_1",
+    "at_risk": false,
+    "category": "pothole",
     "child_incident_ids": [],
     "completed_at": null,
-    "created_at": "2026-10-27T09:30:00Z",
-    "deadline": "2026-10-27T21:30:00Z",
-    "department": "water",
+    "created_at": "2026-10-27T09:40:00Z",
+    "deadline": "2026-10-29T09:40:00Z",
+    "department": "roads",
     "escalation_level": 0,
-    "id": "inc_005",
-    "lat": 12.9698,
-    "lng": 77.6042,
+    "id": "inc_006",
+    "lat": 28.9591327,
+    "lng": 77.0965998,
     "parent_incident_id": null,
     "plan_version": 1,
-    "related_incident_ids": [
-     "inc_006"
-    ],
+    "related_incident_ids": [],
     "report_ids": [
      "rep_007"
     ],
-    "severity": 4,
+    "severity": 3,
+    "sla_state": "on_track",
     "status": "assigned",
-    "title": "Sewage overflowing on Residency Road near the junction"
+    "title": "Row of potholes on the GT Road stretch at Bahalgarh, wate...",
+    "verification": "unverified"
    },
    {
     "assigned_resource_id": "res_water_1",
@@ -134,20 +166,20 @@
     "deadline": "2026-10-27T21:55:00Z",
     "department": "water",
     "escalation_level": 0,
-    "id": "inc_006",
-    "lat": 12.9706,
-    "lng": 77.6048,
+    "id": "inc_007",
+    "lat": 28.9809479,
+    "lng": 77.0904885,
     "parent_incident_id": null,
     "plan_version": 1,
-    "related_incident_ids": [
-     "inc_005"
-    ],
+    "related_incident_ids": [],
     "report_ids": [
      "rep_008"
     ],
     "severity": 4,
+    "sla_state": "on_track",
     "status": "assigned",
-    "title": "Water leaking from a pipe on Residency Road"
+    "title": "Water line leaking under the GT Road service lane south o...",
+    "verification": "unverified"
    },
    {
     "assigned_resource_id": null,
@@ -159,18 +191,171 @@
     "deadline": "2026-10-28T10:00:00Z",
     "department": "sanitation",
     "escalation_level": 1,
-    "id": "inc_007",
-    "lat": 12.9728,
-    "lng": 77.601,
+    "id": "inc_008",
+    "lat": 29.0396149,
+    "lng": 77.0894535,
     "parent_incident_id": null,
     "plan_version": 1,
     "related_incident_ids": [],
     "report_ids": [
-     "rep_009"
+     "rep_009",
+     "rep_010"
     ],
     "severity": 2,
+    "sla_state": "on_track",
     "status": "escalated",
-    "title": "Overflowing bins on St Marks Road"
+    "title": "Garbage dumped behind the Murthal dhabas on GT Road for t...",
+    "verification": "corroborated"
+   },
+   {
+    "assigned_resource_id": "res_water_1",
+    "at_risk": false,
+    "category": "sewage",
+    "child_incident_ids": [],
+    "completed_at": null,
+    "created_at": "2026-10-27T10:10:00Z",
+    "deadline": "2026-10-27T22:10:00Z",
+    "department": "water",
+    "escalation_level": 0,
+    "id": "inc_009",
+    "lat": 29.0382674,
+    "lng": 77.0890425,
+    "parent_incident_id": null,
+    "plan_version": 1,
+    "related_incident_ids": [],
+    "report_ids": [
+     "rep_011"
+    ],
+    "severity": 4,
+    "sla_state": "on_track",
+    "status": "assigned",
+    "title": "Drain choked behind the Murthal dhabas, dirty water spill...",
+    "verification": "unverified"
+   },
+   {
+    "assigned_resource_id": "res_roads_2",
+    "at_risk": false,
+    "category": "pothole",
+    "child_incident_ids": [],
+    "completed_at": null,
+    "created_at": "2026-10-27T10:15:00Z",
+    "deadline": "2026-10-29T10:15:00Z",
+    "department": "roads",
+    "escalation_level": 0,
+    "id": "inc_010",
+    "lat": 29.0265284,
+    "lng": 77.0743072,
+    "parent_incident_id": null,
+    "plan_version": 1,
+    "related_incident_ids": [],
+    "report_ids": [
+     "rep_012"
+    ],
+    "severity": 4,
+    "sla_state": "on_track",
+    "status": "assigned",
+    "title": "Deep pothole at Murthal Chowk on SH20, a scooter nearly h...",
+    "verification": "unverified"
+   },
+   {
+    "assigned_resource_id": null,
+    "at_risk": false,
+    "category": "garbage",
+    "child_incident_ids": [],
+    "completed_at": null,
+    "created_at": "2026-10-27T10:20:00Z",
+    "deadline": "2026-10-28T10:20:00Z",
+    "department": "sanitation",
+    "escalation_level": 1,
+    "id": "inc_011",
+    "lat": 28.9898429,
+    "lng": 77.0177344,
+    "parent_incident_id": null,
+    "plan_version": 1,
+    "related_incident_ids": [],
+    "report_ids": [
+     "rep_013"
+    ],
+    "severity": 2,
+    "sla_state": "on_track",
+    "status": "escalated",
+    "title": "Garbage piled along the road outside Sonipat Junction rai...",
+    "verification": "unverified"
+   },
+   {
+    "assigned_resource_id": "res_water_1",
+    "at_risk": false,
+    "category": "sewage",
+    "child_incident_ids": [],
+    "completed_at": null,
+    "created_at": "2026-10-27T10:25:00Z",
+    "deadline": "2026-10-27T22:25:00Z",
+    "department": "water",
+    "escalation_level": 0,
+    "id": "inc_012",
+    "lat": 28.9891243,
+    "lng": 77.017529,
+    "parent_incident_id": null,
+    "plan_version": 1,
+    "related_incident_ids": [],
+    "report_ids": [
+     "rep_014"
+    ],
+    "severity": 4,
+    "sla_state": "on_track",
+    "status": "assigned",
+    "title": "Open drain overflowing next to the station road, smell ev...",
+    "verification": "unverified"
+   },
+   {
+    "assigned_resource_id": "res_elec_1",
+    "at_risk": false,
+    "category": "streetlight",
+    "child_incident_ids": [],
+    "completed_at": null,
+    "created_at": "2026-10-27T10:30:00Z",
+    "deadline": "2026-10-28T10:30:00Z",
+    "department": "electrical",
+    "escalation_level": 0,
+    "id": "inc_013",
+    "lat": 29.000174,
+    "lng": 77.0395075,
+    "parent_incident_id": null,
+    "plan_version": 1,
+    "related_incident_ids": [],
+    "report_ids": [
+     "rep_015"
+    ],
+    "severity": 2,
+    "sla_state": "on_track",
+    "status": "assigned",
+    "title": "Streetlights not working on the Sector 15 market road for...",
+    "verification": "unverified"
+   },
+   {
+    "assigned_resource_id": "res_water_1",
+    "at_risk": false,
+    "category": "water_leak",
+    "child_incident_ids": [],
+    "completed_at": null,
+    "created_at": "2026-10-27T10:35:00Z",
+    "deadline": "2026-10-27T22:35:00Z",
+    "department": "water",
+    "escalation_level": 0,
+    "id": "inc_014",
+    "lat": 29.001252,
+    "lng": 77.0388912,
+    "parent_incident_id": null,
+    "plan_version": 1,
+    "related_incident_ids": [],
+    "report_ids": [
+     "rep_016"
+    ],
+    "severity": 4,
+    "sla_state": "on_track",
+    "status": "assigned",
+    "title": "Supply line leaking near the Sector 15 park, water standi...",
+    "verification": "unverified"
    },
    {
     "assigned_resource_id": "res_gen_1",
@@ -178,33 +363,60 @@
     "category": "other",
     "child_incident_ids": [],
     "completed_at": null,
-    "created_at": "2026-10-27T10:05:00Z",
-    "deadline": "2026-10-30T10:05:00Z",
+    "created_at": "2026-10-27T10:40:00Z",
+    "deadline": "2026-10-30T10:40:00Z",
     "department": "general",
     "escalation_level": 0,
-    "id": "inc_008",
-    "lat": 12.9745,
-    "lng": 77.5985,
+    "id": "inc_015",
+    "lat": 28.9992757,
+    "lng": 77.0403292,
     "parent_incident_id": null,
     "plan_version": 1,
     "related_incident_ids": [],
     "report_ids": [
-     "rep_010"
+     "rep_017"
     ],
     "severity": 2,
+    "sla_state": "on_track",
     "status": "assigned",
-    "title": "Broken footpath slab on Kasturba Road near Cubbon Park"
+    "title": "Big tree uprooted on the Sector 15 inner road, branches o...",
+    "verification": "unverified"
+   },
+   {
+    "assigned_resource_id": "res_gen_1",
+    "at_risk": false,
+    "category": "other",
+    "child_incident_ids": [],
+    "completed_at": null,
+    "created_at": "2026-10-27T10:45:00Z",
+    "deadline": "2026-10-30T10:45:00Z",
+    "department": "general",
+    "escalation_level": 0,
+    "id": "inc_016",
+    "lat": 28.9953758,
+    "lng": 77.0236708,
+    "parent_incident_id": null,
+    "plan_version": 1,
+    "related_incident_ids": [],
+    "report_ids": [
+     "rep_018"
+    ],
+    "severity": 2,
+    "sla_state": "on_track",
+    "status": "assigned",
+    "title": "Drain cover broken in the Sonipat city centre footpath, o...",
+    "verification": "unverified"
    }
   ],
   "metrics": {
    "at_risk": 1,
    "baseline": {
     "false_closures_accepted": 0,
-    "work_orders": 10
+    "work_orders": 18
    },
    "coordinated_vs_independent": {
-    "coordinated_visits": 8,
-    "independent_visits": 8
+    "coordinated_visits": 16,
+    "independent_visits": 16
    },
    "crew_visits_saved": 0,
    "duplicate_work_orders_avoided": 2,
@@ -213,41 +425,45 @@
    "false_closures_caught": 0,
    "hypotheses": {
     "confirmed": 0,
-    "proposed": 2,
+    "proposed": 1,
     "rejected": 0
    },
-   "incidents": 8,
+   "incidents": 16,
    "replans": 0,
-   "reports": 10,
+   "reports": 18,
    "sla_breaches": 0,
    "verified_closures": 0
   },
   "run": {
-   "description": "Clock to 18:45: Residency Road sewage overflow flagged at risk before its deadline",
+   "description": "Clock to 18:45: Sonipat bus stand sewage overflow flagged at risk before its deadline",
    "log": [
     {
      "description": "Reset; seed crews and services; sanitation crew S1 on leave",
      "step": 1
     },
     {
-     "description": "MG Road: burst main, a duplicate report, and a related pothole at Brigade Road",
+     "description": "Sonipat city: burst main outside Civil Hospital; sewage overflow at the bus stand and a related pothole",
      "step": 2
     },
     {
-     "description": "Church Street lights out (two reports); Brigade Road garbage with no sanitation crew",
+     "description": "GT Road (NH-44): lights out at the Rishihood University gate (two reports); fallen tree and potholes at Bahalgarh; a leak on the service lane",
      "step": 3
     },
     {
-     "description": "Residency Road sewage with a related leak; St Marks Road bins (no crew); Kasturba Road slab",
+     "description": "Murthal: garbage behind the dhabas (two reports, sanitation crew on leave), a choked drain, a pothole at Murthal Chowk",
      "step": 4
     },
     {
-     "description": "Morning work: MG Road main repaired (awaiting proof); Church Street lights crew starts",
+     "description": "Sonipat: railway station garbage (no sanitation crew) and open drain; Sector 15 lights, leak and a fallen tree; broken drain cover in the city centre",
      "step": 5
     },
     {
-     "description": "Clock to 18:45: Residency Road sewage overflow flagged at risk before its deadline",
+     "description": "Morning work: Civil Hospital main repaired (awaiting proof); university-gate lights crew starts",
      "step": 6
+    },
+    {
+     "description": "Clock to 18:45: Sonipat bus stand sewage overflow flagged at risk before its deadline",
+     "step": 7
     }
    ],
    "state": {
@@ -263,45 +479,73 @@
       "department": "water",
       "escalation_level": 0,
       "id": "inc_001",
-      "lat": 12.9756,
-      "lng": 77.6066,
+      "lat": 28.9906486,
+      "lng": 77.0367249,
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [],
+      "report_ids": [
+       "rep_001"
+      ],
+      "severity": 5,
+      "sla_state": "on_track",
+      "status": "pending_verification",
+      "title": "Water pipeline burst on the road outside Civil Hospital,...",
+      "verification": "unverified"
+     },
+     {
+      "assigned_resource_id": "res_water_1",
+      "at_risk": true,
+      "category": "sewage",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:05:00Z",
+      "deadline": "2026-10-27T21:05:00Z",
+      "department": "water",
+      "escalation_level": 0,
+      "id": "inc_002",
+      "lat": 28.9973644,
+      "lng": 77.0233632,
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [
+       "inc_003"
+      ],
+      "report_ids": [
+       "rep_002"
+      ],
+      "severity": 4,
+      "sla_state": "at_risk",
+      "status": "assigned",
+      "title": "Sewage overflowing from a manhole at the Sonipat bus stan...",
+      "verification": "unverified"
+     },
+     {
+      "assigned_resource_id": "res_roads_2",
+      "at_risk": false,
+      "category": "pothole",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:12:00Z",
+      "deadline": "2026-10-29T09:12:00Z",
+      "department": "roads",
+      "escalation_level": 0,
+      "id": "inc_003",
+      "lat": 28.9973644,
+      "lng": 77.0252119,
       "parent_incident_id": null,
       "plan_version": 1,
       "related_incident_ids": [
        "inc_002"
       ],
       "report_ids": [
-       "rep_001",
-       "rep_002"
-      ],
-      "severity": 4,
-      "status": "pending_verification",
-      "title": "Water main burst near the MG Road metro station exit, wat..."
-     },
-     {
-      "assigned_resource_id": "res_roads_1",
-      "at_risk": false,
-      "category": "pothole",
-      "child_incident_ids": [],
-      "completed_at": null,
-      "created_at": "2026-10-27T09:10:00Z",
-      "deadline": "2026-10-29T09:10:00Z",
-      "department": "roads",
-      "escalation_level": 0,
-      "id": "inc_002",
-      "lat": 12.9738,
-      "lng": 77.607,
-      "parent_incident_id": null,
-      "plan_version": 1,
-      "related_incident_ids": [
-       "inc_001"
-      ],
-      "report_ids": [
        "rep_003"
       ],
       "severity": 3,
+      "sla_state": "on_track",
       "status": "assigned",
-      "title": "Road caving in on MG Road near the Brigade Road junction"
+      "title": "Road caving in on NH352A just past the Sonipat bus stand,...",
+      "verification": "unverified"
      },
      {
       "assigned_resource_id": "res_elec_1",
@@ -313,9 +557,9 @@
       "deadline": "2026-10-28T09:15:00Z",
       "department": "electrical",
       "escalation_level": 0,
-      "id": "inc_003",
-      "lat": 12.9754,
-      "lng": 77.6038,
+      "id": "inc_004",
+      "lat": 28.983553,
+      "lng": 77.0904885,
       "parent_incident_id": null,
       "plan_version": 1,
       "related_incident_ids": [],
@@ -324,22 +568,24 @@
        "rep_005"
       ],
       "severity": 2,
+      "sla_state": "on_track",
       "status": "in_progress",
-      "title": "Streetlights out along Church Street"
+      "title": "Streetlights out on the GT Road service lane by the Rishi...",
+      "verification": "corroborated"
      },
      {
-      "assigned_resource_id": null,
+      "assigned_resource_id": "res_gen_1",
       "at_risk": false,
-      "category": "garbage",
+      "category": "other",
       "child_incident_ids": [],
       "completed_at": null,
-      "created_at": "2026-10-27T09:25:00Z",
-      "deadline": "2026-10-28T09:25:00Z",
-      "department": "sanitation",
-      "escalation_level": 1,
-      "id": "inc_004",
-      "lat": 12.972,
-      "lng": 77.6075,
+      "created_at": "2026-10-27T09:30:00Z",
+      "deadline": "2026-10-30T09:30:00Z",
+      "department": "general",
+      "escalation_level": 0,
+      "id": "inc_005",
+      "lat": 28.9595818,
+      "lng": 77.0950598,
       "parent_incident_id": null,
       "plan_version": 1,
       "related_incident_ids": [],
@@ -347,33 +593,35 @@
        "rep_006"
       ],
       "severity": 2,
-      "status": "escalated",
-      "title": "Garbage piling up on Brigade Road for three days"
+      "sla_state": "on_track",
+      "status": "assigned",
+      "title": "Tree fallen across the Bahalgarh road after last night's...",
+      "verification": "unverified"
      },
      {
-      "assigned_resource_id": "res_water_1",
-      "at_risk": true,
-      "category": "sewage",
+      "assigned_resource_id": "res_roads_1",
+      "at_risk": false,
+      "category": "pothole",
       "child_incident_ids": [],
       "completed_at": null,
-      "created_at": "2026-10-27T09:30:00Z",
-      "deadline": "2026-10-27T21:30:00Z",
-      "department": "water",
+      "created_at": "2026-10-27T09:40:00Z",
+      "deadline": "2026-10-29T09:40:00Z",
+      "department": "roads",
       "escalation_level": 0,
-      "id": "inc_005",
-      "lat": 12.9698,
-      "lng": 77.6042,
+      "id": "inc_006",
+      "lat": 28.9591327,
+      "lng": 77.0965998,
       "parent_incident_id": null,
       "plan_version": 1,
-      "related_incident_ids": [
-       "inc_006"
-      ],
+      "related_incident_ids": [],
       "report_ids": [
        "rep_007"
       ],
-      "severity": 4,
+      "severity": 3,
+      "sla_state": "on_track",
       "status": "assigned",
-      "title": "Sewage overflowing on Residency Road near the junction"
+      "title": "Row of potholes on the GT Road stretch at Bahalgarh, wate...",
+      "verification": "unverified"
      },
      {
       "assigned_resource_id": "res_water_1",
@@ -385,20 +633,20 @@
       "deadline": "2026-10-27T21:55:00Z",
       "department": "water",
       "escalation_level": 0,
-      "id": "inc_006",
-      "lat": 12.9706,
-      "lng": 77.6048,
+      "id": "inc_007",
+      "lat": 28.9809479,
+      "lng": 77.0904885,
       "parent_incident_id": null,
       "plan_version": 1,
-      "related_incident_ids": [
-       "inc_005"
-      ],
+      "related_incident_ids": [],
       "report_ids": [
        "rep_008"
       ],
       "severity": 4,
+      "sla_state": "on_track",
       "status": "assigned",
-      "title": "Water leaking from a pipe on Residency Road"
+      "title": "Water line leaking under the GT Road service lane south o...",
+      "verification": "unverified"
      },
      {
       "assigned_resource_id": null,
@@ -410,18 +658,171 @@
       "deadline": "2026-10-28T10:00:00Z",
       "department": "sanitation",
       "escalation_level": 1,
-      "id": "inc_007",
-      "lat": 12.9728,
-      "lng": 77.601,
+      "id": "inc_008",
+      "lat": 29.0396149,
+      "lng": 77.0894535,
       "parent_incident_id": null,
       "plan_version": 1,
       "related_incident_ids": [],
       "report_ids": [
-       "rep_009"
+       "rep_009",
+       "rep_010"
       ],
       "severity": 2,
+      "sla_state": "on_track",
       "status": "escalated",
-      "title": "Overflowing bins on St Marks Road"
+      "title": "Garbage dumped behind the Murthal dhabas on GT Road for t...",
+      "verification": "corroborated"
+     },
+     {
+      "assigned_resource_id": "res_water_1",
+      "at_risk": false,
+      "category": "sewage",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T10:10:00Z",
+      "deadline": "2026-10-27T22:10:00Z",
+      "department": "water",
+      "escalation_level": 0,
+      "id": "inc_009",
+      "lat": 29.0382674,
+      "lng": 77.0890425,
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [],
+      "report_ids": [
+       "rep_011"
+      ],
+      "severity": 4,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "title": "Drain choked behind the Murthal dhabas, dirty water spill...",
+      "verification": "unverified"
+     },
+     {
+      "assigned_resource_id": "res_roads_2",
+      "at_risk": false,
+      "category": "pothole",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T10:15:00Z",
+      "deadline": "2026-10-29T10:15:00Z",
+      "department": "roads",
+      "escalation_level": 0,
+      "id": "inc_010",
+      "lat": 29.0265284,
+      "lng": 77.0743072,
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [],
+      "report_ids": [
+       "rep_012"
+      ],
+      "severity": 4,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "title": "Deep pothole at Murthal Chowk on SH20, a scooter nearly h...",
+      "verification": "unverified"
+     },
+     {
+      "assigned_resource_id": null,
+      "at_risk": false,
+      "category": "garbage",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T10:20:00Z",
+      "deadline": "2026-10-28T10:20:00Z",
+      "department": "sanitation",
+      "escalation_level": 1,
+      "id": "inc_011",
+      "lat": 28.9898429,
+      "lng": 77.0177344,
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [],
+      "report_ids": [
+       "rep_013"
+      ],
+      "severity": 2,
+      "sla_state": "on_track",
+      "status": "escalated",
+      "title": "Garbage piled along the road outside Sonipat Junction rai...",
+      "verification": "unverified"
+     },
+     {
+      "assigned_resource_id": "res_water_1",
+      "at_risk": false,
+      "category": "sewage",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T10:25:00Z",
+      "deadline": "2026-10-27T22:25:00Z",
+      "department": "water",
+      "escalation_level": 0,
+      "id": "inc_012",
+      "lat": 28.9891243,
+      "lng": 77.017529,
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [],
+      "report_ids": [
+       "rep_014"
+      ],
+      "severity": 4,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "title": "Open drain overflowing next to the station road, smell ev...",
+      "verification": "unverified"
+     },
+     {
+      "assigned_resource_id": "res_elec_1",
+      "at_risk": false,
+      "category": "streetlight",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T10:30:00Z",
+      "deadline": "2026-10-28T10:30:00Z",
+      "department": "electrical",
+      "escalation_level": 0,
+      "id": "inc_013",
+      "lat": 29.000174,
+      "lng": 77.0395075,
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [],
+      "report_ids": [
+       "rep_015"
+      ],
+      "severity": 2,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "title": "Streetlights not working on the Sector 15 market road for...",
+      "verification": "unverified"
+     },
+     {
+      "assigned_resource_id": "res_water_1",
+      "at_risk": false,
+      "category": "water_leak",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T10:35:00Z",
+      "deadline": "2026-10-27T22:35:00Z",
+      "department": "water",
+      "escalation_level": 0,
+      "id": "inc_014",
+      "lat": 29.001252,
+      "lng": 77.0388912,
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [],
+      "report_ids": [
+       "rep_016"
+      ],
+      "severity": 4,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "title": "Supply line leaking near the Sector 15 park, water standi...",
+      "verification": "unverified"
      },
      {
       "assigned_resource_id": "res_gen_1",
@@ -429,33 +830,60 @@
       "category": "other",
       "child_incident_ids": [],
       "completed_at": null,
-      "created_at": "2026-10-27T10:05:00Z",
-      "deadline": "2026-10-30T10:05:00Z",
+      "created_at": "2026-10-27T10:40:00Z",
+      "deadline": "2026-10-30T10:40:00Z",
       "department": "general",
       "escalation_level": 0,
-      "id": "inc_008",
-      "lat": 12.9745,
-      "lng": 77.5985,
+      "id": "inc_015",
+      "lat": 28.9992757,
+      "lng": 77.0403292,
       "parent_incident_id": null,
       "plan_version": 1,
       "related_incident_ids": [],
       "report_ids": [
-       "rep_010"
+       "rep_017"
       ],
       "severity": 2,
+      "sla_state": "on_track",
       "status": "assigned",
-      "title": "Broken footpath slab on Kasturba Road near Cubbon Park"
+      "title": "Big tree uprooted on the Sector 15 inner road, branches o...",
+      "verification": "unverified"
+     },
+     {
+      "assigned_resource_id": "res_gen_1",
+      "at_risk": false,
+      "category": "other",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T10:45:00Z",
+      "deadline": "2026-10-30T10:45:00Z",
+      "department": "general",
+      "escalation_level": 0,
+      "id": "inc_016",
+      "lat": 28.9953758,
+      "lng": 77.0236708,
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [],
+      "report_ids": [
+       "rep_018"
+      ],
+      "severity": 2,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "title": "Drain cover broken in the Sonipat city centre footpath, o...",
+      "verification": "unverified"
      }
     ],
     "metrics": {
      "at_risk": 1,
      "baseline": {
       "false_closures_accepted": 0,
-      "work_orders": 10
+      "work_orders": 18
      },
      "coordinated_vs_independent": {
-      "coordinated_visits": 8,
-      "independent_visits": 8
+      "coordinated_visits": 16,
+      "independent_visits": 16
      },
      "crew_visits_saved": 0,
      "duplicate_work_orders_avoided": 2,
@@ -464,12 +892,12 @@
      "false_closures_caught": 0,
      "hypotheses": {
       "confirmed": 0,
-      "proposed": 2,
+      "proposed": 1,
       "rejected": 0
      },
-     "incidents": 8,
+     "incidents": 16,
      "replans": 0,
-     "reports": 10,
+     "reports": 18,
      "sla_breaches": 0,
      "verified_closures": 0
     },
@@ -477,51 +905,57 @@
     "resources": [
      {
       "active_incident_ids": [
-       "inc_003"
+       "inc_004",
+       "inc_013"
       ],
       "available": true,
       "department": "electrical",
       "id": "res_elec_1",
       "location": {
-       "lat": 12.98,
-       "lng": 77.605
+       "lat": 28.9875937,
+       "lng": 77.0907966
       },
       "name": "Electrical Crew E1"
      },
      {
       "active_incident_ids": [
-       "inc_008"
+       "inc_005",
+       "inc_015",
+       "inc_016"
       ],
       "available": true,
       "department": "general",
       "id": "res_gen_1",
       "location": {
-       "lat": 12.97,
-       "lng": 77.598
+       "lat": 28.9775937,
+       "lng": 77.0829988
       },
       "name": "General Works Crew G1"
      },
      {
       "active_incident_ids": [
-       "inc_002"
+       "inc_006"
       ],
       "available": true,
       "department": "roads",
       "id": "res_roads_1",
       "location": {
-       "lat": 12.974,
-       "lng": 77.6
+       "lat": 28.9815937,
+       "lng": 77.0852267
       },
       "name": "Roads Crew R1"
      },
      {
-      "active_incident_ids": [],
+      "active_incident_ids": [
+       "inc_003",
+       "inc_010"
+      ],
       "available": true,
       "department": "roads",
       "id": "res_roads_2",
       "location": {
-       "lat": 12.99,
-       "lng": 77.58
+       "lat": 28.9975937,
+       "lng": 77.0629471
       },
       "name": "Roads Crew R2"
      },
@@ -531,29 +965,32 @@
       "department": "sanitation",
       "id": "res_sanit_1",
       "location": {
-       "lat": 12.978,
-       "lng": 77.595
+       "lat": 28.9855937,
+       "lng": 77.0796568
       },
       "name": "Sanitation Crew S1"
      },
      {
       "active_incident_ids": [
        "inc_001",
-       "inc_005",
-       "inc_006"
+       "inc_002",
+       "inc_007",
+       "inc_009",
+       "inc_012",
+       "inc_014"
       ],
       "available": true,
       "department": "water",
       "id": "res_water_1",
       "location": {
-       "lat": 12.972,
-       "lng": 77.61
+       "lat": 28.9795937,
+       "lng": 77.0963665
       },
       "name": "Water Crew W1"
      }
     ]
    },
-   "step": 6
+   "step": 7
   }
  },
  "golden": {
@@ -569,8 +1006,8 @@
     "department": "water",
     "escalation_level": 1,
     "id": "inc_001",
-    "lat": 12.9756,
-    "lng": 77.605,
+    "lat": 28.9831937,
+    "lng": 77.0907966,
     "parent_incident_id": null,
     "plan_version": 2,
     "related_incident_ids": [
@@ -581,8 +1018,10 @@
      "rep_002"
     ],
     "severity": 5,
+    "sla_state": null,
     "status": "verified_closed",
-    "title": "Water gushing from a broken pipe on MG Road near the metr..."
+    "title": "Water gushing from a broken pipe on GT Road near the Rish...",
+    "verification": "confirmed_on_site"
    },
    {
     "assigned_resource_id": "res_roads_1",
@@ -595,8 +1034,8 @@
     "department": "roads",
     "escalation_level": 1,
     "id": "inc_002",
-    "lat": 12.97335,
-    "lng": 77.605,
+    "lat": 28.9809437,
+    "lng": 77.0907966,
     "parent_incident_id": null,
     "plan_version": 1,
     "related_incident_ids": [
@@ -606,8 +1045,10 @@
      "rep_003"
     ],
     "severity": 3,
+    "sla_state": "breached",
     "status": "escalated",
-    "title": "Deep pothole forming on MG Road, road surface sinking"
+    "title": "Deep pothole forming on GT Road (NH-44), road surface sin...",
+    "verification": "unverified"
    }
   ],
   "metrics": {
@@ -644,7 +1085,7 @@
      "step": 1
     },
     {
-     "description": "Report A: water leak at MG Road -> new incident I1, assigned to water crew W1",
+     "description": "Report A: water leak on GT Road (NH-44) by Rishihood University -> new incident I1, assigned to water crew W1",
      "step": 2
     },
     {
@@ -693,8 +1134,8 @@
       "department": "water",
       "escalation_level": 1,
       "id": "inc_001",
-      "lat": 12.9756,
-      "lng": 77.605,
+      "lat": 28.9831937,
+      "lng": 77.0907966,
       "parent_incident_id": null,
       "plan_version": 2,
       "related_incident_ids": [
@@ -705,8 +1146,10 @@
        "rep_002"
       ],
       "severity": 5,
+      "sla_state": null,
       "status": "verified_closed",
-      "title": "Water gushing from a broken pipe on MG Road near the metr..."
+      "title": "Water gushing from a broken pipe on GT Road near the Rish...",
+      "verification": "confirmed_on_site"
      },
      {
       "assigned_resource_id": "res_roads_1",
@@ -719,8 +1162,8 @@
       "department": "roads",
       "escalation_level": 1,
       "id": "inc_002",
-      "lat": 12.97335,
-      "lng": 77.605,
+      "lat": 28.9809437,
+      "lng": 77.0907966,
       "parent_incident_id": null,
       "plan_version": 1,
       "related_incident_ids": [
@@ -730,8 +1173,10 @@
        "rep_003"
       ],
       "severity": 3,
+      "sla_state": "breached",
       "status": "escalated",
-      "title": "Deep pothole forming on MG Road, road surface sinking"
+      "title": "Deep pothole forming on GT Road (NH-44), road surface sin...",
+      "verification": "unverified"
      }
     ],
     "metrics": {
@@ -768,8 +1213,8 @@
       "department": "electrical",
       "id": "res_elec_1",
       "location": {
-       "lat": 12.98,
-       "lng": 77.605
+       "lat": 28.9875937,
+       "lng": 77.0907966
       },
       "name": "Electrical Crew E1"
      },
@@ -779,8 +1224,8 @@
       "department": "general",
       "id": "res_gen_1",
       "location": {
-       "lat": 12.97,
-       "lng": 77.598
+       "lat": 28.9775937,
+       "lng": 77.0829988
       },
       "name": "General Works Crew G1"
      },
@@ -792,8 +1237,8 @@
       "department": "roads",
       "id": "res_roads_1",
       "location": {
-       "lat": 12.974,
-       "lng": 77.6
+       "lat": 28.9815937,
+       "lng": 77.0852267
       },
       "name": "Roads Crew R1"
      },
@@ -803,8 +1248,8 @@
       "department": "roads",
       "id": "res_roads_2",
       "location": {
-       "lat": 12.99,
-       "lng": 77.58
+       "lat": 28.9975937,
+       "lng": 77.0629471
       },
       "name": "Roads Crew R2"
      },
@@ -814,8 +1259,8 @@
       "department": "sanitation",
       "id": "res_sanit_1",
       "location": {
-       "lat": 12.978,
-       "lng": 77.595
+       "lat": 28.9855937,
+       "lng": 77.0796568
       },
       "name": "Sanitation Crew S1"
      },
@@ -825,8 +1270,8 @@
       "department": "water",
       "id": "res_water_1",
       "location": {
-       "lat": 12.972,
-       "lng": 77.61
+       "lat": 28.9795937,
+       "lng": 77.0963665
       },
       "name": "Water Crew W1"
      }
@@ -851,8 +1296,8 @@
     "department": "water",
     "escalation_level": 0,
     "id": "inc_001",
-    "lat": 12.9756,
-    "lng": 77.605,
+    "lat": 29.0265284,
+    "lng": 77.0736908,
     "parent_incident_id": null,
     "plan_version": 1,
     "related_incident_ids": [
@@ -863,8 +1308,10 @@
      "rep_001"
     ],
     "severity": 4,
+    "sla_state": null,
     "status": "verified_closed",
-    "title": "Water bubbling up through the road on MG Road near the ju..."
+    "title": "Water bubbling up through the road at Murthal Chowk",
+    "verification": "confirmed_on_site"
    },
    {
     "assigned_resource_id": null,
@@ -877,8 +1324,8 @@
     "department": "roads",
     "escalation_level": 0,
     "id": "inc_002",
-    "lat": 12.97668,
-    "lng": 77.605,
+    "lat": 29.0276084,
+    "lng": 77.0736908,
     "parent_incident_id": "inc_001",
     "plan_version": 2,
     "related_incident_ids": [
@@ -888,8 +1335,10 @@
      "rep_002"
     ],
     "severity": 3,
+    "sla_state": null,
     "status": "verified_closed",
-    "title": "Road surface sinking and a pothole opening near the MG Ro..."
+    "title": "Road surface sinking and a pothole opening near Murthal C...",
+    "verification": "unverified"
    },
    {
     "assigned_resource_id": null,
@@ -902,8 +1351,8 @@
     "department": "roads",
     "escalation_level": 0,
     "id": "inc_003",
-    "lat": 12.97308,
-    "lng": 77.605,
+    "lat": 29.0240084,
+    "lng": 77.0736908,
     "parent_incident_id": "inc_001",
     "plan_version": 2,
     "related_incident_ids": [
@@ -913,8 +1362,10 @@
      "rep_003"
     ],
     "severity": 3,
+    "sla_state": null,
     "status": "verified_closed",
-    "title": "Pothole at the MG Road bus stop, buses swerving around it"
+    "title": "Pothole at the Murthal Chowk bus stop, buses swerving aro...",
+    "verification": "confirmed_on_site"
    }
   ],
   "metrics": {
@@ -951,7 +1402,7 @@
      "step": 1
     },
     {
-     "description": "Report A: water bubbling through MG Road -> leak incident, water crew assigned",
+     "description": "Report A: water bubbling through the road at Murthal Chowk -> leak incident, water crew assigned",
      "step": 2
     },
     {
@@ -995,8 +1446,8 @@
       "department": "water",
       "escalation_level": 0,
       "id": "inc_001",
-      "lat": 12.9756,
-      "lng": 77.605,
+      "lat": 29.0265284,
+      "lng": 77.0736908,
       "parent_incident_id": null,
       "plan_version": 1,
       "related_incident_ids": [
@@ -1007,8 +1458,10 @@
        "rep_001"
       ],
       "severity": 4,
+      "sla_state": null,
       "status": "verified_closed",
-      "title": "Water bubbling up through the road on MG Road near the ju..."
+      "title": "Water bubbling up through the road at Murthal Chowk",
+      "verification": "confirmed_on_site"
      },
      {
       "assigned_resource_id": null,
@@ -1021,8 +1474,8 @@
       "department": "roads",
       "escalation_level": 0,
       "id": "inc_002",
-      "lat": 12.97668,
-      "lng": 77.605,
+      "lat": 29.0276084,
+      "lng": 77.0736908,
       "parent_incident_id": "inc_001",
       "plan_version": 2,
       "related_incident_ids": [
@@ -1032,8 +1485,10 @@
        "rep_002"
       ],
       "severity": 3,
+      "sla_state": null,
       "status": "verified_closed",
-      "title": "Road surface sinking and a pothole opening near the MG Ro..."
+      "title": "Road surface sinking and a pothole opening near Murthal C...",
+      "verification": "unverified"
      },
      {
       "assigned_resource_id": null,
@@ -1046,8 +1501,8 @@
       "department": "roads",
       "escalation_level": 0,
       "id": "inc_003",
-      "lat": 12.97308,
-      "lng": 77.605,
+      "lat": 29.0240084,
+      "lng": 77.0736908,
       "parent_incident_id": "inc_001",
       "plan_version": 2,
       "related_incident_ids": [
@@ -1057,8 +1512,10 @@
        "rep_003"
       ],
       "severity": 3,
+      "sla_state": null,
       "status": "verified_closed",
-      "title": "Pothole at the MG Road bus stop, buses swerving around it"
+      "title": "Pothole at the Murthal Chowk bus stop, buses swerving aro...",
+      "verification": "confirmed_on_site"
      }
     ],
     "metrics": {
@@ -1095,8 +1552,8 @@
       "department": "electrical",
       "id": "res_elec_1",
       "location": {
-       "lat": 12.98,
-       "lng": 77.605
+       "lat": 29.0309284,
+       "lng": 77.0736908
       },
       "name": "Electrical Crew E1"
      },
@@ -1106,8 +1563,8 @@
       "department": "general",
       "id": "res_gen_1",
       "location": {
-       "lat": 12.97,
-       "lng": 77.598
+       "lat": 29.0209284,
+       "lng": 77.0658897
       },
       "name": "General Works Crew G1"
      },
@@ -1117,8 +1574,8 @@
       "department": "roads",
       "id": "res_roads_1",
       "location": {
-       "lat": 12.974,
-       "lng": 77.6
+       "lat": 29.0249284,
+       "lng": 77.0681186
       },
       "name": "Roads Crew R1"
      },
@@ -1128,8 +1585,8 @@
       "department": "roads",
       "id": "res_roads_2",
       "location": {
-       "lat": 12.99,
-       "lng": 77.58
+       "lat": 29.0409284,
+       "lng": 77.0458296
       },
       "name": "Roads Crew R2"
      },
@@ -1139,8 +1596,8 @@
       "department": "sanitation",
       "id": "res_sanit_1",
       "location": {
-       "lat": 12.978,
-       "lng": 77.595
+       "lat": 29.0289284,
+       "lng": 77.0625463
       },
       "name": "Sanitation Crew S1"
      },
@@ -1150,8 +1607,8 @@
       "department": "water",
       "id": "res_water_1",
       "location": {
-       "lat": 12.972,
-       "lng": 77.61
+       "lat": 29.0229284,
+       "lng": 77.079263
       },
       "name": "Water Crew W1"
      }

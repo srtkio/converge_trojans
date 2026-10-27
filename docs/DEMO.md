@@ -26,10 +26,10 @@ reset.
 it until the fix is verified on the ground."
 **Point at:** the empty queue, and the four crews on the map: two roads, one water, one electrical.
 
-## 2. Report A: water leak on MG Road (0:20)
+## 2. Report A: water leak on GT Road, by the university gate (0:20)
 
 **Click:** Next step →.
-**Say:** "A citizen reports a water leak. CONVERGE opens incident I1 and assigns it to water crew
+**Say:** "A citizen reports a water leak on GT Road, right outside the Rishihood University gate. CONVERGE opens incident I1 and assigns it to water crew
 W1, the nearest available water crew."
 **Point at:** I1 in the queue, with the water department and the crew W1 assigned.
 
@@ -125,12 +125,12 @@ wait for proof).
 
 ### 1. Reset (0:00)
 **Click:** Reset.
-**Say:** "Now a harder case. Several complaints in one area may have one cause underneath."
+**Say:** "Now a harder case, at Murthal Chowk. Several complaints in one area may have one cause underneath."
 **Point at:** an empty queue.
 
-### 2. Report A: water bubbling through MG Road (0:15)
+### 2. Report A: water bubbling through the road at Murthal Chowk (0:15)
 **Click:** Next step →.
-**Say:** "A citizen reports water coming through the road. CONVERGE opens a leak incident and assigns
+**Say:** "A citizen reports water coming through the road at Murthal Chowk. CONVERGE opens a leak incident and assigns
 the water crew."
 **Point at:** the leak incident and its crew.
 
@@ -140,7 +140,7 @@ the water crew."
 CONVERGE links it as related to the leak."
 **Point at:** the related link on the pothole. Visits so far: 2 independent.
 
-### 4. Report C: pothole at the bus stop, 280 m away (0:45) ★
+### 4. Report C: pothole at the Murthal Chowk bus stop, 280 m away (0:45) ★
 **Click:** Next step →.
 **Say:** "A third pothole. CONVERGE now sees three complaints and a likely shared cause, and proposes
 a hypothesis: the leak is the root cause."
@@ -185,3 +185,17 @@ Open `/citizen` in a second browser window, sign in with a name and email, and f
 Go to the case link, add a note, and answer **Still broken**.
 **Point at:** the **Citizen activity** panel on the operator's **Incidents** tab. The complaint and
 the note appear with the citizen's first name, within about four seconds, and link to the case.
+
+---
+
+## Live city data for testers (Murthal–Sonipat)
+
+`POST /sim/scenario/city` loads 18 complaints along the corridor we are presenting from: the
+Rishihood University gate and Bahalgarh on GT Road (NH-44), the Murthal dhabas and Murthal Chowk, and
+in Sonipat the bus stand, Sonipat Junction railway station, Civil Hospital, Sector 15 and the city
+centre. Each complaint has a photo (CC-licensed stock photos credited in
+`backend/app/seed/photos/ATTRIBUTION.md`; they are not pictures of these exact spots) and the place
+name as its location. It shows 2 duplicate pairs, 1 root-cause hypothesis (bus stand sewage and a
+pothole 180 m away), 2 garbage incidents escalated because the sanitation crew is on leave, 1 repair
+awaiting proof (Civil Hospital main) and 1 incident at risk of missing its deadline. These are test
+data, not pitch numbers.

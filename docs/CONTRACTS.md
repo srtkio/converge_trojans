@@ -88,10 +88,27 @@ Rules (deterministic, in engine code, never in the LLM):
 ```
 Baseline = a naive system that opens one work order per report and accepts every "complete".
 
+## Demo location (Murthal / Sonipat, Haryana)
+
+All demo data is on the Murthal–Sonipat corridor. Real places (OpenStreetMap) are in
+`backend/app/places.py`; demo points are placed in metres from them (`app.engine.geo.place`), so the
+duplicate (150 m), related (400 m), nearest-crew and impact-radius decisions are the same as in the
+original layout (`tests/test_relocation.py` proves it against the pre-move run).
+
+| Place | lat, lng | Used by |
+|---|---|---|
+| Rishihood University, GT Road (NH-44) | 28.9831937, 77.0907966 | golden scenario, crew depots, default `/sim/reset` |
+| Murthal Chowk (SH20) | 29.0265284, 77.0736908 | root-cause scenario (its reset seeds the crews at the same metres from here) |
+| Murthal dhabas, Bahalgarh, Sonipat Bus Stand, Sonipat Junction, Civil Hospital, Sector 15, Sonipat city centre | see `places.py` | city dataset |
+
+City services (`/services`, simulated): Haryana Roadways Sonipat–Murthal route stop, Government
+Senior Secondary School and a Primary Health Centre access road, once by Rishihood University and once
+at Murthal Chowk (6 in total).
+
 ## Golden scenario (`/sim/scenario/golden`)
 
 1. Reset; seed resources (2 roads crews, 1 water crew, 1 electrical crew).
-2. Report A: water leak at MG Road → new incident I1, assigned to water crew W1.
+2. Report A: water leak on GT Road (NH-44) by the Rishihood University gate → new incident I1, assigned to water crew W1.
 3. Report B: same leak, 60 m away → linked `duplicate` to I1.
 4. Report C: pothole 250 m away → new incident I2, linked `related` to I1 (leak undermining road).
 5. W1 becomes unavailable → I1 replanned (no other water crew → escalated, flagged).
@@ -131,7 +148,7 @@ Shapes as posted in CHANNEL.md. Implemented on `feat/v2-rootcause`.
 | GET | `/feedback` | | `Feedback[]` newest first |
 | GET | `/feedback/summary` | | `{count, average, distribution, by_role, recent}` |
 | GET/POST | `/sim/scenario/rootcause` | `?step=N` | same shape as golden |
-| GET/POST | `/sim/scenario/city` | `?step=N` (1-6) | same shape; small-area (~1 km, MG Road) live-city dataset for user testing and the map, not pitch metrics |
+| GET/POST | `/sim/scenario/city` | `?step=N` (1-7) | same shape; live-city dataset for user testing and the map (not pitch metrics): 18 complaints along the Murthal–Sonipat corridor, each with a stock photo (`photo_url`), `location_source: "landmark"` and the real place as `location_label` |
 
 `/metrics` adds `crew_visits_saved`, `coordinated_vs_independent: {independent_visits, coordinated_visits}`,
 `hypotheses: {proposed, confirmed, rejected}`, `at_risk` (count).
