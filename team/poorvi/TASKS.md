@@ -1,3 +1,5 @@
+> **Superseded (2026-10-27):** Upoorvi is presenting, not building. See PRESENTER.md in this folder.
+
 # Poorvi — pitch and research
 
 Owner: Poorvi (`poorvig222`). Coordinator: the Claude session on the coordination branch.

@@ -1,3 +1,5 @@
+> **Superseded (2026-10-27):** Uantriksh is presenting, not building. See PRESENTER.md in this folder.
+
 # Antriksh — QA and scenario data
 
 Owner: Antriksh (`Antrikshcodes`). Coordinator: the Claude session on the coordination branch.
