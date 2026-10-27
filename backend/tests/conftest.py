@@ -1,6 +1,7 @@
 import os
 
-os.environ["CONVERGE_DB_URL"] = "sqlite://"
+# Set CONVERGE_TEST_DB_URL to run the suite against Postgres.
+os.environ["CONVERGE_DB_URL"] = os.environ.get("CONVERGE_TEST_DB_URL", "sqlite://")
 os.environ["CONVERGE_LLM"] = "off"
 
 import pytest  # noqa: E402

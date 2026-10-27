@@ -57,6 +57,14 @@ Set `ANTHROPIC_API_KEY` in `backend/.env` for LLM link explanations. Without it 
 back to deterministic rules. See `backend/.env.example` for all backend settings, including
 `CONVERGE_CORS_ORIGINS` (comma-separated frontend URLs, needed when the frontend is deployed).
 
+LLM provider: set `ANTHROPIC_API_KEY` (claude-haiku-5-5) or `GEMINI_API_KEY` (Gemini Flash, free
+tier). The LLM only writes explanation text and an advisory photo check; decisions stay rule-based.
+
+Deploy backend to Render: Dashboard → New → Blueprint → this repo (`render.yaml` creates the
+Docker web service plus a free Postgres so feedback survives restarts). Set `GEMINI_API_KEY` /
+`ANTHROPIC_API_KEY` in the dashboard, add the Vercel URL to `CONVERGE_CORS_ORIGINS`, then set the
+frontend's `NEXT_PUBLIC_API_URL` to the Render URL.
+
 Backend via Docker (e.g. Render/Railway; honours `$PORT`):
 
 ```bash
