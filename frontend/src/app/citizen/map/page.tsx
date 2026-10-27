@@ -9,7 +9,7 @@ import { CitizenMapView } from "@/components/CitizenMapView";
 import { CitizenScreen } from "@/components/CitizenScreen";
 import { NearbySheet } from "@/components/NearbySheet";
 import { api } from "@/lib/api";
-import { CITIZEN_STATUS_LABEL, distanceM, formatMetres, joinable } from "@/lib/citizen";
+import { CITIZEN_STATUS_LABEL, distanceM, formatMetres } from "@/lib/citizen";
 import { BIG_BUTTON } from "@/lib/citizenStyles";
 import { CATEGORY_ICON } from "@/lib/format";
 import { PILOT_AREA, PILOT_CENTRE, PILOT_PLACE, outsidePilot, useDeviceLocation } from "@/lib/location";
@@ -18,9 +18,9 @@ import { putPin, type LatLng } from "@/lib/pinHandoff";
 import { firstName } from "@/lib/session";
 import type { Incident } from "@/lib/types";
 
-// "Nearby": open issues people can still join, within this distance of the phone (or the pilot centre).
-const NEARBY_M = 1500;
-const REFRESH_MS = 30_000;
+// "Nearby": open issues people can track or join, within this distance of the phone (or the pilot centre).
+const NEARBY_M = 5000;
+const REFRESH_MS = 15_000;
 
 /** Map tab: open issues around you to join with "Me too", and a pin to report something new. */
 export default function MapPage() {
@@ -41,7 +41,7 @@ export default function MapPage() {
   const load = useCallback(async () => {
     try {
       const all = await api.incidents();
-      setIncidents(all.filter(joinable));
+      setIncidents(all.filter((i) => i.status !== "verified_closed" && i.status !== "rejected"));
       setListError(false);
     } catch {
       setListError(true);

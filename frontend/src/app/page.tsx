@@ -46,7 +46,16 @@ export default function Home() {
       <section className="mx-auto grid min-h-[92dvh] max-w-6xl items-center gap-10 px-6 py-12 sm:py-16 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)]">
         <div>
         <Reveal>
-          <BrandMark />
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <BrandMark />
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50/90 px-3 py-1 text-xs font-medium text-emerald-900 shadow-sm backdrop-blur">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-600"></span>
+              </span>
+              <span>Live Pilot: Murthal–Sonipat Corridor (NH-44)</span>
+            </div>
+          </div>
         </Reveal>
         <Reveal index={1}>
           <h1 className="mt-8 max-w-3xl text-[2.4rem] font-semibold sm:text-5xl xl:text-6xl leading-[1.04] tracking-tight">
@@ -61,6 +70,21 @@ export default function Home() {
         </Reveal>
         <Reveal index={3} className="mt-10 max-w-3xl">
           <PortalButtons />
+          <div className="mt-6 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+            <span className="font-semibold text-slate-700">Jump straight into the live demo:</span>
+            <Link
+              href="/track/inc_001"
+              className="rounded-lg bg-white px-2.5 py-1.5 font-medium text-slate-700 ring-1 ring-slate-200 transition hover:bg-slate-50 hover:text-emerald-700"
+            >
+              🔍 Case inc_001 (Awaiting Citizen Check)
+            </Link>
+            <Link
+              href="/citizen/map"
+              className="rounded-lg bg-white px-2.5 py-1.5 font-medium text-slate-700 ring-1 ring-slate-200 transition hover:bg-slate-50 hover:text-emerald-700"
+            >
+              📍 Citizen Map Tab
+            </Link>
+          </div>
         </Reveal>
         <Reveal index={4}>
           <a href="#story" className="mt-14 inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-800">

@@ -191,7 +191,7 @@ export default function CitizenMap({
         if (ll.lat !== i.lat || ll.lng !== i.lng) m.setLatLng([i.lat, i.lng]);
         if (m.options.icon !== icon) m.setIcon(icon);
       }
-      m.setZIndexOffset(i.id === selectedId ? 900 : 0);
+      m.setZIndexOffset(i.id === selectedId ? 1000 : 500);
     }
     for (const [id, m] of markers) {
       if (!keep.has(id)) {
@@ -219,7 +219,7 @@ export default function CitizenMap({
         icon: pinIcon(),
         draggable,
         autoPan: true,
-        zIndexOffset: 1000,
+        zIndexOffset: 200,
         keyboard: false,
         title: "Your spot",
         alt: "Your spot",

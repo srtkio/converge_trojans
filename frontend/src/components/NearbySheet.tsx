@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import { SuccessCheck } from "@/components/CitizenMotion";
 import { BottomSheet } from "@/components/Sheet";
-import { CITIZEN_STATUS_LABEL, explainStatus, formatMetres, hasMeToo } from "@/lib/citizen";
+import { CITIZEN_STATUS_LABEL, explainStatus, formatMetres, hasMeToo, needsCheck } from "@/lib/citizen";
 import { BIG_BUTTON } from "@/lib/citizenStyles";
 import { CATEGORY_ICON, CATEGORY_LABEL, STATUS_STYLE } from "@/lib/format";
 import { joinCase } from "@/lib/meToo";
@@ -60,7 +60,7 @@ export function NearbySheet({
             </span>
             <div className="min-w-0 flex-1">
               <p className="text-xs font-medium text-slate-500">
-                {CATEGORY_LABEL[incident.category]} · {formatMetres(distanceM)} {fromYou ? "from you" : "from MG Road metro"}
+                {CATEGORY_LABEL[incident.category]} · {formatMetres(distanceM)} {fromYou ? "from you" : "from Rishihood University"}
               </p>
               <h2 id="nearby-sheet-title" className="mt-0.5 break-words text-lg font-semibold leading-snug">
                 {incident.title}
@@ -89,7 +89,16 @@ export function NearbySheet({
           </div>
           <p className="text-sm text-slate-700">{explainStatus(incident)}</p>
 
-          {result ? (
+          {needsCheck(incident) ? (
+            <Link
+              href={`/track/${caseId}`}
+              transitionTypes={["cz-forward"]}
+              onClick={onClosed}
+              className={`${BIG_BUTTON} h-12 bg-amber-500 text-base font-semibold text-amber-950 ring-1 ring-amber-400 hover:bg-amber-400 shadow-sm`}
+            >
+              👀 Check repair &amp; answer &quot;Is it fixed?&quot;
+            </Link>
+          ) : result ? (
             <div role="status" className="cz-rise flex items-center gap-3 rounded-xl bg-emerald-50 p-3 ring-1 ring-emerald-200">
               <SuccessCheck className="h-8 w-8" />
               <p className="text-sm text-emerald-950">

@@ -5,8 +5,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { distanceM } from "./citizen";
 
-/** Between Murthal and Sonipat (Haryana): the middle of the pilot area. */
-export const PILOT_CENTRE = { lat: 29.005, lng: 77.055 };
+/** Rishihood University, GT Road (Sonipat, Haryana): the middle of the pilot area. */
+export const PILOT_CENTRE = { lat: 28.9832, lng: 77.0864 };
 export const PILOT_PLACE = "Rishihood University";
 export const PILOT_AREA = "Murthal–Sonipat, Haryana";
 /** Further than this from the centre, the citizen is told they're outside the pilot (not blocked). */
