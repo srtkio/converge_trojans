@@ -1,0 +1,5 @@
+[
+  {"id": "svc_bus_335e", "name": "Bus route 335E (MG Road stop)", "kind": "transport", "lat": 12.97310, "lng": 77.60500, "radius_m": 150},
+  {"id": "svc_school_mg", "name": "Government Primary School, MG Road", "kind": "school", "lat": 12.97600, "lng": 77.60560, "radius_m": 150},
+  {"id": "svc_clinic_mg", "name": "Urban Primary Health Centre access road", "kind": "health", "lat": 12.97700, "lng": 77.60480, "radius_m": 120}
+]
