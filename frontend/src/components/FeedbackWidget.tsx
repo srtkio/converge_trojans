@@ -15,10 +15,12 @@ const ROLES = [
 // Shown when the backend has no /feedback route yet (it is being added in parallel).
 const NOT_READY = "Feedback isn't switched on yet. Please try again later.";
 
-export function FeedbackWidget({ incidentId, page }: { incidentId?: string; page?: string } = {}) {
+/** `knownRole` skips the "Who are you?" question when the page already knows (signed-in citizen). */
+export function FeedbackWidget({ incidentId, page, knownRole }: { incidentId?: string; page?: string; knownRole?: string } = {}) {
   const [rating, setRating] = useState(0);
   const [sent, setSent] = useState(false);
-  const [role, setRole] = useState("citizen");
+  const [chosenRole, setRole] = useState("citizen");
+  const role = knownRole ?? chosenRole;
   const [comment, setComment] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -95,20 +97,22 @@ export function FeedbackWidget({ incidentId, page }: { incidentId?: string; page
         ))}
       </div>
 
-      <label className="mt-4 block text-sm font-medium text-slate-700">
-        Who are you?
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-          className="mt-1 h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-base"
-        >
-          {ROLES.map((r) => (
-            <option key={r.value} value={r.value}>
-              {r.label}
-            </option>
-          ))}
-        </select>
-      </label>
+      {!knownRole && (
+        <label className="mt-4 block text-sm font-medium text-slate-700">
+          Who are you?
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            className="mt-1 h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-base"
+          >
+            {ROLES.map((r) => (
+              <option key={r.value} value={r.value}>
+                {r.label}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
 
       <label className="mt-4 block text-sm font-medium text-slate-700">
         Comment <span className="font-normal text-slate-400">(optional)</span>

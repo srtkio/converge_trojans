@@ -35,8 +35,6 @@ export function citizenEvent(e: AuditEvent): string | null {
       return "Linked to a related problem nearby so the teams can coordinate.";
     case "escalated":
       return "No crew was free, so a supervisor was alerted.";
-    case "replanned":
-      return "The crew changed, so the work plan was updated.";
     case "work_started":
       return "The crew started work.";
     case "work_completed":
@@ -60,15 +58,25 @@ export function citizenEvent(e: AuditEvent): string | null {
     case "parent_resolved":
       return "The underlying problem was fixed. Please check that this one is fixed too.";
     default:
-      return null; // no_resource, plan_invalidated, notified, link_explained, ai_photo_check, ...
+      return null; // no_resource, plan_invalidated, replanned, notified, link_explained, ai_photo_check, ...
   }
 }
+
+const crewOf = (e: AuditEvent) => /^Assigned (.+?) \(/.exec(e.detail)?.[1] ?? null;
 
 /** Citizen timeline: friendly lines, internal events hidden, back-to-back repeats collapsed. */
 export function citizenTimeline(audit: AuditEvent[]): { id: string; timestamp: string; text: string }[] {
   const out: { id: string; timestamp: string; text: string }[] = [];
+  let lastCrew: string | null = null;
+  let assignedBefore = false;
   for (const e of [...audit].sort((a, b) => a.timestamp.localeCompare(b.timestamp))) {
-    const text = citizenEvent(e);
+    let text = citizenEvent(e);
+    if (e.event_type === "assigned") {
+      const crew = crewOf(e);
+      if (assignedBefore && crew) text = crew === lastCrew ? `${crew} was assigned again.` : `${crew} took over the case.`;
+      assignedBefore = true;
+      lastCrew = crew ?? lastCrew;
+    }
     if (text && out.at(-1)?.text !== text) out.push({ id: e.id, timestamp: e.timestamp, text });
   }
   return out;

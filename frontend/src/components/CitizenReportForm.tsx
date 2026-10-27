@@ -128,7 +128,7 @@ export function CitizenReportForm({
       <button
         type="submit"
         disabled={!canSubmit}
-        className={`${BIG_BUTTON} bg-slate-900 text-white shadow-[0_12px_26px_-16px_rgba(15,23,42,0.9)] hover:bg-slate-800`}
+        className={`${BIG_BUTTON} bg-slate-900 text-white shadow-[0_12px_26px_-16px_rgba(15,23,42,0.9)] hover:bg-slate-800 disabled:bg-slate-100 disabled:text-slate-400 disabled:opacity-100 disabled:shadow-none disabled:ring-1 disabled:ring-slate-200`}
       >
         {busy ? "Sending…" : "Submit report"}
       </button>

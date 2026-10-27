@@ -306,7 +306,7 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
       </Reveal>
 
       <Reveal index={4}>
-        <FeedbackWidget incidentId={incident.id} page="/track" />
+        <FeedbackWidget incidentId={incident.id} page="/track" knownRole={citizenName ? "citizen" : undefined} />
       </Reveal>
 
       <nav className="flex items-center justify-center gap-6 pb-2 text-sm text-slate-600">
