@@ -1,161 +1,154 @@
-# TROJANS - CONVERGE
+# CONVERGE
 
-**From citizen reports to verified resolution.**
+**City complaints, closed only when they're really fixed.**
 
-## Problem statement
+CONVERGE is a civic complaint platform. It groups duplicate reports, assigns crews, enforces
+deadlines, and closes a case only when evidence backs the fix. Every decision is written to an audit
+trail.
 
-> Smart Cities — From Citizen Reports to Verified Resolution
->
-> Create a platform that processes citizen complaints, identifies duplicate and related incidents,
-> assigns work across departments, and tracks service-level deadlines. When a department misses a
-> deadline or evidence contradicts a closure report, the system must reopen or escalate the case
-> and coordinate the next steps.
+- **App (citizens and operators):** https://converge-web-ten.vercel.app
+- **Operator dashboard:** https://converge-web-ten.vercel.app/operator
+- **Backend health:** https://converge-backend-hnp0.onrender.com/health (open this first; the free host sleeps)
+- **Demo operator login:** badge `CMD-01`, access code `command-demo-2026` (city command centre, all departments)
 
-## Pitch
+> Demo credentials only. Sessions are per browser tab, and the API is not locked down. Production
+> auth is planned for v2.
 
-Most civic systems stop at "ticket closed". CONVERGE treats *work order complete* and *issue
-resolved* as different things. It links duplicate and related reports, assigns the right
-department and crew, replans when a crew drops out, escalates on missed SLAs, and only closes an
-incident when evidence backs it. Every step is audited.
+![Demo final state](docs/screenshots/final-state.png)
 
-## Live demo
+![False closure caught and reopened](docs/screenshots/false-closure-reopened.png)
 
-- **App:** https://converge-web-ten.vercel.app (start page → citizen or operator portal)
-- **Operator dashboard:** https://converge-web-ten.vercel.app/operator (demo badges in "Portals and demo sign-in" below)
-- **Citizen tracking (phones):** https://converge-web-ten.vercel.app/track/inc_001 after running a scenario
-- **Backend API:** https://converge-backend-hnp0.onrender.com (`/health`)
+![Citizen case page on a phone](docs/screenshots/v3-track-after-still-broken.png)
 
-The backend is on Render's free plan and sleeps after ~15 minutes idle; the first request then takes
-about a minute. Open `/health` a few minutes before judging or testing. Check the whole flow with
-`python3 scripts/e2e.py --base https://converge-web-ten.vercel.app`.
+## The problem
 
-## Docs
+Most city systems open one ticket per report, close a ticket when a department says "done", and let
+deadlines slip quietly. A crew that says "fixed" closes the case, even if the water is still running.
 
-- [docs/PLAN.md](docs/PLAN.md) — scope, timeline, who owns what
-- [docs/CONTRACTS.md](docs/CONTRACTS.md) — data model, states, API (code against this)
-- [docs/CONVERGE_Hackathon_Blueprint.pdf](docs/CONVERGE_Hackathon_Blueprint.pdf) — original research blueprint
-- [CHANNEL.md](CHANNEL.md) — team + AI message board
-- [TEAM_GUIDE.md](TEAM_GUIDE.md) — plain-language guide, roles, how to share files
+## What CONVERGE does
 
-## Run
+| Capability | What the code does |
+|---|---|
+| Groups reports | A repeat report within 150 m and 72 h becomes a **duplicate** of the existing incident. A connected problem within 400 m (a leak under a road) becomes **related**. |
+| Finds shared causes (v2) | Related incidents form a **hypothesis**. An operator confirms it, and one repair covers all of them. The demo cuts crew visits from 3 to 1. |
+| Assigns and replans | The nearest free crew in the right department. If a crew drops out, its jobs are reassigned automatically. |
+| Enforces deadlines | Each category has an SLA (water leak 12 h, pothole 48 h, healthcare 24 h, bin overflow 12 h). Missed deadlines escalate: officer → department head → city command centre. |
+| Checks the fix | "Done" means *awaiting proof*. A citizen saying "still broken" reopens the case. It closes only on supporting evidence. |
+| Stops fake reports | Trust badges (unverified, corroborated, confirmed on site), a reject action for department heads and the command centre, and a per-reporter rate limit. |
+| Citizen photos and location | Citizens can attach a photo and a GPS or pinned location. Photos are stored and shown to operators. |
+| AI, optionally | Claude Haiku or Gemini can write the link explanations and an advisory photo check. **AI never decides a status.** It is off in the live demo. |
 
-Backend (FastAPI, port 8000):
+Every step lands in the audit trail, and the metrics compare CONVERGE with a naive ticketing system.
+
+## Pilot area
+
+The live demo covers **Murthal–Sonipat, Haryana**: Murthal Chowk on GT Road (NH-44), the Murthal
+dhabas, Bahalgarh, the Sonipat bus stand and railway junction, Civil Hospital, and Rishihood
+University. The map is OpenStreetMap, and the demo data is in `backend/app/seed/`.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  U["Citizen and operator browsers"] --> V["Next.js frontend on Vercel"]
+  V -->|"REST JSON"| A["FastAPI backend on Render"]
+  A --> P[("Postgres on Render")]
+  A -.->|"optional wording only"| C["Claude or Gemini API"]
+```
+
+- **Frontend:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Leaflet maps.
+- **Backend:** Python, FastAPI, SQLModel. Rules live in `backend/app/engine/`.
+- **Database:** SQLite locally, Postgres on Render. Feedback survives resets.
+- **Flows:** every process is drawn in [docs/FLOWS.md](docs/FLOWS.md).
+
+## Run it locally
+
+Backend (port 8001; 8000 is often taken):
 
 ```bash
 cd backend
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-uvicorn app.main:app --reload
-# tests
-pytest
+uvicorn app.main:app --port 8001
 ```
 
-Frontend (Next.js, port 3000):
+Frontend (port 3000):
 
 ```bash
 cd frontend
 pnpm install
-pnpm dev
+NEXT_PUBLIC_API_URL=http://localhost:8001 pnpm dev
 ```
 
-If port 8000 is taken, run the backend with `--port 8001` and put
-`NEXT_PUBLIC_API_URL=http://localhost:8001` in `frontend/.env.local`.
+Open http://localhost:3000. The start page asks who you are. Operators sign in at `/operator`.
+Press **Reset**, then **Next step →** to run the 10-step golden scenario.
 
-Demo: open http://localhost:3000/operator, sign in with a demo operator account (see "Portals and
-demo sign-in" below), press **Reset**, then **Next step →** through the 10-step golden scenario.
-`/operator?incident=inc_001` opens an incident directly. Before presenting, run `python3 scripts/e2e.py`.
+Optional AI: put `ANTHROPIC_API_KEY` or `GEMINI_API_KEY` in `backend/.env` (see
+`backend/.env.example`). Without a key, the rule text is used. Never commit `.env`.
 
-Set `ANTHROPIC_API_KEY` in `backend/.env` for LLM link explanations. Without it the system falls
-back to deterministic rules. See `backend/.env.example` for all backend settings, including
-`CONVERGE_CORS_ORIGINS` (comma-separated frontend URLs, needed when the frontend is deployed).
-
-LLM provider: set `ANTHROPIC_API_KEY` (claude-haiku-5-5) or `GEMINI_API_KEY` (Gemini Flash, free
-tier). The LLM only writes explanation text and an advisory photo check; decisions stay rule-based.
-
-Deploy backend to Render: Dashboard → New → Blueprint → this repo (`render.yaml` creates the
-Docker web service plus a free Postgres so feedback survives restarts). Set `GEMINI_API_KEY` /
-`ANTHROPIC_API_KEY` in the dashboard, add the Vercel URL to `CONVERGE_CORS_ORIGINS`, then set the
-frontend's `NEXT_PUBLIC_API_URL` to the Render URL.
-
-Backend via Docker (e.g. Render/Railway; honours `$PORT`):
+## Tests
 
 ```bash
-cd backend
-docker build -t converge-backend .
-docker run -p 8000:8000 -e CONVERGE_CORS_ORIGINS=http://localhost:3000 converge-backend
+cd backend && pytest                                  # unit, invariant and scenario tests
+cd frontend && pnpm lint && pnpm build
+python3 scripts/e2e.py --base http://localhost:3000   # the whole demo in a browser
+python3 scripts/e2e_citizen_flow.py --base http://localhost:3000   # citizen files, operator sees it
 ```
 
-## Portals and demo sign-in
+`scripts/e2e.py` runs the v1 and v2 scenarios and checks the comparison tables. The second script
+checks that a citizen's report and evidence reach the operator, with first name only.
 
-The start page asks who you are.
+## Demo accounts
 
-- **Citizen:** enter a name and email at `/citizen`, then report a problem and track it. The citizen
-  side is a phone app with a bottom nav:
-  - **Report** (`/citizen`): the report form. "Adjust on the map" opens a full-screen map where you
-    drag the pin or tap the spot; a pinned report is sent with location source `pin`.
-  - **My cases** (`/citizen/cases`): the cases reported from this phone, with live status
-    (refreshed about every 15 s while visible; ones that need your check come first).
-  - **Map** (`/citizen/map`): open issues within 1.5 km of you (or of Rishihood University). Tap one for
-    "Me too" or "View case"; drag the pin and tap "Report something here" to report a new spot.
-  - Case pages (`/track/<id>`) stay public, so shared links work without signing in.
-- **Operator:** `/operator` checks your badge ID and access code against the backend. Demo accounts
-  (demo only, not real credentials):
-  - `OPS-WTR-01` / `water-demo-2026`: water department officer
-  - `OPS-RDS-01` / `roads-demo-2026`: roads department officer
-  - `HEAD-WTR-01` / `water-head-2026`: water department head (can reject water complaints as invalid)
-  - `HEAD-RDS-01` / `roads-head-2026`: roads department head (can reject roads complaints)
-  - `CMD-01` / `command-demo-2026`: city command centre (all departments; best for the demo)
+Demo only. Operator codes are stored as SHA-256 hashes in `backend/app/seed/operators.json`.
 
-  Hierarchy: officer → department head → city command centre. A missed deadline notifies the next level up.
+| Badge | Access code | Who |
+|---|---|---|
+| `OPS-WTR-01` | `water-demo-2026` | Water department officer |
+| `OPS-RDS-01` | `roads-demo-2026` | Roads department officer |
+| `HEAD-WTR-01` | `water-head-2026` | Water department head (can reject water complaints as invalid) |
+| `HEAD-RDS-01` | `roads-head-2026` | Roads department head (can reject roads complaints) |
+| `CMD-01` | `command-demo-2026` | City command centre, all departments |
 
-Sign-in is demo-grade: sessions are kept in the browser tab, and operator codes are stored as
-SHA-256 hashes in `backend/app/seed/operators.json`. The sign-in gates the dashboard screen only;
-the API itself is not locked down. Production auth is planned for v2.
+Citizens sign in with a name and email at `/citizen`. Only the first name is stored with a report.
 
-## Install the citizen app on a phone
+## Deploy
 
-The citizen pages link a web app manifest (`frontend/public/manifest.webmanifest`, start URL
-`/citizen`, theme `#047857`). There is no service worker: the app always shows live data.
+- **Backend:** Render Blueprint (`render.yaml`): Docker web service plus a free Postgres. Set
+  `GEMINI_API_KEY` or `ANTHROPIC_API_KEY` in the Render dashboard, not in git.
+- **Frontend:** Vercel, with `NEXT_PUBLIC_API_URL` set to the Render URL at build time.
+- Add the Vercel URL to `CONVERGE_CORS_ORIGINS` on the backend.
+- The Render free plan sleeps when idle. Open `/health` before a demo.
 
-- **iPhone (Safari):** open `/citizen`, tap Share, then Add to Home Screen. My cases shows this tip
-  once (dismissible).
-- **Android (Chrome):** open `/citizen`, then menu > Install app (or Add to Home screen).
+## Roadmap
 
-Installing needs https (the live demo, or `next dev --experimental-https` on your LAN). The icons
-in `frontend/public/icons/` are committed PNGs; to change them, edit and re-run
-`cd frontend && node scripts/make-icons.mjs` (uses `next/og`, no extra dependency).
+Built and live: the v1 verified loop, v2 shared-cause repair, the v3 citizen loop with photos and
+location, operator hierarchy, and the pilot-area data.
 
-## End-to-end demo check
+Next: the water, food and healthcare-administration modules and cross-domain coordination are
+designed in [docs/FLOWS.md](docs/FLOWS.md) and [docs/ROADMAP.md](docs/ROADMAP.md). They are roadmap
+items, not built features.
 
-`scripts/e2e.py` drives the running app through the browser (Python Playwright) and checks the
-demo before the pitch:
+## Docs
 
-1. Signs in to the operator dashboard with the demo badge, if the sign-in form appears.
-2. v1 "Verified loop": Reset, then Next step to step 10. Checks the naive-vs-CONVERGE table
-   (work orders 3 vs 2, false closures accepted 1 vs 0).
-3. v2 "Root cause": Reset, then Next step to step 8. Checks crew visits 3 vs 1.
-4. `/track/inc_001` at iPhone 13 size: no horizontal overflow, no console errors.
+- [docs/FLOWS.md](docs/FLOWS.md): seven flowcharts, one implemented and six roadmap
+- [docs/CONTRACTS.md](docs/CONTRACTS.md): data model, rules and API (the frozen contract)
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/PRD.md](docs/PRD.md), [docs/ROADMAP.md](docs/ROADMAP.md)
+- [docs/DEMO.md](docs/DEMO.md) and [docs/PRESENTATION_SCRIPT.md](docs/PRESENTATION_SCRIPT.md): the demo
+- [docs/TESTING.md](docs/TESTING.md): user testing with six people
+- [TEAM_GUIDE.md](TEAM_GUIDE.md): plain-language guide for the team
+- [AGENTS.md](AGENTS.md): instructions for AI assistants working in this repo
+- [CHANNEL.md](CHANNEL.md): the team's message board
 
-It exits 0 when everything passes and 1 on the first failure.
+## Team
 
-```bash
-pip install playwright && playwright install chromium
-# with the backend on :8001 and the frontend on :3000
-python3 scripts/e2e.py
-python3 scripts/e2e.py --base http://localhost:3002 --headed   # other port, watch it run
-```
+- **Sarthak** (`srtkio`): lead, dashboard, integration, deploys, pitch
+- **Prachi** (`Prachivats-21`): backend engine, citizen app
+- **Antriksh** (`Antrikshcodes`): presenter, demo driver, QA
+- **Poorvi** (`poorvig222`): presenter, research, market, results
 
-The script expects the dashboard at `/operator` (the default). For an older build without the
-portals, pass `--dashboard-path /`.
+## Credits
 
-`scripts/e2e_citizen_app.py` checks the citizen app at iPhone 13 size: the manifest and icons, the
-sign-in gate, the bottom nav (tabs, back/forward, a Map round trip), a report pinned on the map
-(the backend stores `location_source: "pin"` at the dropped spot), "Me too" from a map marker,
-live status in My cases after an operator-side change, the offline map fallback (tiles blocked)
-and reduced motion. It needs the backend URL and golden step 6 data:
-
-```bash
-curl -XPOST "localhost:8001/sim/scenario/golden?step=6"
-python3 scripts/e2e_citizen_app.py --base http://localhost:3000 --api http://localhost:8001
-python3 scripts/e2e_citizen_app.py --shots /tmp/shots   # also save phone screenshots
-```
+- Map tiles: © OpenStreetMap contributors. Maps: Leaflet.
+- Sample photos and their licences: [backend/app/seed/photos/ATTRIBUTION.md](backend/app/seed/photos/ATTRIBUTION.md).
+- Built with FastAPI, Next.js, React, Tailwind CSS and SQLModel.
