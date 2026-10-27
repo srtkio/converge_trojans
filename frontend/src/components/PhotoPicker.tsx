@@ -4,7 +4,7 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import { CameraIcon } from "@/components/CitizenIcons";
 import type { PhotoUpload } from "@/lib/api";
-import { PHOTO_READ_ERROR, compressPhoto, formatPhotoSize, type PreparedPhoto } from "@/lib/photo";
+import { PHOTO_READ_ERROR, compressPhoto, type PreparedPhoto } from "@/lib/photo";
 
 /**
  * State for one optional photo, owned by the component that sends it. The preview URL is revoked
