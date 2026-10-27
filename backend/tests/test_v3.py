@@ -1,13 +1,16 @@
 """v3: SLA at-risk flag, AI photo check (signal only), real feedback."""
+import base64
+
 from types import SimpleNamespace
 
 import pytest
 
 from app.engine import llm
 
+from .images import jpeg
 from .test_rules import detail, events, finish_work, report
 
-PHOTO = {"data": "aGVsbG8=", "media_type": "image/jpeg"}
+PHOTO = {"data": base64.b64encode(jpeg()).decode(), "media_type": "image/jpeg"}
 
 
 def test_at_risk_flag_before_breach_and_alert_once(client):
@@ -110,3 +113,12 @@ def test_feedback_submit_summary_and_survives_reset(client):
     assert s["recent"][0]["comment"] == "Clear status page"
     fb = client.get("/feedback").json()
     assert fb[0]["created_at"] >= fb[-1]["created_at"]
+
+
+def test_feedback_newest_first_even_within_the_same_second(client):
+    for i in range(5):
+        client.post("/feedback", json={"rating": 4, "role": "citizen", "comment": f"order check {i}"})
+    recent = [r["comment"] for r in client.get("/feedback/summary").json()["recent"]]
+    assert recent == [f"order check {i}" for i in range(4, -1, -1)]
+    listed = client.get("/feedback").json()
+    assert [f["created_at"] for f in listed] == sorted((f["created_at"] for f in listed), reverse=True)

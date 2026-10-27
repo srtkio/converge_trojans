@@ -5,13 +5,17 @@ from datetime import UTC, datetime
 from sqlmodel import Session, select
 
 from app.models import Feedback
-from app.timeutil import fmt
+
+
+def _now() -> str:
+    # Microseconds, so "newest first" is well defined even when two people rate in the same second.
+    return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
 
 def submit(session: Session, rating: int, comment: str, role: str, page: str | None,
            incident_id: str | None) -> Feedback:
     fb = Feedback(id=f"fb_{uuid.uuid4().hex[:10]}", rating=rating, comment=comment.strip(), role=role,
-                  page=page, incident_id=incident_id, created_at=fmt(datetime.now(UTC)))
+                  page=page, incident_id=incident_id, created_at=_now())
     session.add(fb)
     session.flush()
     return fb

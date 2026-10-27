@@ -1,6 +1,11 @@
 """SQLModel tables. Shapes follow docs/CONTRACTS.md; `to_api` methods produce the JSON contract."""
-from sqlalchemy import JSON, Column
+from sqlalchemy import JSON, Column, LargeBinary
 from sqlmodel import Field, SQLModel
+
+
+def photo_url(photo_id: str | None) -> str | None:
+    """API-relative path of a stored photo; clients prefix it with the API base URL."""
+    return f"/photos/{photo_id}" if photo_id else None
 
 
 class Report(SQLModel, table=True):
@@ -12,9 +17,16 @@ class Report(SQLModel, table=True):
     reporter: str
     created_at: str
     incident_id: str | None = None
+    # Citizen photo and where the location came from (device GPS or a picked landmark).
+    photo_id: str | None = None
+    location_source: str | None = None  # gps | landmark | pin (dragged on the map)
+    location_accuracy_m: float | None = None
+    location_label: str | None = None
 
     def to_api(self) -> dict:
-        return self.model_dump()
+        d = self.model_dump(exclude={"photo_id"})
+        d["photo_url"] = photo_url(self.photo_id)
+        return d
 
 
 class Incident(SQLModel, table=True):
@@ -92,9 +104,13 @@ class Evidence(SQLModel, table=True):
     created_at: str
     # v3: AI photo checks are recorded as evidence but never drive status changes.
     signal_only: bool = False
+    # Photo attached by the person giving evidence (stored, served at /photos/{id}).
+    photo_id: str | None = None
 
     def to_api(self) -> dict:
-        return self.model_dump()
+        d = self.model_dump(exclude={"photo_id"})
+        d["photo_url"] = photo_url(self.photo_id)
+        return d
 
 
 class AuditEvent(SQLModel, table=True):
@@ -168,3 +184,12 @@ class Feedback(SQLModel, table=True):
 
     def to_api(self) -> dict:
         return self.model_dump()
+
+
+class Photo(SQLModel, table=True):
+    """Citizen photo bytes (<= 5 MB). Wiped on /sim/reset together with reports and evidence."""
+    id: str = Field(primary_key=True)
+    media_type: str
+    size_bytes: int
+    data: bytes = Field(sa_column=Column(LargeBinary, nullable=False))
+    created_at: str

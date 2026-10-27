@@ -135,3 +135,25 @@ Shapes as posted in CHANNEL.md. Implemented on `feat/v2-rootcause`.
 
 `/metrics` adds `crew_visits_saved`, `coordinated_vs_independent: {independent_visits, coordinated_visits}`,
 `hypotheses: {proposed, confirmed, rejected}`, `at_risk` (count).
+
+## Citizen photos and location (additive)
+
+- `POST /reports` body adds optional `photo: {data: base64, media_type: "image/jpeg"|"image/png"|"image/webp"|"image/gif"}`
+  and optional `location: {source: "gps"|"landmark"|"pin", accuracy_m: number|null, label: string|null}` ("pin" = dragged on the citizen map).
+  `lat`/`lng` stay as before (GPS fills them with the device position).
+- `POST /incidents/{id}/evidence`: the optional `photo` is now stored (the AI check stays a signal only
+  and only ever sees the stripped copy).
+- Limits: decoded photo ≤ 5 MB → else 413; invalid base64, unknown type, or bytes that don't match the
+  declared type → 422. Location/device metadata (JPEG EXIF/XMP/IPTC/comments/appended images, PNG
+  text/eXIf/tIME, WebP EXIF/XMP) is removed before storing; pixels are not re-encoded.
+- `GET /photos/{photo_id}` → image bytes; `Content-Type` as uploaded,
+  `Cache-Control: public, max-age=31536000, immutable`, `X-Content-Type-Options: nosniff`; 404 if unknown.
+  `photo_id` = `ph_` + 16 hex chars. Photos are wiped on `/sim/reset` like reports (feedback is kept).
+- `Report` (in `GET /incidents/{id}` `reports[]` and the `POST /reports` response) adds
+  `photo_url: "/photos/ph_…" | null` (a path: prefix it with the API base), `location_source`,
+  `location_accuracy_m`, `location_label`.
+- `Evidence` (in `GET /incidents/{id}` `evidence[]` and the evidence response) adds `photo_url`.
+- `GET /citizen/activity` items add `photo_url`, `lat`, `lng`, `location_source`, `location_accuracy_m`,
+  `location_label` (complaints carry the report's location; evidence items have null location).
+- Existing databases are upgraded on startup by adding the new nullable columns (additive only,
+  idempotent).

@@ -47,10 +47,13 @@ def _new_incident(session: Session, report: Report) -> Incident:
     return inc
 
 
-def submit_report(session: Session, text: str, category: str, lat: float, lng: float, reporter: str):
+def submit_report(session: Session, text: str, category: str, lat: float, lng: float, reporter: str,
+                  photo_id: str | None = None, location_source: str | None = None,
+                  location_accuracy_m: float | None = None, location_label: str | None = None):
     at = now(session)
     report = Report(id=next_id(session, "rep"), text=text, category=category, lat=lat, lng=lng,
-                    reporter=reporter, created_at=at)
+                    reporter=reporter, created_at=at, photo_id=photo_id, location_source=location_source,
+                    location_accuracy_m=location_accuracy_m, location_label=location_label)
     session.add(report)
     session.flush()
 
