@@ -3,15 +3,18 @@
 import Link from "next/link";
 import { use, useCallback, useEffect, useRef, useState } from "react";
 
+import { PinIcon } from "@/components/CitizenIcons";
 import { Reveal, SuccessCheck, useAfterMount, useTween } from "@/components/CitizenMotion";
 import { BrandMark, CitizenShell } from "@/components/CitizenShell";
 import { BIG_BUTTON, CARD } from "@/lib/citizenStyles";
 import { FeedbackWidget } from "@/components/FeedbackWidget";
-import { api } from "@/lib/api";
+import { PhotoPicker, usePhotoField } from "@/components/PhotoPicker";
+import { api, photoSrc } from "@/lib/api";
 import {
   CITIZEN_STATUS_LABEL,
   STAGES,
   WAKING_HINT,
+  casePhotos,
   citizenTimeline,
   explainStatus,
   friendlyTimeLeft,
@@ -19,10 +22,13 @@ import {
   joinable,
   markMeToo,
   rememberCase,
+  reportedWhere,
   stageOf,
   useSlowHint,
+  type CasePhoto,
 } from "@/lib/citizen";
 import { CATEGORY_ICON, CATEGORY_LABEL, STATUS_STYLE, formatTime, hoursLeft } from "@/lib/format";
+import { photoRejected } from "@/lib/photo";
 import { firstName, readSession } from "@/lib/session";
 import type { Incident, IncidentDetail, Resource } from "@/lib/types";
 
@@ -40,6 +46,8 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
   const [note, setNote] = useState("");
   const [citizenName, setCitizenName] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  // Optional photo sent with the "Is it fixed?" answer.
+  const photo = usePhotoField();
   // Last status seen, so a change made elsewhere (the crew, an inspector) can be announced.
   const lastStatus = useRef<string | null>(null);
   const slowLoad = useSlowHint(!data && !loadError);
@@ -88,16 +96,19 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
     setNotice(null);
     const base = fixed ? "Citizen says the problem is fixed" : "Citizen says the problem is still broken";
     const extra = note.trim();
+    const upload = photo.upload;
     try {
       const r = await api.evidence(id, {
         kind: "citizen_followup",
         supports_resolution: fixed,
         note: extra ? `${base}: ${extra}` : base,
         source: `citizen:${citizenName ?? "web"}`,
+        photo: upload,
       });
       rememberCase(id);
       lastStatus.current = r.incident.status; // the citizen's own change: no "status changed" toast
       setNote("");
+      photo.clear();
       const next =
         r.incident.status === "verified_closed"
           ? "The repair is confirmed and the case is now closed."
@@ -108,8 +119,14 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
               : "The crew will see your update.";
       setNotice({ tone: "ok", text: `Thanks. Your answer is recorded and the team will review it. ${next}` });
       await load();
-    } catch {
-      setNotice({ tone: "error", text: "We couldn't send your answer. Check your connection and try again." });
+    } catch (e) {
+      setNotice({
+        tone: "error",
+        text:
+          upload && photoRejected(e)
+            ? "We couldn't send your photo. Remove it or try another one, then answer again."
+            : "We couldn't send your answer. Check your connection and try again.",
+      });
     } finally {
       setBusy(false);
     }
@@ -160,6 +177,8 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
   const timeline = citizenTimeline(data.audit).reverse();
   // The incident title is a 60-character summary; citizens see the original description in full.
   const description = reports[0]?.text ?? incident.title;
+  const where = reportedWhere(reports[0]);
+  const photos = casePhotos(reports, data.evidence);
 
   return (
     <CitizenShell>
@@ -214,6 +233,12 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
           {CATEGORY_LABEL[incident.category]} · Case <span className="font-mono">{incident.id}</span>
         </p>
         <h1 className="mt-1 break-words text-xl font-semibold leading-snug">{description}</h1>
+        {where && (
+          <p className="mt-1.5 flex items-start gap-1.5 text-sm text-slate-600">
+            <PinIcon className="mt-0.5 h-4 w-4 text-slate-500" />
+            <span className="min-w-0 break-words">{where}</span>
+          </p>
+        )}
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <span
             key={incident.status}
@@ -287,10 +312,17 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
                 className="mt-1.5 w-full resize-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-base placeholder:text-slate-400 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
               />
             </label>
+            <div className="mt-3">
+              <PhotoPicker
+                field={photo}
+                disabled={busy}
+                hint="Optional. A photo of how it looks now helps the team check the repair."
+              />
+            </div>
             <div className="mt-4 grid gap-3">
               <button
                 type="button"
-                disabled={busy}
+                disabled={busy || photo.preparing}
                 onClick={() => answer(true)}
                 className={`${BIG_BUTTON} bg-emerald-700 text-white hover:bg-emerald-800`}
               >
@@ -298,7 +330,7 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
               </button>
               <button
                 type="button"
-                disabled={busy}
+                disabled={busy || photo.preparing}
                 onClick={() => answer(false)}
                 className={`${BIG_BUTTON} bg-rose-600 text-white`}
               >
@@ -325,7 +357,13 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
       </section>
       </Reveal>
 
-      <Reveal index={3}>
+      {photos.length > 0 && (
+        <Reveal index={3}>
+          <CasePhotos photos={photos} />
+        </Reveal>
+      )}
+
+      <Reveal index={4}>
       <section aria-labelledby="timeline-heading" className={CARD}>
         <h2 id="timeline-heading" className="text-lg font-semibold">
           What happened
@@ -351,7 +389,7 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
       </section>
       </Reveal>
 
-      <Reveal index={4}>
+      <Reveal index={5}>
         <FeedbackWidget incidentId={incident.id} page="/track" knownRole={citizenName ? "citizen" : undefined} />
       </Reveal>
 
@@ -480,6 +518,7 @@ function MeToo({ incident, reporter, onAdded }: { incident: Incident; reporter: 
         lat: incident.lat,
         lng: incident.lng,
         reporter,
+        location: { source: "landmark", accuracy_m: null, label: `Same spot as case ${incident.id}` },
       });
       markMeToo(incident.id);
       rememberCase(r.incident.id);
@@ -528,5 +567,73 @@ function MeToo({ incident, reporter, onAdded }: { incident: Incident; reporter: 
         </p>
       )}
     </div>
+  );
+}
+
+/** Photos people sent with their reports and answers, newest first. Tap one to open it full size. */
+function CasePhotos({ photos }: { photos: CasePhoto[] }) {
+  return (
+    <section aria-labelledby="photos-heading" className={CARD}>
+      <h2 id="photos-heading" className="text-lg font-semibold">
+        Photos
+      </h2>
+      <p className="mt-0.5 text-xs text-slate-500">Tap a photo to see it full size.</p>
+      <ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {photos.map((p) => (
+          <li key={p.id} className="min-w-0">
+            <PhotoTile photo={p} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+function PhotoTile({ photo }: { photo: CasePhoto }) {
+  const [failed, setFailed] = useState(false);
+  const src = photoSrc(photo.path);
+  const label = (
+    <span className="mt-1.5 block text-xs leading-snug">
+      <span className="block font-medium text-slate-800">{photo.caption}</span>
+      <span className="block text-slate-500">{formatTime(photo.at)}</span>
+    </span>
+  );
+
+  if (failed) {
+    // Demo data is sometimes reset; the photo may be gone even though the page still lists it.
+    return (
+      <div>
+        <div className="grid aspect-square w-full place-items-center rounded-xl bg-slate-100 p-2 text-center text-xs text-slate-500 ring-1 ring-slate-900/5">
+          Photo unavailable
+        </div>
+        {label}
+      </div>
+    );
+  }
+
+  return (
+    <a
+      href={src}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+    >
+      <span className="block overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-900/5">
+        {/* A photo served by the API on another origin; next/image would need a remote pattern. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={src}
+          alt={photo.alt}
+          loading="lazy"
+          decoding="async"
+          width={320}
+          height={320}
+          onError={() => setFailed(true)}
+          className="aspect-square h-auto w-full object-cover transition-transform duration-300 motion-safe:group-hover:scale-[1.03]"
+        />
+      </span>
+      {label}
+      <span className="sr-only">(opens full size in a new tab)</span>
+    </a>
   );
 }

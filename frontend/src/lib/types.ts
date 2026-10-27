@@ -13,6 +13,9 @@ export type Status =
 
 export type EvidenceKind = "photo" | "sensor" | "citizen_followup" | "inspector";
 
+/** Where a report's lat/lng came from: the device's GPS or a landmark the citizen picked. */
+export type LocationSource = "gps" | "landmark";
+
 export interface Report {
   id: string;
   text: string;
@@ -22,6 +25,13 @@ export interface Report {
   reporter: string;
   created_at: string;
   incident_id: string | null;
+  /** Citizen photo as an API path ("/photos/ph_…"); build the full URL with photoSrc() from lib/api. */
+  photo_url?: string | null;
+  location_source?: LocationSource | null;
+  /** GPS accuracy radius in metres (null for landmarks). */
+  location_accuracy_m?: number | null;
+  /** Landmark name, "Current location", or "Same spot as case inc_…". */
+  location_label?: string | null;
 }
 
 export interface Incident {
@@ -74,6 +84,10 @@ export interface Evidence {
   note: string;
   source: string;
   created_at: string;
+  /** Photo sent with this evidence, as an API path; null when none. */
+  photo_url?: string | null;
+  /** v3: AI photo checks are recorded as evidence but never change the status. */
+  signal_only?: boolean;
 }
 
 // One row of the operator inbox: a citizen complaint or a citizen's follow-up evidence.
