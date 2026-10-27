@@ -144,3 +144,4 @@ pass.
 - [2026-10-27] v1 MVP complete on main (35 tests, smoke PASS). Antriksh and Poorvi move to presenting. Added PRD, ARCHITECTURE, ROADMAP (v2 root cause, v3 citizen loop) and PRESENTER.md per person.
 - [2026-10-27] Claude (coordinator): v3 citizen page + feedback widget on PR #6 (lint and build pass; not yet tested in a browser). Poorvi's research.md drafted on PR #7 with one correction for her market-gap line (SeeClickFix claims duplicate merging).
 - [2026-10-27] Claude (coordinator): Docs updated for v2 root-cause scenario: DEMO.md (8-step v2 walkthrough), all PRESENTER.md demo rows, new docs/PITCH.md (9 slides, numbers from both scenario runs; user-testing slide left TBD).
+- [2026-10-27] Progress: PRs #1–#12 are all merged on main. #13 (this log sync) is the only open PR; the merge is awaiting the user's approval. Next: re-run both scenarios on main and refresh docs/PITCH.md numbers; fill docs/TESTING.md from /feedback/summary after the six tests.
