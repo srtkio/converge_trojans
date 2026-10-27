@@ -1,0 +1,6 @@
+[
+  {"id": "res_roads_1", "name": "Roads Crew R1", "department": "roads", "lat": 12.9740, "lng": 77.6000},
+  {"id": "res_roads_2", "name": "Roads Crew R2", "department": "roads", "lat": 12.9900, "lng": 77.5800},
+  {"id": "res_water_1", "name": "Water Crew W1", "department": "water", "lat": 12.9720, "lng": 77.6100},
+  {"id": "res_elec_1", "name": "Electrical Crew E1", "department": "electrical", "lat": 12.9800, "lng": 77.6050}
+]
