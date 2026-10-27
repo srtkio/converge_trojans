@@ -92,8 +92,13 @@ The start page asks who you are.
 - **Citizen:** enter a name and email at `/citizen`, then report a problem and track it.
 - **Operator:** `/operator` checks your badge ID and access code against the backend. Demo accounts
   (demo only, not real credentials):
-  - `OPS-WTR-01` / `water-demo-2026` (water department)
-  - `OPS-RDS-01` / `roads-demo-2026` (roads department)
+  - `OPS-WTR-01` / `water-demo-2026`: water department officer
+  - `OPS-RDS-01` / `roads-demo-2026`: roads department officer
+  - `HEAD-WTR-01` / `water-head-2026`: water department head (can reject water complaints as invalid)
+  - `HEAD-RDS-01` / `roads-head-2026`: roads department head (can reject roads complaints)
+  - `CMD-01` / `command-demo-2026`: city command centre (all departments; best for the demo)
+
+  Hierarchy: officer → department head → city command centre. A missed deadline notifies the next level up.
 
 Sign-in is demo-grade: sessions are kept in the browser tab, and operator codes are stored as
 SHA-256 hashes in `backend/app/seed/operators.json`. The sign-in gates the dashboard screen only;
