@@ -20,22 +20,24 @@ import {
 } from "@/lib/citizen";
 import { BIG_BUTTON } from "@/lib/citizenStyles";
 import { CATEGORY_ICON, CATEGORY_LABEL } from "@/lib/format";
-import { PILOT_AREA, PILOT_CENTRE, PILOT_PLACE, outsidePilot, useDeviceLocation } from "@/lib/location";
+import { PILOT_CENTRE, PILOT_PLACE, outsidePilot, useDeviceLocation } from "@/lib/location";
 import { takePin, type LatLng } from "@/lib/pinHandoff";
 import { photoRejected } from "@/lib/photo";
 import type { Category, Incident, Link } from "@/lib/types";
 
-// Landmarks inside the pilot area (see PILOT_* in lib/location.ts). The points sit
-// close to the demo incidents, so a matching report joins the existing case instead of opening a
-// new one.
+// Landmarks inside the pilot area (the Murthal–Sonipat corridor, Haryana; coordinates from
+// OpenStreetMap). The first points sit close to the demo incidents on GT Road, so a matching
+// report joins the existing case instead of opening a new one.
 const PLACES = [
-  { name: "MG Road metro exit", lat: 12.9756, lng: 77.6058 },
-  { name: "MG Road at Brigade Road junction", lat: 12.9738, lng: 77.607 },
-  { name: "Church Street", lat: 12.9754, lng: 77.6038 },
-  { name: "Brigade Road", lat: 12.972, lng: 77.6075 },
-  { name: "Residency Road", lat: 12.9698, lng: 77.6042 },
-  { name: "St Marks Road", lat: 12.9728, lng: 77.601 },
-  { name: "Kasturba Road, near Cubbon Park", lat: 12.9745, lng: 77.5985 },
+  { name: "Rishihood University gate, GT Road (NH-44)", lat: 28.9832, lng: 77.0864 },
+  { name: "GT Road, 250 m south of Rishihood University", lat: 28.98095, lng: 77.0864 },
+  { name: "Bahalgarh Chowk", lat: 28.9587, lng: 77.0951 },
+  { name: "Murthal Chowk", lat: 29.0265, lng: 77.0737 },
+  { name: "Murthal dhaba strip, GT Road", lat: 29.0396, lng: 77.0895 },
+  { name: "Sector 15, Sonipat", lat: 29.0002, lng: 77.0395 },
+  { name: "Civil Hospital, Sonipat", lat: 28.9906, lng: 77.0363 },
+  { name: "Sonipat Bus Stand", lat: 28.9974, lng: 77.0234 },
+  { name: "Sonipat Junction (railway station)", lat: 28.9898, lng: 77.0171 },
 ];
 
 const CATEGORIES = Object.keys(CATEGORY_LABEL) as Category[];
@@ -49,7 +51,7 @@ const ROUGH_FIX_M = 250;
 const PINNED_LABEL = "Pinned on the map";
 const MAP_FAILED = "The map isn't loading. Pick a nearby place instead.";
 const OUTSIDE_PILOT =
-  `You're outside this pilot's area (${PILOT_AREA}). We'll still log your report at your real location.`;
+  "You're outside this pilot's area (Murthal–Sonipat, Haryana). We'll still log your report at your real location.";
 
 export type ReportOutcome = { incident: Incident; link: Link | null };
 
@@ -282,7 +284,7 @@ export function CitizenReportForm({
           rows={3}
           maxLength={MAX_TEXT}
           enterKeyHint="next"
-          placeholder="e.g. Water leaking from a pipe near the metro"
+          placeholder="e.g. Water leaking from a pipe near the university gate"
           className="mt-1.5 w-full resize-none rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-base placeholder:text-slate-400 focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
         />
         {restored && text && (
@@ -422,7 +424,7 @@ export function CitizenReportForm({
                   </option>
                 ))}
               </select>
-              <span className="mt-1 block text-xs text-slate-500">This pilot covers the streets {PILOT_AREA}.</span>
+              <span className="mt-1 block text-xs text-slate-500">This pilot covers the Murthal–Sonipat corridor, Haryana.</span>
             </label>
             {mapFailed ? (
               <p role="status" className="mt-2 rounded-xl bg-amber-50 p-3 text-sm text-amber-950 ring-1 ring-amber-200">

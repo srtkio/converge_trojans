@@ -1,8 +1,8 @@
 [
-  {"id": "res_roads_1", "name": "Roads Crew R1", "department": "roads", "lat": 12.9740, "lng": 77.6000},
-  {"id": "res_roads_2", "name": "Roads Crew R2", "department": "roads", "lat": 12.9900, "lng": 77.5800},
-  {"id": "res_water_1", "name": "Water Crew W1", "department": "water", "lat": 12.9720, "lng": 77.6100},
-  {"id": "res_elec_1", "name": "Electrical Crew E1", "department": "electrical", "lat": 12.9800, "lng": 77.6050},
-  {"id": "res_sanit_1", "name": "Sanitation Crew S1", "department": "sanitation", "lat": 12.9780, "lng": 77.5950},
-  {"id": "res_gen_1", "name": "General Works Crew G1", "department": "general", "lat": 12.9700, "lng": 77.5980}
+  {"id": "res_roads_1", "name": "Roads Crew R1", "department": "roads", "lat": 28.9816000, "lng": 77.0808301},
+  {"id": "res_roads_2", "name": "Roads Crew R2", "department": "roads", "lat": 28.9975937, "lng": 77.0629471},
+  {"id": "res_water_1", "name": "Water Crew W1", "department": "water", "lat": 28.9796000, "lng": 77.0919699},
+  {"id": "res_elec_1", "name": "Electrical Crew E1", "department": "electrical", "lat": 28.9876000, "lng": 77.0864000},
+  {"id": "res_sanit_1", "name": "Sanitation Crew S1", "department": "sanitation", "lat": 28.9856000, "lng": 77.0752602},
+  {"id": "res_gen_1", "name": "General Works Crew G1", "department": "general", "lat": 28.9776000, "lng": 77.0786022}
 ]

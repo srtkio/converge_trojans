@@ -1,0 +1,2579 @@
+{
+ "golden": {
+  "details": {
+   "inc_001": {
+    "audit": [
+     [
+      "created",
+      "open",
+      "citizen"
+     ],
+     [
+      "assigned",
+      "assigned",
+      "system"
+     ],
+     [
+      "duplicate_linked",
+      null,
+      "system"
+     ],
+     [
+      "related_linked",
+      null,
+      "system"
+     ],
+     [
+      "plan_invalidated",
+      null,
+      "system"
+     ],
+     [
+      "no_resource",
+      null,
+      "system"
+     ],
+     [
+      "escalated",
+      "escalated",
+      "system"
+     ],
+     [
+      "notified",
+      null,
+      "system"
+     ],
+     [
+      "replanned",
+      null,
+      "system"
+     ],
+     [
+      "assigned",
+      "assigned",
+      "system"
+     ],
+     [
+      "work_started",
+      "in_progress",
+      "department:water"
+     ],
+     [
+      "work_completed",
+      "pending_verification",
+      "department:water"
+     ],
+     [
+      "false_closure_detected",
+      "reopened",
+      "citizen"
+     ],
+     [
+      "work_started",
+      "in_progress",
+      "department:water"
+     ],
+     [
+      "work_completed",
+      "pending_verification",
+      "department:water"
+     ],
+     [
+      "verified_closed",
+      "verified_closed",
+      "department:water"
+     ]
+    ],
+    "evidence": [
+     [
+      "citizen_followup",
+      false,
+      false
+     ],
+     [
+      "inspector",
+      true,
+      false
+     ]
+    ],
+    "impact": [
+     [
+      "school",
+      "inc_001"
+     ]
+    ],
+    "links": [
+     [
+      "lnk_001",
+      "rep_002",
+      "inc_001",
+      "duplicate",
+      0.8
+     ],
+     [
+      "lnk_002",
+      "rep_003",
+      "inc_001",
+      "related",
+      0.59
+     ]
+    ]
+   },
+   "inc_002": {
+    "audit": [
+     [
+      "created",
+      "open",
+      "citizen"
+     ],
+     [
+      "assigned",
+      "assigned",
+      "system"
+     ],
+     [
+      "related_linked",
+      null,
+      "system"
+     ],
+     [
+      "sla_breach",
+      "escalated",
+      "system"
+     ],
+     [
+      "notified",
+      null,
+      "system"
+     ]
+    ],
+    "evidence": [],
+    "impact": [
+     [
+      "transport",
+      "inc_002"
+     ]
+    ],
+    "links": [
+     [
+      "lnk_002",
+      "rep_003",
+      "inc_001",
+      "related",
+      0.59
+     ]
+    ]
+   }
+  },
+  "hypotheses": [],
+  "metrics": {
+   "at_risk": 0,
+   "baseline": {
+    "false_closures_accepted": 1,
+    "work_orders": 3
+   },
+   "coordinated_vs_independent": {
+    "coordinated_visits": 2,
+    "independent_visits": 2
+   },
+   "crew_visits_saved": 0,
+   "duplicate_work_orders_avoided": 1,
+   "duplicates_linked": 1,
+   "escalations": 2,
+   "false_closures_caught": 1,
+   "hypotheses": {
+    "confirmed": 0,
+    "proposed": 0,
+    "rejected": 0
+   },
+   "incidents": 2,
+   "replans": 1,
+   "reports": 3,
+   "sla_breaches": 1,
+   "verified_closures": 1
+  },
+  "steps": [
+   {
+    "incidents": [],
+    "metrics": {
+     "at_risk": 0,
+     "baseline": {
+      "false_closures_accepted": 0,
+      "work_orders": 0
+     },
+     "coordinated_vs_independent": {
+      "coordinated_visits": 0,
+      "independent_visits": 0
+     },
+     "crew_visits_saved": 0,
+     "duplicate_work_orders_avoided": 0,
+     "duplicates_linked": 0,
+     "escalations": 0,
+     "false_closures_caught": 0,
+     "hypotheses": {
+      "confirmed": 0,
+      "proposed": 0,
+      "rejected": 0
+     },
+     "incidents": 0,
+     "replans": 0,
+     "reports": 0,
+     "sla_breaches": 0,
+     "verified_closures": 0
+    },
+    "now": "2026-10-27T09:00:00Z",
+    "resources": [
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "electrical",
+      "id": "res_elec_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "general",
+      "id": "res_gen_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_2"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "sanitation",
+      "id": "res_sanit_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "water",
+      "id": "res_water_1"
+     }
+    ],
+    "step": 1
+   },
+   {
+    "incidents": [
+     {
+      "assigned_resource_id": "res_water_1",
+      "at_risk": false,
+      "category": "water_leak",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:00:00Z",
+      "deadline": "2026-10-27T21:00:00Z",
+      "department": "water",
+      "escalation_level": 0,
+      "id": "inc_001",
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [],
+      "report_ids": [
+       "rep_001"
+      ],
+      "severity": 4,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "verification": "unverified"
+     }
+    ],
+    "metrics": {
+     "at_risk": 0,
+     "baseline": {
+      "false_closures_accepted": 0,
+      "work_orders": 1
+     },
+     "coordinated_vs_independent": {
+      "coordinated_visits": 1,
+      "independent_visits": 1
+     },
+     "crew_visits_saved": 0,
+     "duplicate_work_orders_avoided": 0,
+     "duplicates_linked": 0,
+     "escalations": 0,
+     "false_closures_caught": 0,
+     "hypotheses": {
+      "confirmed": 0,
+      "proposed": 0,
+      "rejected": 0
+     },
+     "incidents": 1,
+     "replans": 0,
+     "reports": 1,
+     "sla_breaches": 0,
+     "verified_closures": 0
+    },
+    "now": "2026-10-27T09:00:00Z",
+    "resources": [
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "electrical",
+      "id": "res_elec_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "general",
+      "id": "res_gen_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_2"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "sanitation",
+      "id": "res_sanit_1"
+     },
+     {
+      "active_incident_ids": [
+       "inc_001"
+      ],
+      "available": true,
+      "department": "water",
+      "id": "res_water_1"
+     }
+    ],
+    "step": 2
+   },
+   {
+    "incidents": [
+     {
+      "assigned_resource_id": "res_water_1",
+      "at_risk": false,
+      "category": "water_leak",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:00:00Z",
+      "deadline": "2026-10-27T21:00:00Z",
+      "department": "water",
+      "escalation_level": 0,
+      "id": "inc_001",
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [],
+      "report_ids": [
+       "rep_001",
+       "rep_002"
+      ],
+      "severity": 5,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "verification": "corroborated"
+     }
+    ],
+    "metrics": {
+     "at_risk": 0,
+     "baseline": {
+      "false_closures_accepted": 0,
+      "work_orders": 2
+     },
+     "coordinated_vs_independent": {
+      "coordinated_visits": 1,
+      "independent_visits": 1
+     },
+     "crew_visits_saved": 0,
+     "duplicate_work_orders_avoided": 1,
+     "duplicates_linked": 1,
+     "escalations": 0,
+     "false_closures_caught": 0,
+     "hypotheses": {
+      "confirmed": 0,
+      "proposed": 0,
+      "rejected": 0
+     },
+     "incidents": 1,
+     "replans": 0,
+     "reports": 2,
+     "sla_breaches": 0,
+     "verified_closures": 0
+    },
+    "now": "2026-10-27T09:10:00Z",
+    "resources": [
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "electrical",
+      "id": "res_elec_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "general",
+      "id": "res_gen_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_2"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "sanitation",
+      "id": "res_sanit_1"
+     },
+     {
+      "active_incident_ids": [
+       "inc_001"
+      ],
+      "available": true,
+      "department": "water",
+      "id": "res_water_1"
+     }
+    ],
+    "step": 3
+   },
+   {
+    "incidents": [
+     {
+      "assigned_resource_id": "res_water_1",
+      "at_risk": false,
+      "category": "water_leak",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:00:00Z",
+      "deadline": "2026-10-27T21:00:00Z",
+      "department": "water",
+      "escalation_level": 0,
+      "id": "inc_001",
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [
+       "inc_002"
+      ],
+      "report_ids": [
+       "rep_001",
+       "rep_002"
+      ],
+      "severity": 5,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "verification": "corroborated"
+     },
+     {
+      "assigned_resource_id": "res_roads_1",
+      "at_risk": false,
+      "category": "pothole",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:20:00Z",
+      "deadline": "2026-10-29T09:20:00Z",
+      "department": "roads",
+      "escalation_level": 0,
+      "id": "inc_002",
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [
+       "inc_001"
+      ],
+      "report_ids": [
+       "rep_003"
+      ],
+      "severity": 3,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "verification": "unverified"
+     }
+    ],
+    "metrics": {
+     "at_risk": 0,
+     "baseline": {
+      "false_closures_accepted": 0,
+      "work_orders": 3
+     },
+     "coordinated_vs_independent": {
+      "coordinated_visits": 2,
+      "independent_visits": 2
+     },
+     "crew_visits_saved": 0,
+     "duplicate_work_orders_avoided": 1,
+     "duplicates_linked": 1,
+     "escalations": 0,
+     "false_closures_caught": 0,
+     "hypotheses": {
+      "confirmed": 0,
+      "proposed": 1,
+      "rejected": 0
+     },
+     "incidents": 2,
+     "replans": 0,
+     "reports": 3,
+     "sla_breaches": 0,
+     "verified_closures": 0
+    },
+    "now": "2026-10-27T09:20:00Z",
+    "resources": [
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "electrical",
+      "id": "res_elec_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "general",
+      "id": "res_gen_1"
+     },
+     {
+      "active_incident_ids": [
+       "inc_002"
+      ],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_2"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "sanitation",
+      "id": "res_sanit_1"
+     },
+     {
+      "active_incident_ids": [
+       "inc_001"
+      ],
+      "available": true,
+      "department": "water",
+      "id": "res_water_1"
+     }
+    ],
+    "step": 4
+   },
+   {
+    "incidents": [
+     {
+      "assigned_resource_id": null,
+      "at_risk": false,
+      "category": "water_leak",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:00:00Z",
+      "deadline": "2026-10-27T21:00:00Z",
+      "department": "water",
+      "escalation_level": 1,
+      "id": "inc_001",
+      "parent_incident_id": null,
+      "plan_version": 2,
+      "related_incident_ids": [
+       "inc_002"
+      ],
+      "report_ids": [
+       "rep_001",
+       "rep_002"
+      ],
+      "severity": 5,
+      "sla_state": "on_track",
+      "status": "escalated",
+      "verification": "corroborated"
+     },
+     {
+      "assigned_resource_id": "res_roads_1",
+      "at_risk": false,
+      "category": "pothole",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:20:00Z",
+      "deadline": "2026-10-29T09:20:00Z",
+      "department": "roads",
+      "escalation_level": 0,
+      "id": "inc_002",
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [
+       "inc_001"
+      ],
+      "report_ids": [
+       "rep_003"
+      ],
+      "severity": 3,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "verification": "unverified"
+     }
+    ],
+    "metrics": {
+     "at_risk": 0,
+     "baseline": {
+      "false_closures_accepted": 0,
+      "work_orders": 3
+     },
+     "coordinated_vs_independent": {
+      "coordinated_visits": 2,
+      "independent_visits": 2
+     },
+     "crew_visits_saved": 0,
+     "duplicate_work_orders_avoided": 1,
+     "duplicates_linked": 1,
+     "escalations": 1,
+     "false_closures_caught": 0,
+     "hypotheses": {
+      "confirmed": 0,
+      "proposed": 1,
+      "rejected": 0
+     },
+     "incidents": 2,
+     "replans": 1,
+     "reports": 3,
+     "sla_breaches": 0,
+     "verified_closures": 0
+    },
+    "now": "2026-10-27T09:30:00Z",
+    "resources": [
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "electrical",
+      "id": "res_elec_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "general",
+      "id": "res_gen_1"
+     },
+     {
+      "active_incident_ids": [
+       "inc_002"
+      ],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_2"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "sanitation",
+      "id": "res_sanit_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": false,
+      "department": "water",
+      "id": "res_water_1"
+     }
+    ],
+    "step": 5
+   },
+   {
+    "incidents": [
+     {
+      "assigned_resource_id": "res_water_1",
+      "at_risk": false,
+      "category": "water_leak",
+      "child_incident_ids": [],
+      "completed_at": "2026-10-27T12:15:00Z",
+      "created_at": "2026-10-27T09:00:00Z",
+      "deadline": "2026-10-27T21:00:00Z",
+      "department": "water",
+      "escalation_level": 1,
+      "id": "inc_001",
+      "parent_incident_id": null,
+      "plan_version": 2,
+      "related_incident_ids": [
+       "inc_002"
+      ],
+      "report_ids": [
+       "rep_001",
+       "rep_002"
+      ],
+      "severity": 5,
+      "sla_state": "on_track",
+      "status": "pending_verification",
+      "verification": "corroborated"
+     },
+     {
+      "assigned_resource_id": "res_roads_1",
+      "at_risk": false,
+      "category": "pothole",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:20:00Z",
+      "deadline": "2026-10-29T09:20:00Z",
+      "department": "roads",
+      "escalation_level": 0,
+      "id": "inc_002",
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [
+       "inc_001"
+      ],
+      "report_ids": [
+       "rep_003"
+      ],
+      "severity": 3,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "verification": "unverified"
+     }
+    ],
+    "metrics": {
+     "at_risk": 0,
+     "baseline": {
+      "false_closures_accepted": 0,
+      "work_orders": 3
+     },
+     "coordinated_vs_independent": {
+      "coordinated_visits": 2,
+      "independent_visits": 2
+     },
+     "crew_visits_saved": 0,
+     "duplicate_work_orders_avoided": 1,
+     "duplicates_linked": 1,
+     "escalations": 1,
+     "false_closures_caught": 0,
+     "hypotheses": {
+      "confirmed": 0,
+      "proposed": 1,
+      "rejected": 0
+     },
+     "incidents": 2,
+     "replans": 1,
+     "reports": 3,
+     "sla_breaches": 0,
+     "verified_closures": 0
+    },
+    "now": "2026-10-27T12:15:00Z",
+    "resources": [
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "electrical",
+      "id": "res_elec_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "general",
+      "id": "res_gen_1"
+     },
+     {
+      "active_incident_ids": [
+       "inc_002"
+      ],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_2"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "sanitation",
+      "id": "res_sanit_1"
+     },
+     {
+      "active_incident_ids": [
+       "inc_001"
+      ],
+      "available": true,
+      "department": "water",
+      "id": "res_water_1"
+     }
+    ],
+    "step": 6
+   },
+   {
+    "incidents": [
+     {
+      "assigned_resource_id": "res_water_1",
+      "at_risk": false,
+      "category": "water_leak",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:00:00Z",
+      "deadline": "2026-10-27T21:00:00Z",
+      "department": "water",
+      "escalation_level": 1,
+      "id": "inc_001",
+      "parent_incident_id": null,
+      "plan_version": 2,
+      "related_incident_ids": [
+       "inc_002"
+      ],
+      "report_ids": [
+       "rep_001",
+       "rep_002"
+      ],
+      "severity": 5,
+      "sla_state": "on_track",
+      "status": "reopened",
+      "verification": "corroborated"
+     },
+     {
+      "assigned_resource_id": "res_roads_1",
+      "at_risk": false,
+      "category": "pothole",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:20:00Z",
+      "deadline": "2026-10-29T09:20:00Z",
+      "department": "roads",
+      "escalation_level": 0,
+      "id": "inc_002",
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [
+       "inc_001"
+      ],
+      "report_ids": [
+       "rep_003"
+      ],
+      "severity": 3,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "verification": "unverified"
+     }
+    ],
+    "metrics": {
+     "at_risk": 0,
+     "baseline": {
+      "false_closures_accepted": 1,
+      "work_orders": 3
+     },
+     "coordinated_vs_independent": {
+      "coordinated_visits": 2,
+      "independent_visits": 2
+     },
+     "crew_visits_saved": 0,
+     "duplicate_work_orders_avoided": 1,
+     "duplicates_linked": 1,
+     "escalations": 1,
+     "false_closures_caught": 1,
+     "hypotheses": {
+      "confirmed": 0,
+      "proposed": 1,
+      "rejected": 0
+     },
+     "incidents": 2,
+     "replans": 1,
+     "reports": 3,
+     "sla_breaches": 0,
+     "verified_closures": 0
+    },
+    "now": "2026-10-27T12:45:00Z",
+    "resources": [
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "electrical",
+      "id": "res_elec_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "general",
+      "id": "res_gen_1"
+     },
+     {
+      "active_incident_ids": [
+       "inc_002"
+      ],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_2"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "sanitation",
+      "id": "res_sanit_1"
+     },
+     {
+      "active_incident_ids": [
+       "inc_001"
+      ],
+      "available": true,
+      "department": "water",
+      "id": "res_water_1"
+     }
+    ],
+    "step": 7
+   },
+   {
+    "incidents": [
+     {
+      "assigned_resource_id": null,
+      "at_risk": false,
+      "category": "water_leak",
+      "child_incident_ids": [],
+      "completed_at": "2026-10-27T15:45:00Z",
+      "created_at": "2026-10-27T09:00:00Z",
+      "deadline": "2026-10-27T21:00:00Z",
+      "department": "water",
+      "escalation_level": 1,
+      "id": "inc_001",
+      "parent_incident_id": null,
+      "plan_version": 2,
+      "related_incident_ids": [
+       "inc_002"
+      ],
+      "report_ids": [
+       "rep_001",
+       "rep_002"
+      ],
+      "severity": 5,
+      "sla_state": null,
+      "status": "verified_closed",
+      "verification": "confirmed_on_site"
+     },
+     {
+      "assigned_resource_id": "res_roads_1",
+      "at_risk": false,
+      "category": "pothole",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:20:00Z",
+      "deadline": "2026-10-29T09:20:00Z",
+      "department": "roads",
+      "escalation_level": 0,
+      "id": "inc_002",
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [
+       "inc_001"
+      ],
+      "report_ids": [
+       "rep_003"
+      ],
+      "severity": 3,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "verification": "unverified"
+     }
+    ],
+    "metrics": {
+     "at_risk": 0,
+     "baseline": {
+      "false_closures_accepted": 1,
+      "work_orders": 3
+     },
+     "coordinated_vs_independent": {
+      "coordinated_visits": 2,
+      "independent_visits": 2
+     },
+     "crew_visits_saved": 0,
+     "duplicate_work_orders_avoided": 1,
+     "duplicates_linked": 1,
+     "escalations": 1,
+     "false_closures_caught": 1,
+     "hypotheses": {
+      "confirmed": 0,
+      "proposed": 0,
+      "rejected": 0
+     },
+     "incidents": 2,
+     "replans": 1,
+     "reports": 3,
+     "sla_breaches": 0,
+     "verified_closures": 1
+    },
+    "now": "2026-10-27T16:00:00Z",
+    "resources": [
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "electrical",
+      "id": "res_elec_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "general",
+      "id": "res_gen_1"
+     },
+     {
+      "active_incident_ids": [
+       "inc_002"
+      ],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_2"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "sanitation",
+      "id": "res_sanit_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "water",
+      "id": "res_water_1"
+     }
+    ],
+    "step": 8
+   },
+   {
+    "incidents": [
+     {
+      "assigned_resource_id": null,
+      "at_risk": false,
+      "category": "water_leak",
+      "child_incident_ids": [],
+      "completed_at": "2026-10-27T15:45:00Z",
+      "created_at": "2026-10-27T09:00:00Z",
+      "deadline": "2026-10-27T21:00:00Z",
+      "department": "water",
+      "escalation_level": 1,
+      "id": "inc_001",
+      "parent_incident_id": null,
+      "plan_version": 2,
+      "related_incident_ids": [
+       "inc_002"
+      ],
+      "report_ids": [
+       "rep_001",
+       "rep_002"
+      ],
+      "severity": 5,
+      "sla_state": null,
+      "status": "verified_closed",
+      "verification": "confirmed_on_site"
+     },
+     {
+      "assigned_resource_id": "res_roads_1",
+      "at_risk": false,
+      "category": "pothole",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:20:00Z",
+      "deadline": "2026-10-30T09:20:00Z",
+      "department": "roads",
+      "escalation_level": 1,
+      "id": "inc_002",
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [
+       "inc_001"
+      ],
+      "report_ids": [
+       "rep_003"
+      ],
+      "severity": 3,
+      "sla_state": "breached",
+      "status": "escalated",
+      "verification": "unverified"
+     }
+    ],
+    "metrics": {
+     "at_risk": 0,
+     "baseline": {
+      "false_closures_accepted": 1,
+      "work_orders": 3
+     },
+     "coordinated_vs_independent": {
+      "coordinated_visits": 2,
+      "independent_visits": 2
+     },
+     "crew_visits_saved": 0,
+     "duplicate_work_orders_avoided": 1,
+     "duplicates_linked": 1,
+     "escalations": 2,
+     "false_closures_caught": 1,
+     "hypotheses": {
+      "confirmed": 0,
+      "proposed": 0,
+      "rejected": 0
+     },
+     "incidents": 2,
+     "replans": 1,
+     "reports": 3,
+     "sla_breaches": 1,
+     "verified_closures": 1
+    },
+    "now": "2026-10-29T17:00:00Z",
+    "resources": [
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "electrical",
+      "id": "res_elec_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "general",
+      "id": "res_gen_1"
+     },
+     {
+      "active_incident_ids": [
+       "inc_002"
+      ],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_2"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "sanitation",
+      "id": "res_sanit_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "water",
+      "id": "res_water_1"
+     }
+    ],
+    "step": 9
+   },
+   {
+    "incidents": [
+     {
+      "assigned_resource_id": null,
+      "at_risk": false,
+      "category": "water_leak",
+      "child_incident_ids": [],
+      "completed_at": "2026-10-27T15:45:00Z",
+      "created_at": "2026-10-27T09:00:00Z",
+      "deadline": "2026-10-27T21:00:00Z",
+      "department": "water",
+      "escalation_level": 1,
+      "id": "inc_001",
+      "parent_incident_id": null,
+      "plan_version": 2,
+      "related_incident_ids": [
+       "inc_002"
+      ],
+      "report_ids": [
+       "rep_001",
+       "rep_002"
+      ],
+      "severity": 5,
+      "sla_state": null,
+      "status": "verified_closed",
+      "verification": "confirmed_on_site"
+     },
+     {
+      "assigned_resource_id": "res_roads_1",
+      "at_risk": false,
+      "category": "pothole",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:20:00Z",
+      "deadline": "2026-10-30T09:20:00Z",
+      "department": "roads",
+      "escalation_level": 1,
+      "id": "inc_002",
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [
+       "inc_001"
+      ],
+      "report_ids": [
+       "rep_003"
+      ],
+      "severity": 3,
+      "sla_state": "breached",
+      "status": "escalated",
+      "verification": "unverified"
+     }
+    ],
+    "metrics": {
+     "at_risk": 0,
+     "baseline": {
+      "false_closures_accepted": 1,
+      "work_orders": 3
+     },
+     "coordinated_vs_independent": {
+      "coordinated_visits": 2,
+      "independent_visits": 2
+     },
+     "crew_visits_saved": 0,
+     "duplicate_work_orders_avoided": 1,
+     "duplicates_linked": 1,
+     "escalations": 2,
+     "false_closures_caught": 1,
+     "hypotheses": {
+      "confirmed": 0,
+      "proposed": 0,
+      "rejected": 0
+     },
+     "incidents": 2,
+     "replans": 1,
+     "reports": 3,
+     "sla_breaches": 1,
+     "verified_closures": 1
+    },
+    "now": "2026-10-29T17:00:00Z",
+    "resources": [
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "electrical",
+      "id": "res_elec_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "general",
+      "id": "res_gen_1"
+     },
+     {
+      "active_incident_ids": [
+       "inc_002"
+      ],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_2"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "sanitation",
+      "id": "res_sanit_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "water",
+      "id": "res_water_1"
+     }
+    ],
+    "step": 10
+   }
+  ]
+ },
+ "rootcause": {
+  "details": {
+   "inc_001": {
+    "audit": [
+     [
+      "created",
+      "open",
+      "citizen"
+     ],
+     [
+      "assigned",
+      "assigned",
+      "system"
+     ],
+     [
+      "related_linked",
+      null,
+      "system"
+     ],
+     [
+      "related_linked",
+      null,
+      "system"
+     ],
+     [
+      "hypothesis_confirmed",
+      null,
+      "operator"
+     ],
+     [
+      "work_started",
+      "in_progress",
+      "department:water"
+     ],
+     [
+      "work_completed",
+      "pending_verification",
+      "department:water"
+     ],
+     [
+      "verified_closed",
+      "verified_closed",
+      "department:water"
+     ]
+    ],
+    "evidence": [
+     [
+      "inspector",
+      true,
+      false
+     ]
+    ],
+    "impact": [
+     [
+      "health",
+      "inc_002"
+     ],
+     [
+      "school",
+      "inc_001"
+     ],
+     [
+      "transport",
+      "inc_003"
+     ]
+    ],
+    "links": [
+     [
+      "lnk_001",
+      "rep_002",
+      "inc_001",
+      "related",
+      0.75
+     ],
+     [
+      "lnk_002",
+      "rep_003",
+      "inc_001",
+      "related",
+      0.55
+     ]
+    ]
+   },
+   "inc_002": {
+    "audit": [
+     [
+      "created",
+      "open",
+      "citizen"
+     ],
+     [
+      "assigned",
+      "assigned",
+      "system"
+     ],
+     [
+      "related_linked",
+      null,
+      "system"
+     ],
+     [
+      "linked_to_parent",
+      null,
+      "system"
+     ],
+     [
+      "merged_into_parent_repair",
+      null,
+      "system"
+     ],
+     [
+      "parent_resolved",
+      "pending_verification",
+      "system"
+     ],
+     [
+      "verified_closed",
+      "verified_closed",
+      "citizen"
+     ]
+    ],
+    "evidence": [
+     [
+      "citizen_followup",
+      true,
+      false
+     ]
+    ],
+    "impact": [
+     [
+      "health",
+      "inc_002"
+     ],
+     [
+      "school",
+      "inc_002"
+     ]
+    ],
+    "links": [
+     [
+      "lnk_001",
+      "rep_002",
+      "inc_001",
+      "related",
+      0.75
+     ]
+    ]
+   },
+   "inc_003": {
+    "audit": [
+     [
+      "created",
+      "open",
+      "citizen"
+     ],
+     [
+      "assigned",
+      "assigned",
+      "system"
+     ],
+     [
+      "related_linked",
+      null,
+      "system"
+     ],
+     [
+      "linked_to_parent",
+      null,
+      "system"
+     ],
+     [
+      "merged_into_parent_repair",
+      null,
+      "system"
+     ],
+     [
+      "parent_resolved",
+      "pending_verification",
+      "system"
+     ],
+     [
+      "verified_closed",
+      "verified_closed",
+      "system"
+     ]
+    ],
+    "evidence": [
+     [
+      "photo",
+      true,
+      false
+     ]
+    ],
+    "impact": [
+     [
+      "transport",
+      "inc_003"
+     ]
+    ],
+    "links": [
+     [
+      "lnk_002",
+      "rep_003",
+      "inc_001",
+      "related",
+      0.55
+     ]
+    ]
+   }
+  },
+  "hypotheses": [
+   {
+    "cause_incident_id": "inc_001",
+    "confidence": 0.7,
+    "id": "hyp_001",
+    "member_ids": [
+     "inc_002",
+     "inc_003"
+    ],
+    "status": "confirmed"
+   }
+  ],
+  "metrics": {
+   "at_risk": 0,
+   "baseline": {
+    "false_closures_accepted": 0,
+    "work_orders": 3
+   },
+   "coordinated_vs_independent": {
+    "coordinated_visits": 1,
+    "independent_visits": 3
+   },
+   "crew_visits_saved": 2,
+   "duplicate_work_orders_avoided": 0,
+   "duplicates_linked": 0,
+   "escalations": 0,
+   "false_closures_caught": 0,
+   "hypotheses": {
+    "confirmed": 1,
+    "proposed": 0,
+    "rejected": 0
+   },
+   "incidents": 3,
+   "replans": 0,
+   "reports": 3,
+   "sla_breaches": 0,
+   "verified_closures": 3
+  },
+  "steps": [
+   {
+    "incidents": [],
+    "metrics": {
+     "at_risk": 0,
+     "baseline": {
+      "false_closures_accepted": 0,
+      "work_orders": 0
+     },
+     "coordinated_vs_independent": {
+      "coordinated_visits": 0,
+      "independent_visits": 0
+     },
+     "crew_visits_saved": 0,
+     "duplicate_work_orders_avoided": 0,
+     "duplicates_linked": 0,
+     "escalations": 0,
+     "false_closures_caught": 0,
+     "hypotheses": {
+      "confirmed": 0,
+      "proposed": 0,
+      "rejected": 0
+     },
+     "incidents": 0,
+     "replans": 0,
+     "reports": 0,
+     "sla_breaches": 0,
+     "verified_closures": 0
+    },
+    "now": "2026-10-27T09:00:00Z",
+    "resources": [
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "electrical",
+      "id": "res_elec_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "general",
+      "id": "res_gen_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_2"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "sanitation",
+      "id": "res_sanit_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "water",
+      "id": "res_water_1"
+     }
+    ],
+    "step": 1
+   },
+   {
+    "incidents": [
+     {
+      "assigned_resource_id": "res_water_1",
+      "at_risk": false,
+      "category": "water_leak",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:00:00Z",
+      "deadline": "2026-10-27T21:00:00Z",
+      "department": "water",
+      "escalation_level": 0,
+      "id": "inc_001",
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [],
+      "report_ids": [
+       "rep_001"
+      ],
+      "severity": 4,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "verification": "unverified"
+     }
+    ],
+    "metrics": {
+     "at_risk": 0,
+     "baseline": {
+      "false_closures_accepted": 0,
+      "work_orders": 1
+     },
+     "coordinated_vs_independent": {
+      "coordinated_visits": 1,
+      "independent_visits": 1
+     },
+     "crew_visits_saved": 0,
+     "duplicate_work_orders_avoided": 0,
+     "duplicates_linked": 0,
+     "escalations": 0,
+     "false_closures_caught": 0,
+     "hypotheses": {
+      "confirmed": 0,
+      "proposed": 0,
+      "rejected": 0
+     },
+     "incidents": 1,
+     "replans": 0,
+     "reports": 1,
+     "sla_breaches": 0,
+     "verified_closures": 0
+    },
+    "now": "2026-10-27T09:00:00Z",
+    "resources": [
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "electrical",
+      "id": "res_elec_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "general",
+      "id": "res_gen_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_2"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "sanitation",
+      "id": "res_sanit_1"
+     },
+     {
+      "active_incident_ids": [
+       "inc_001"
+      ],
+      "available": true,
+      "department": "water",
+      "id": "res_water_1"
+     }
+    ],
+    "step": 2
+   },
+   {
+    "incidents": [
+     {
+      "assigned_resource_id": "res_water_1",
+      "at_risk": false,
+      "category": "water_leak",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:00:00Z",
+      "deadline": "2026-10-27T21:00:00Z",
+      "department": "water",
+      "escalation_level": 0,
+      "id": "inc_001",
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [
+       "inc_002"
+      ],
+      "report_ids": [
+       "rep_001"
+      ],
+      "severity": 4,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "verification": "unverified"
+     },
+     {
+      "assigned_resource_id": "res_roads_1",
+      "at_risk": false,
+      "category": "pothole",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:20:00Z",
+      "deadline": "2026-10-29T09:20:00Z",
+      "department": "roads",
+      "escalation_level": 0,
+      "id": "inc_002",
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [
+       "inc_001"
+      ],
+      "report_ids": [
+       "rep_002"
+      ],
+      "severity": 3,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "verification": "unverified"
+     }
+    ],
+    "metrics": {
+     "at_risk": 0,
+     "baseline": {
+      "false_closures_accepted": 0,
+      "work_orders": 2
+     },
+     "coordinated_vs_independent": {
+      "coordinated_visits": 2,
+      "independent_visits": 2
+     },
+     "crew_visits_saved": 0,
+     "duplicate_work_orders_avoided": 0,
+     "duplicates_linked": 0,
+     "escalations": 0,
+     "false_closures_caught": 0,
+     "hypotheses": {
+      "confirmed": 0,
+      "proposed": 1,
+      "rejected": 0
+     },
+     "incidents": 2,
+     "replans": 0,
+     "reports": 2,
+     "sla_breaches": 0,
+     "verified_closures": 0
+    },
+    "now": "2026-10-27T09:20:00Z",
+    "resources": [
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "electrical",
+      "id": "res_elec_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "general",
+      "id": "res_gen_1"
+     },
+     {
+      "active_incident_ids": [
+       "inc_002"
+      ],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_2"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "sanitation",
+      "id": "res_sanit_1"
+     },
+     {
+      "active_incident_ids": [
+       "inc_001"
+      ],
+      "available": true,
+      "department": "water",
+      "id": "res_water_1"
+     }
+    ],
+    "step": 3
+   },
+   {
+    "incidents": [
+     {
+      "assigned_resource_id": "res_water_1",
+      "at_risk": false,
+      "category": "water_leak",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:00:00Z",
+      "deadline": "2026-10-27T21:00:00Z",
+      "department": "water",
+      "escalation_level": 0,
+      "id": "inc_001",
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [
+       "inc_002",
+       "inc_003"
+      ],
+      "report_ids": [
+       "rep_001"
+      ],
+      "severity": 4,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "verification": "unverified"
+     },
+     {
+      "assigned_resource_id": "res_roads_1",
+      "at_risk": false,
+      "category": "pothole",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:20:00Z",
+      "deadline": "2026-10-29T09:20:00Z",
+      "department": "roads",
+      "escalation_level": 0,
+      "id": "inc_002",
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [
+       "inc_001"
+      ],
+      "report_ids": [
+       "rep_002"
+      ],
+      "severity": 3,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "verification": "unverified"
+     },
+     {
+      "assigned_resource_id": "res_roads_1",
+      "at_risk": false,
+      "category": "pothole",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:40:00Z",
+      "deadline": "2026-10-29T09:40:00Z",
+      "department": "roads",
+      "escalation_level": 0,
+      "id": "inc_003",
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [
+       "inc_001"
+      ],
+      "report_ids": [
+       "rep_003"
+      ],
+      "severity": 3,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "verification": "unverified"
+     }
+    ],
+    "metrics": {
+     "at_risk": 0,
+     "baseline": {
+      "false_closures_accepted": 0,
+      "work_orders": 3
+     },
+     "coordinated_vs_independent": {
+      "coordinated_visits": 3,
+      "independent_visits": 3
+     },
+     "crew_visits_saved": 0,
+     "duplicate_work_orders_avoided": 0,
+     "duplicates_linked": 0,
+     "escalations": 0,
+     "false_closures_caught": 0,
+     "hypotheses": {
+      "confirmed": 0,
+      "proposed": 1,
+      "rejected": 0
+     },
+     "incidents": 3,
+     "replans": 0,
+     "reports": 3,
+     "sla_breaches": 0,
+     "verified_closures": 0
+    },
+    "now": "2026-10-27T09:40:00Z",
+    "resources": [
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "electrical",
+      "id": "res_elec_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "general",
+      "id": "res_gen_1"
+     },
+     {
+      "active_incident_ids": [
+       "inc_002",
+       "inc_003"
+      ],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_2"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "sanitation",
+      "id": "res_sanit_1"
+     },
+     {
+      "active_incident_ids": [
+       "inc_001"
+      ],
+      "available": true,
+      "department": "water",
+      "id": "res_water_1"
+     }
+    ],
+    "step": 4
+   },
+   {
+    "incidents": [
+     {
+      "assigned_resource_id": "res_water_1",
+      "at_risk": false,
+      "category": "water_leak",
+      "child_incident_ids": [
+       "inc_002",
+       "inc_003"
+      ],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:00:00Z",
+      "deadline": "2026-10-27T21:00:00Z",
+      "department": "water",
+      "escalation_level": 0,
+      "id": "inc_001",
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [
+       "inc_002",
+       "inc_003"
+      ],
+      "report_ids": [
+       "rep_001"
+      ],
+      "severity": 4,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "verification": "unverified"
+     },
+     {
+      "assigned_resource_id": null,
+      "at_risk": false,
+      "category": "pothole",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:20:00Z",
+      "deadline": "2026-10-29T09:20:00Z",
+      "department": "roads",
+      "escalation_level": 0,
+      "id": "inc_002",
+      "parent_incident_id": "inc_001",
+      "plan_version": 2,
+      "related_incident_ids": [
+       "inc_001"
+      ],
+      "report_ids": [
+       "rep_002"
+      ],
+      "severity": 3,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "verification": "unverified"
+     },
+     {
+      "assigned_resource_id": null,
+      "at_risk": false,
+      "category": "pothole",
+      "child_incident_ids": [],
+      "completed_at": null,
+      "created_at": "2026-10-27T09:40:00Z",
+      "deadline": "2026-10-29T09:40:00Z",
+      "department": "roads",
+      "escalation_level": 0,
+      "id": "inc_003",
+      "parent_incident_id": "inc_001",
+      "plan_version": 2,
+      "related_incident_ids": [
+       "inc_001"
+      ],
+      "report_ids": [
+       "rep_003"
+      ],
+      "severity": 3,
+      "sla_state": "on_track",
+      "status": "assigned",
+      "verification": "unverified"
+     }
+    ],
+    "metrics": {
+     "at_risk": 0,
+     "baseline": {
+      "false_closures_accepted": 0,
+      "work_orders": 3
+     },
+     "coordinated_vs_independent": {
+      "coordinated_visits": 1,
+      "independent_visits": 3
+     },
+     "crew_visits_saved": 2,
+     "duplicate_work_orders_avoided": 0,
+     "duplicates_linked": 0,
+     "escalations": 0,
+     "false_closures_caught": 0,
+     "hypotheses": {
+      "confirmed": 1,
+      "proposed": 0,
+      "rejected": 0
+     },
+     "incidents": 3,
+     "replans": 0,
+     "reports": 3,
+     "sla_breaches": 0,
+     "verified_closures": 0
+    },
+    "now": "2026-10-27T09:50:00Z",
+    "resources": [
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "electrical",
+      "id": "res_elec_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "general",
+      "id": "res_gen_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_2"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "sanitation",
+      "id": "res_sanit_1"
+     },
+     {
+      "active_incident_ids": [
+       "inc_001"
+      ],
+      "available": true,
+      "department": "water",
+      "id": "res_water_1"
+     }
+    ],
+    "step": 5
+   },
+   {
+    "incidents": [
+     {
+      "assigned_resource_id": null,
+      "at_risk": false,
+      "category": "water_leak",
+      "child_incident_ids": [
+       "inc_002",
+       "inc_003"
+      ],
+      "completed_at": "2026-10-27T12:35:00Z",
+      "created_at": "2026-10-27T09:00:00Z",
+      "deadline": "2026-10-27T21:00:00Z",
+      "department": "water",
+      "escalation_level": 0,
+      "id": "inc_001",
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [
+       "inc_002",
+       "inc_003"
+      ],
+      "report_ids": [
+       "rep_001"
+      ],
+      "severity": 4,
+      "sla_state": null,
+      "status": "verified_closed",
+      "verification": "confirmed_on_site"
+     },
+     {
+      "assigned_resource_id": null,
+      "at_risk": false,
+      "category": "pothole",
+      "child_incident_ids": [],
+      "completed_at": "2026-10-27T12:55:00Z",
+      "created_at": "2026-10-27T09:20:00Z",
+      "deadline": "2026-10-29T09:20:00Z",
+      "department": "roads",
+      "escalation_level": 0,
+      "id": "inc_002",
+      "parent_incident_id": "inc_001",
+      "plan_version": 2,
+      "related_incident_ids": [
+       "inc_001"
+      ],
+      "report_ids": [
+       "rep_002"
+      ],
+      "severity": 3,
+      "sla_state": "on_track",
+      "status": "pending_verification",
+      "verification": "unverified"
+     },
+     {
+      "assigned_resource_id": null,
+      "at_risk": false,
+      "category": "pothole",
+      "child_incident_ids": [],
+      "completed_at": "2026-10-27T12:55:00Z",
+      "created_at": "2026-10-27T09:40:00Z",
+      "deadline": "2026-10-29T09:40:00Z",
+      "department": "roads",
+      "escalation_level": 0,
+      "id": "inc_003",
+      "parent_incident_id": "inc_001",
+      "plan_version": 2,
+      "related_incident_ids": [
+       "inc_001"
+      ],
+      "report_ids": [
+       "rep_003"
+      ],
+      "severity": 3,
+      "sla_state": "on_track",
+      "status": "pending_verification",
+      "verification": "unverified"
+     }
+    ],
+    "metrics": {
+     "at_risk": 0,
+     "baseline": {
+      "false_closures_accepted": 0,
+      "work_orders": 3
+     },
+     "coordinated_vs_independent": {
+      "coordinated_visits": 1,
+      "independent_visits": 3
+     },
+     "crew_visits_saved": 2,
+     "duplicate_work_orders_avoided": 0,
+     "duplicates_linked": 0,
+     "escalations": 0,
+     "false_closures_caught": 0,
+     "hypotheses": {
+      "confirmed": 1,
+      "proposed": 0,
+      "rejected": 0
+     },
+     "incidents": 3,
+     "replans": 0,
+     "reports": 3,
+     "sla_breaches": 0,
+     "verified_closures": 1
+    },
+    "now": "2026-10-27T12:55:00Z",
+    "resources": [
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "electrical",
+      "id": "res_elec_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "general",
+      "id": "res_gen_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_2"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "sanitation",
+      "id": "res_sanit_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "water",
+      "id": "res_water_1"
+     }
+    ],
+    "step": 6
+   },
+   {
+    "incidents": [
+     {
+      "assigned_resource_id": null,
+      "at_risk": false,
+      "category": "water_leak",
+      "child_incident_ids": [
+       "inc_002",
+       "inc_003"
+      ],
+      "completed_at": "2026-10-27T12:35:00Z",
+      "created_at": "2026-10-27T09:00:00Z",
+      "deadline": "2026-10-27T21:00:00Z",
+      "department": "water",
+      "escalation_level": 0,
+      "id": "inc_001",
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [
+       "inc_002",
+       "inc_003"
+      ],
+      "report_ids": [
+       "rep_001"
+      ],
+      "severity": 4,
+      "sla_state": null,
+      "status": "verified_closed",
+      "verification": "confirmed_on_site"
+     },
+     {
+      "assigned_resource_id": null,
+      "at_risk": false,
+      "category": "pothole",
+      "child_incident_ids": [],
+      "completed_at": "2026-10-27T12:55:00Z",
+      "created_at": "2026-10-27T09:20:00Z",
+      "deadline": "2026-10-29T09:20:00Z",
+      "department": "roads",
+      "escalation_level": 0,
+      "id": "inc_002",
+      "parent_incident_id": "inc_001",
+      "plan_version": 2,
+      "related_incident_ids": [
+       "inc_001"
+      ],
+      "report_ids": [
+       "rep_002"
+      ],
+      "severity": 3,
+      "sla_state": null,
+      "status": "verified_closed",
+      "verification": "unverified"
+     },
+     {
+      "assigned_resource_id": null,
+      "at_risk": false,
+      "category": "pothole",
+      "child_incident_ids": [],
+      "completed_at": "2026-10-27T12:55:00Z",
+      "created_at": "2026-10-27T09:40:00Z",
+      "deadline": "2026-10-29T09:40:00Z",
+      "department": "roads",
+      "escalation_level": 0,
+      "id": "inc_003",
+      "parent_incident_id": "inc_001",
+      "plan_version": 2,
+      "related_incident_ids": [
+       "inc_001"
+      ],
+      "report_ids": [
+       "rep_003"
+      ],
+      "severity": 3,
+      "sla_state": null,
+      "status": "verified_closed",
+      "verification": "confirmed_on_site"
+     }
+    ],
+    "metrics": {
+     "at_risk": 0,
+     "baseline": {
+      "false_closures_accepted": 0,
+      "work_orders": 3
+     },
+     "coordinated_vs_independent": {
+      "coordinated_visits": 1,
+      "independent_visits": 3
+     },
+     "crew_visits_saved": 2,
+     "duplicate_work_orders_avoided": 0,
+     "duplicates_linked": 0,
+     "escalations": 0,
+     "false_closures_caught": 0,
+     "hypotheses": {
+      "confirmed": 1,
+      "proposed": 0,
+      "rejected": 0
+     },
+     "incidents": 3,
+     "replans": 0,
+     "reports": 3,
+     "sla_breaches": 0,
+     "verified_closures": 3
+    },
+    "now": "2026-10-27T13:55:00Z",
+    "resources": [
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "electrical",
+      "id": "res_elec_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "general",
+      "id": "res_gen_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_2"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "sanitation",
+      "id": "res_sanit_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "water",
+      "id": "res_water_1"
+     }
+    ],
+    "step": 7
+   },
+   {
+    "incidents": [
+     {
+      "assigned_resource_id": null,
+      "at_risk": false,
+      "category": "water_leak",
+      "child_incident_ids": [
+       "inc_002",
+       "inc_003"
+      ],
+      "completed_at": "2026-10-27T12:35:00Z",
+      "created_at": "2026-10-27T09:00:00Z",
+      "deadline": "2026-10-27T21:00:00Z",
+      "department": "water",
+      "escalation_level": 0,
+      "id": "inc_001",
+      "parent_incident_id": null,
+      "plan_version": 1,
+      "related_incident_ids": [
+       "inc_002",
+       "inc_003"
+      ],
+      "report_ids": [
+       "rep_001"
+      ],
+      "severity": 4,
+      "sla_state": null,
+      "status": "verified_closed",
+      "verification": "confirmed_on_site"
+     },
+     {
+      "assigned_resource_id": null,
+      "at_risk": false,
+      "category": "pothole",
+      "child_incident_ids": [],
+      "completed_at": "2026-10-27T12:55:00Z",
+      "created_at": "2026-10-27T09:20:00Z",
+      "deadline": "2026-10-29T09:20:00Z",
+      "department": "roads",
+      "escalation_level": 0,
+      "id": "inc_002",
+      "parent_incident_id": "inc_001",
+      "plan_version": 2,
+      "related_incident_ids": [
+       "inc_001"
+      ],
+      "report_ids": [
+       "rep_002"
+      ],
+      "severity": 3,
+      "sla_state": null,
+      "status": "verified_closed",
+      "verification": "unverified"
+     },
+     {
+      "assigned_resource_id": null,
+      "at_risk": false,
+      "category": "pothole",
+      "child_incident_ids": [],
+      "completed_at": "2026-10-27T12:55:00Z",
+      "created_at": "2026-10-27T09:40:00Z",
+      "deadline": "2026-10-29T09:40:00Z",
+      "department": "roads",
+      "escalation_level": 0,
+      "id": "inc_003",
+      "parent_incident_id": "inc_001",
+      "plan_version": 2,
+      "related_incident_ids": [
+       "inc_001"
+      ],
+      "report_ids": [
+       "rep_003"
+      ],
+      "severity": 3,
+      "sla_state": null,
+      "status": "verified_closed",
+      "verification": "confirmed_on_site"
+     }
+    ],
+    "metrics": {
+     "at_risk": 0,
+     "baseline": {
+      "false_closures_accepted": 0,
+      "work_orders": 3
+     },
+     "coordinated_vs_independent": {
+      "coordinated_visits": 1,
+      "independent_visits": 3
+     },
+     "crew_visits_saved": 2,
+     "duplicate_work_orders_avoided": 0,
+     "duplicates_linked": 0,
+     "escalations": 0,
+     "false_closures_caught": 0,
+     "hypotheses": {
+      "confirmed": 1,
+      "proposed": 0,
+      "rejected": 0
+     },
+     "incidents": 3,
+     "replans": 0,
+     "reports": 3,
+     "sla_breaches": 0,
+     "verified_closures": 3
+    },
+    "now": "2026-10-27T13:55:00Z",
+    "resources": [
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "electrical",
+      "id": "res_elec_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "general",
+      "id": "res_gen_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "roads",
+      "id": "res_roads_2"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "sanitation",
+      "id": "res_sanit_1"
+     },
+     {
+      "active_incident_ids": [],
+      "available": true,
+      "department": "water",
+      "id": "res_water_1"
+     }
+    ],
+    "step": 8
+   }
+  ]
+ }
+}

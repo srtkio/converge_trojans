@@ -6,13 +6,13 @@ import pytest
 
 from app.engine.trust import RateLimiter
 
-MG = (12.97560, 77.60500)
+GT = (28.9832, 77.0864)  # GT Road (NH-44) at Rishihood University
 NEW_INCIDENT_FIELDS = {"verification", "sla_state"}
 BASELINE = json.loads((Path(__file__).parent / "fixtures" / "scenario_baseline.json").read_text())
 RATE_MSG = "You've sent a lot of reports in a short time. Please wait a bit and try again."
 
 
-def _report(client, text="Water gushing from a broken pipe", category="water_leak", at=MG, reporter="citizen:asha"):
+def _report(client, text="Water gushing from a broken pipe", category="water_leak", at=GT, reporter="citizen:asha"):
     r = client.post("/reports", json={"text": text, "category": category, "lat": at[0], "lng": at[1],
                                       "reporter": reporter})
     assert r.status_code == 200, r.text
@@ -23,18 +23,7 @@ def _reject(client, inc_id, badge, reason="fake", note=""):
     return client.post(f"/incidents/{inc_id}/reject", json={"reason": reason, "note": note, "by_badge": badge})
 
 
-def _strip(obj):
-    """Drop only the newly added computed incident fields, recursively."""
-    if isinstance(obj, dict):
-        if "plan_version" in obj and "escalation_level" in obj:  # an Incident
-            obj = {k: v for k, v in obj.items() if k not in NEW_INCIDENT_FIELDS}
-        return {k: _strip(v) for k, v in obj.items()}
-    if isinstance(obj, list):
-        return [_strip(x) for x in obj]
-    return obj
-
-
-# --- golden / rootcause / city unchanged vs origin/main ------------------------------------
+# --- golden / rootcause / city unchanged vs the committed baseline ------------------------------------
 
 
 @pytest.mark.parametrize("name", ["golden", "rootcause", "city"])
@@ -43,7 +32,9 @@ def test_scenarios_unchanged_vs_main(client, name):
     after = {"run": run, "incidents": client.get("/incidents").json(), "metrics": client.get("/metrics").json()}
     for inc in after["incidents"]:
         assert NEW_INCIDENT_FIELDS <= inc.keys()
-    assert _strip(after) == BASELINE[name]
+    # The baseline now includes the computed verification / sla_state fields (regenerated for the
+    # Murthal/Sonipat move); test_relocation.py proves that move changed no decision.
+    assert after == BASELINE[name]
     assert after["metrics"] == BASELINE[name]["metrics"]
 
 
@@ -170,7 +161,7 @@ def test_rejected_is_closed_for_sla_replan_and_dedup(client):
 def test_reporter_flags_count_other_rejected_incidents(client):
     fake = _report(client, reporter="citizen:troll")["incident"]
     _reject(client, fake["id"], "CMD-01", "fake")
-    far = (MG[0] + 0.02, MG[1])
+    far = (GT[0] + 0.02, GT[1])
     nxt = _report(client, "Streetlight out", "streetlight", far, "citizen:troll")["incident"]
     _report(client, "Streetlight out here too", "streetlight", far, "citizen:asha")
     reps = {r["reporter"]: r["reporter_flags"] for r in client.get(f"/incidents/{nxt['id']}").json()["reports"]}
@@ -182,7 +173,7 @@ def test_reporter_flags_count_other_rejected_incidents(client):
 def test_anonymous_reporters_are_never_flagged(client):
     fake = _report(client, reporter="anonymous")["incident"]
     _reject(client, fake["id"], "CMD-01", "fake")
-    nxt = _report(client, "Garbage pile", "garbage", (MG[0] + 0.02, MG[1]), "anonymous")["incident"]
+    nxt = _report(client, "Garbage pile", "garbage", (GT[0] + 0.02, GT[1]), "anonymous")["incident"]
     assert client.get(f"/incidents/{nxt['id']}").json()["reports"][0]["reporter_flags"] == 0
 
 
@@ -191,8 +182,8 @@ def test_anonymous_reporters_are_never_flagged(client):
 
 def test_sixth_report_in_an_hour_is_429(client):
     for i in range(5):
-        _report(client, f"Pothole number {i}", "pothole", (MG[0] + 0.01 * i, MG[1]), "citizen:spam")
-    r = client.post("/reports", json={"text": "one more", "category": "pothole", "lat": MG[0], "lng": MG[1],
+        _report(client, f"Pothole number {i}", "pothole", (GT[0] + 0.01 * i, GT[1]), "citizen:spam")
+    r = client.post("/reports", json={"text": "one more", "category": "pothole", "lat": GT[0], "lng": GT[1],
                                       "reporter": "citizen:spam"})
     assert r.status_code == 429 and r.json() == {"detail": RATE_MSG}
     _report(client, reporter="citizen:asha")  # other reporters unaffected
@@ -225,7 +216,7 @@ def test_verification_levels(client):
     assert inc["verification"] == "unverified"
     _report(client, "Same leak again", reporter="citizen:asha")  # same person again: still one reporter
     assert client.get(f"/incidents/{inc['id']}").json()["incident"]["verification"] == "unverified"
-    _report(client, "Big leak by the metro", at=(MG[0] + 0.0005, MG[1]), reporter="citizen:ravi")
+    _report(client, "Big leak by the university gate", at=(GT[0] + 0.0005, GT[1]), reporter="citizen:ravi")
     assert client.get(f"/incidents/{inc['id']}").json()["incident"]["verification"] == "corroborated"
     client.post(f"/incidents/{inc['id']}/evidence",
                 json={"kind": "citizen_followup", "supports_resolution": False, "note": "still there"})

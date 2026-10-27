@@ -42,12 +42,12 @@ def test_no_api_key_falls_back_silently(client, monkeypatch):
 
 
 def test_llm_rewrites_reason_and_clamps_confidence(client, fake_llm):
-    msgs = fake_llm(payload={"reason": "Both describe the same burst pipe outside MG Road metro.", "confidence": 0.01})
+    msgs = fake_llm(payload={"reason": "Both describe the same burst pipe outside the Rishihood University gate.", "confidence": 0.01})
     a = report(client)
     b = report(client, north=60)
     assert msgs.calls == 1  # first report had nothing to link to
     assert b["link"]["kind"] == "duplicate" and b["incident"]["id"] == a["incident"]["id"]
-    assert b["link"]["reason"] == "Both describe the same burst pipe outside MG Road metro."
+    assert b["link"]["reason"] == "Both describe the same burst pipe outside the Rishihood University gate."
     rule_conf = 0.8  # 1 - 60/150 * 0.5
     assert b["link"]["confidence"] == round(rule_conf - llm.MAX_CONFIDENCE_SHIFT, 2)
     audit = client.get("/audit", params={"incident_id": a["incident"]["id"]}).json()
