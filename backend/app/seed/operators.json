@@ -1,12 +1,44 @@
 [
-  {"badge_id": "OPS-WTR-01", "name": "Water Dept Officer", "department": "water", "role": "officer",
-   "code_sha256": "81fb02759e6cf7403f1bf83463a3bec92a05d49b8f04967b709101c652c01618"},
-  {"badge_id": "OPS-RDS-01", "name": "Roads Dept Officer", "department": "roads", "role": "officer",
-   "code_sha256": "0d03b14772807d5f225c2e507d225844967de2d2949ac568ccb9499c389c175d"},
-  {"badge_id": "HEAD-WTR-01", "name": "Water Dept Head", "department": "water", "role": "head",
-   "code_sha256": "5df80b1fde81c3d9a1cb61359edfb9f9028455a3690117e5d15afaf947297436"},
-  {"badge_id": "HEAD-RDS-01", "name": "Roads Dept Head", "department": "roads", "role": "head",
-   "code_sha256": "0677cd10883ab0e1ccf225910516f8abc402b12d47d694f77a9bde0ce975c5d5"},
-  {"badge_id": "CMD-01", "name": "City Command Centre", "department": "all", "role": "command",
-   "code_sha256": "c14b704f1ad94ff7a4d01e14fb94c53d78a67c7d0b9f04675372e754590387b2"}
+  {
+    "badge_id": "OPS-WTR-01",
+    "name": "Water Dept Officer",
+    "department": "water",
+    "role": "officer",
+    "code_sha256": "81fb02759e6cf7403f1bf83463a3bec92a05d49b8f04967b709101c652c01618"
+  },
+  {
+    "badge_id": "OPS-RDS-01",
+    "name": "Roads Dept Officer",
+    "department": "roads",
+    "role": "officer",
+    "code_sha256": "0d03b14772807d5f225c2e507d225844967de2d2949ac568ccb9499c389c175d"
+  },
+  {
+    "badge_id": "HEAD-WTR-01",
+    "name": "Water Dept Head",
+    "department": "water",
+    "role": "head",
+    "code_sha256": "5df80b1fde81c3d9a1cb61359edfb9f9028455a3690117e5d15afaf947297436"
+  },
+  {
+    "badge_id": "HEAD-RDS-01",
+    "name": "Roads Dept Head",
+    "department": "roads",
+    "role": "head",
+    "code_sha256": "0677cd10883ab0e1ccf225910516f8abc402b12d47d694f77a9bde0ce975c5d5"
+  },
+  {
+    "badge_id": "CMD-01",
+    "name": "City Command Centre",
+    "department": "all",
+    "role": "command",
+    "code_sha256": "c14b704f1ad94ff7a4d01e14fb94c53d78a67c7d0b9f04675372e754590387b2"
+  },
+  {
+    "badge_id": "OPS-HLT-01",
+    "name": "Health Dept Officer",
+    "department": "health",
+    "role": "officer",
+    "code_sha256": "dffa779a10bb2caec2ce21daa8efa5913ab012c54b8ede37facbb019ce66ebf5"
+  }
 ]

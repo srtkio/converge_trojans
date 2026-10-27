@@ -5,8 +5,8 @@ import pytest
 
 from .test_rules import BASE, M_LAT
 
-CATEGORIES = ["pothole", "streetlight", "water_leak", "garbage", "sewage", "other"]
-RESOURCES = ["res_roads_1", "res_roads_2", "res_water_1", "res_elec_1", "res_sanit_1", "res_gen_1"]
+CATEGORIES = ["pothole", "streetlight", "water_leak", "garbage", "sewage", "other", "health_service", "bin_overflow"]
+RESOURCES = ["res_roads_1", "res_roads_2", "res_water_1", "res_elec_1", "res_sanit_1", "res_gen_1", "res_health_1"]
 
 
 def random_op(c, rng: random.Random, incidents: list[dict]):

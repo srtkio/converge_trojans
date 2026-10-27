@@ -95,6 +95,7 @@ The start page asks who you are.
   - `OPS-WTR-01` / `water-demo-2026`: water department officer
   - `OPS-RDS-01` / `roads-demo-2026`: roads department officer
   - `HEAD-WTR-01` / `water-head-2026`: water department head (can reject water complaints as invalid)
+  - `OPS-HLT-01` / `health-demo-2026`: health department officer (healthcare complaints)
   - `HEAD-RDS-01` / `roads-head-2026`: roads department head (can reject roads complaints)
   - `CMD-01` / `command-demo-2026`: city command centre (all departments; best for the demo)
 

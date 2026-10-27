@@ -29,6 +29,8 @@ export const CATEGORY_LABEL: Record<Category, string> = {
   water_leak: "Water leak",
   garbage: "Garbage",
   sewage: "Sewage",
+  health_service: "Health service",
+  bin_overflow: "Bin overflow",
   other: "Other",
 };
 
@@ -38,6 +40,8 @@ export const CATEGORY_ICON: Record<Category, string> = {
   water_leak: "💧",
   garbage: "🗑️",
   sewage: "🚰",
+  health_service: "🏥",
+  bin_overflow: "🗑️",
   other: "📍",
 };
 

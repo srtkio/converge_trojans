@@ -1,6 +1,14 @@
 // Shapes mirror backend/app/models.py `to_api` output (docs/CONTRACTS.md).
 
-export type Category = "pothole" | "streetlight" | "water_leak" | "garbage" | "sewage" | "other";
+export type Category =
+  | "pothole"
+  | "streetlight"
+  | "water_leak"
+  | "garbage"
+  | "sewage"
+  | "other"
+  | "health_service"
+  | "bin_overflow";
 
 export type Status =
   | "open"

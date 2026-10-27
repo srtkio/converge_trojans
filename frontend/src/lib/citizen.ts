@@ -170,6 +170,8 @@ export function friendlyTimeLeft(hours: number): string {
 }
 
 const CATEGORY_HINTS: [Category, RegExp][] = [
+  ["bin_overflow", /overflow|overflowing|bin.*overflow|overflowing bin/],
+  ["health_service", /clinic|hospital|doctor|medicine|ambulance|health|nurse|pharmacy/],
   ["sewage", /sewage|sewer|manhole|drain|gutter/],
   ["garbage", /garbage|trash|rubbish|litter|waste|\bbins?\b|dump/],
   ["water_leak", /water|leak|pipe|burst|flood|gush/],
@@ -261,6 +263,8 @@ const FIX_HOURS: Record<Category, number> = {
   garbage: 24,
   sewage: 12,
   other: 72,
+  health_service: 24,
+  bin_overflow: 12,
 };
 
 export function fixTimeText(c: Category): string {

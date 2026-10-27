@@ -502,6 +502,17 @@
       "name": "General Works Crew G1"
      },
      {
+      "id": "res_health_1",
+      "name": "Health Outreach Crew H1",
+      "department": "health",
+      "available": true,
+      "location": {
+       "lat": 12.976,
+       "lng": 77.602
+      },
+      "active_incident_ids": []
+     },
+     {
       "active_incident_ids": [
        "inc_002"
       ],
@@ -783,6 +794,17 @@
        "lng": 77.598
       },
       "name": "General Works Crew G1"
+     },
+     {
+      "id": "res_health_1",
+      "name": "Health Outreach Crew H1",
+      "department": "health",
+      "available": true,
+      "location": {
+       "lat": 12.976,
+       "lng": 77.602
+      },
+      "active_incident_ids": []
      },
      {
       "active_incident_ids": [
@@ -1110,6 +1132,17 @@
        "lng": 77.598
       },
       "name": "General Works Crew G1"
+     },
+     {
+      "id": "res_health_1",
+      "name": "Health Outreach Crew H1",
+      "department": "health",
+      "available": true,
+      "location": {
+       "lat": 12.976,
+       "lng": 77.602
+      },
+      "active_incident_ids": []
      },
      {
       "active_incident_ids": [],
