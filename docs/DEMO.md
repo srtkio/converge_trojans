@@ -8,10 +8,8 @@ number to point at.
 1. Backend running: `cd backend && uvicorn app.main:app --port 8000`
    (if 8000 is taken by another project, use `--port 8001` and set
    `NEXT_PUBLIC_API_URL=http://localhost:8001` in `frontend/.env.local`).
-2. Frontend running: `cd frontend && pnpm dev`, then open http://localhost:3000.
-   Sign in to the operator dashboard at **/operator** with the demo badge `OPS-WTR-01` and code
-   `water-demo-2026` (see the README; these are demo credentials). Before PR #16 is merged the
-   dashboard is at `/`, and no sign-in is needed.
+2. Frontend running: `cd frontend && pnpm dev`, then open http://localhost:3000/operator and sign in
+   as `OPS-WTR-01` / `water-demo-2026` (demo account; see README › Portals and demo sign-in).
 3. Press **Reset**. The dashboard should show no incidents.
 4. Optional check: `scripts/smoke.sh` should print `PASS` (use `CONVERGE_URL=http://localhost:8001`
    if the backend is on 8001). Run it, then press **Reset** again before presenting.
@@ -183,7 +181,7 @@ deterministic.
 ## Optional: a live citizen complaint (about 1 minute, after the scorecard)
 
 **Say:** "Citizens don't need to call anyone. Here is one filing from a phone."
-Open `/citizen` in a second browser window, sign in with any name and email, and file a complaint.
+Open `/citizen` in a second browser window, sign in with a name and email, and file a complaint.
 Go to the case link, add a note, and answer **Still broken**.
 **Point at:** the **Citizen activity** panel at the top of the operator dashboard. The complaint and
-the note appear with the citizen's name, within about four seconds, and link to the case.
+the note appear with the citizen's first name, within about four seconds, and link to the case.

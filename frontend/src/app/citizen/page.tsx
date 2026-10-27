@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 import { ReportForm } from "@/components/ReportForm";
 import { api } from "@/lib/api";
-import { clearSession, readSession, saveSession, type Session } from "@/lib/session";
+import { clearSession, firstName, readSession, saveSession, type Session } from "@/lib/session";
 
 type Citizen = Extract<Session, { kind: "citizen" }>;
 
@@ -60,7 +60,7 @@ function CitizenHome({ citizen, onSignOut }: { citizen: Citizen; onSignOut: () =
             busy={busy}
             act={act}
             onCreated={(id) => setTrackId(id)}
-            reporter={`citizen:${citizen.name}`}
+            reporter={`citizen:${firstName(citizen.name)}`}
           />
         </div>
       </section>

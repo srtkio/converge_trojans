@@ -15,7 +15,7 @@ import {
   hoursLeft,
   humanize,
 } from "@/lib/format";
-import { readSession } from "@/lib/session";
+import { firstName, readSession } from "@/lib/session";
 import type { IncidentDetail } from "@/lib/types";
 
 const REFRESH_MS = 4000;
@@ -51,8 +51,9 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
 
   useEffect(() => {
     // The signed-in citizen's name, so the operator inbox can show who answered. Storage is browser-only.
+    const name = readSession("citizen")?.name;
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setCitizenName(readSession("citizen")?.name ?? null);
+    setCitizenName(name ? firstName(name) : null);
   }, []);
 
   const answer = async (fixed: boolean) => {

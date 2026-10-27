@@ -5,7 +5,7 @@
   2. Citizen opens the case from the "Track your case" link, adds a note, answers "Still broken".
   3. Operator signs in at /operator (demo badge) in a separate browser.
   4. Within 20 seconds the operator's Citizen activity panel must show the complaint and the
-     evidence, with the citizen's name.
+     evidence, with the citizen's first name only. The email must not appear anywhere on the page.
 
 Exits 0 on pass, 1 on the first failure.
 
@@ -98,10 +98,16 @@ def operator_sees(page, base: str, marker: str) -> None:
     except PlaywrightTimeout as e:
         raise Check("operator inbox never showed the citizen's evidence note") from e
 
-    name_shown = page.get_by_text(CITIZEN_NAME, exact=False).count() > 0
-    if not name_shown:
-        raise Check(f"operator inbox does not show the citizen's name '{CITIZEN_NAME}'")
-    log("operator inbox shows the complaint, the evidence note, and the citizen's name")
+    inbox_text = page.locator("section[aria-labelledby=inbox-heading]").inner_text()
+    first = CITIZEN_NAME.split()[0]
+    if first not in inbox_text:
+        raise Check(f"operator inbox does not show the citizen's first name '{first}'")
+    if CITIZEN_NAME in inbox_text:
+        raise Check("operator inbox shows the citizen's full name; only the first name may appear")
+    body_text = page.inner_text("body")
+    if CITIZEN_EMAIL in body_text:
+        raise Check("the citizen's email appears on the operator page; it must never leave the citizen's browser")
+    log("operator inbox shows the complaint, the evidence note, and the first name only (no email)")
 
 
 def main() -> int:

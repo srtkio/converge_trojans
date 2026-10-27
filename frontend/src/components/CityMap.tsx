@@ -1,5 +1,73 @@
+"use client";
+
+import dynamic from "next/dynamic";
+import { useState } from "react";
+
 import { CATEGORY_ICON, STATUS_LABEL, STATUS_STYLE } from "@/lib/format";
 import type { Incident, Report, Resource } from "@/lib/types";
+
+// Leaflet touches `window`, so the street map only renders in the browser.
+const StreetMap = dynamic(() => import("./StreetMap"), {
+  ssr: false,
+  loading: () => <div className="h-[340px] w-full animate-pulse rounded-md bg-slate-100" />,
+});
+
+type MapProps = {
+  incidents: Incident[];
+  resources: Resource[];
+  reports: Report[];
+  selectedId: string | null;
+  onSelect: (id: string) => void;
+};
+
+/** City view: real street map by default, schematic as the offline fallback. */
+export function CityMap(props: MapProps) {
+  const [view, setView] = useState<"street" | "schematic">("street");
+  const [tilesDown, setTilesDown] = useState(false);
+  return (
+    <section className="rounded-lg border border-slate-200 bg-white p-2 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-2 px-1 pb-2">
+        <div className="flex items-center gap-3">
+          <h2 className="text-sm font-semibold">City view</h2>
+          <div className="flex rounded-md bg-slate-100 p-0.5 text-xs font-medium">
+            {(["street", "schematic"] as const).map((v) => (
+              <button
+                key={v}
+                onClick={() => setView(v)}
+                className={`rounded px-2 py-0.5 ${view === v ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
+              >
+                {v === "street" ? "Street map" : "Schematic (offline)"}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-3 text-[11px] text-slate-500">
+          <span>● incident</span>
+          <span>◦ report</span>
+          <span>■ crew</span>
+          <span className="text-violet-600">┅ related</span>
+          <span>dashed ring = 150 m duplicate radius</span>
+        </div>
+      </div>
+      {tilesDown && view === "schematic" && (
+        <p className="mb-2 rounded-md bg-amber-50 px-3 py-1.5 text-xs text-amber-800 ring-1 ring-amber-200">
+          Street map tiles couldn’t load (no internet?), so this is the offline schematic view.
+        </p>
+      )}
+      {view === "street" ? (
+        <StreetMap
+          {...props}
+          onTilesFailed={() => {
+            setTilesDown(true);
+            setView("schematic");
+          }}
+        />
+      ) : (
+        <SchematicMap {...props} />
+      )}
+    </section>
+  );
+}
 
 /**
  * Schematic map: plots incidents, reports, and crews on a local x/y projection of lat/lng.
@@ -10,19 +78,7 @@ const H = 300;
 const PAD = 40;
 const M_PER_DEG_LAT = 111_320;
 
-export function CityMap({
-  incidents,
-  resources,
-  reports,
-  selectedId,
-  onSelect,
-}: {
-  incidents: Incident[];
-  resources: Resource[];
-  reports: Report[];
-  selectedId: string | null;
-  onSelect: (id: string) => void;
-}) {
+function SchematicMap({ incidents, resources, reports, selectedId, onSelect }: MapProps) {
   // Frame on incidents and reports; crews only set the frame when there's nothing else.
   // Crews outside the frame are pinned to its edge so far-away depots don't shrink the action.
   const focus = [...incidents.map((i) => ({ lat: i.lat, lng: i.lng })), ...reports.map((r) => ({ lat: r.lat, lng: r.lng }))];
@@ -30,7 +86,7 @@ export function CityMap({
 
   if (points.length === 0) {
     return (
-      <div className="flex h-[300px] items-center justify-center rounded-lg border border-slate-200 bg-white text-sm text-slate-500 shadow-sm">
+      <div className="flex h-[300px] items-center justify-center rounded-md bg-slate-50 text-sm text-slate-500">
         Map appears when there are incidents or crews.
       </div>
     );
@@ -68,17 +124,6 @@ export function CityMap({
   const scaleBarM = spanM > 1500 ? 500 : 100;
 
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-2 shadow-sm">
-      <div className="flex items-center justify-between px-1 pb-1">
-        <h2 className="text-sm font-semibold">City view</h2>
-        <div className="flex flex-wrap gap-3 text-[11px] text-slate-500">
-          <span>● incident</span>
-          <span>◦ report</span>
-          <span>■ crew (→ off-map)</span>
-          <span className="text-violet-600">┅ related</span>
-          <span>dashed ring = 150 m duplicate radius</span>
-        </div>
-      </div>
       <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full rounded-md bg-slate-50" role="img" aria-label="Map of incidents and crews">
         <defs>
           <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
@@ -149,6 +194,5 @@ export function CityMap({
           </text>
         </g>
       </svg>
-    </section>
   );
 }
