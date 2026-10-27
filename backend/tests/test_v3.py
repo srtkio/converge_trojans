@@ -1,13 +1,16 @@
 """v3: SLA at-risk flag, AI photo check (signal only), real feedback."""
+import base64
+
 from types import SimpleNamespace
 
 import pytest
 
 from app.engine import llm
 
+from .images import jpeg
 from .test_rules import detail, events, finish_work, report
 
-PHOTO = {"data": "aGVsbG8=", "media_type": "image/jpeg"}
+PHOTO = {"data": base64.b64encode(jpeg()).decode(), "media_type": "image/jpeg"}
 
 
 def test_at_risk_flag_before_breach_and_alert_once(client):

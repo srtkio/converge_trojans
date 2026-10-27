@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 from typing import Literal
 
 from dotenv import load_dotenv
-from fastapi import Depends, FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, HTTPException, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from sqlmodel import Session, or_, select
@@ -15,9 +15,9 @@ load_dotenv()
 
 from app import auth, sim  # noqa: E402
 from app.db import engine, get_session, init_db, now  # noqa: E402
-from app.engine import feedback, impact, llm, metrics, rootcause, verify  # noqa: E402
+from app.engine import feedback, impact, llm, metrics, photos, rootcause, verify  # noqa: E402
 from app.engine.intake import submit_report  # noqa: E402
-from app.models import AuditEvent, Evidence, Incident, Link, Report, Resource, Service  # noqa: E402
+from app.models import AuditEvent, Evidence, Incident, Link, Report, Resource, Service, photo_url  # noqa: E402
 
 Category = Literal["pothole", "streetlight", "water_leak", "garbage", "sewage", "other"]
 EvidenceKind = Literal["photo", "sensor", "citizen_followup", "inspector"]
@@ -50,21 +50,24 @@ app.add_middleware(
 )
 
 
+class LocationIn(BaseModel):
+    source: Literal["gps", "landmark"]
+    accuracy_m: float | None = Field(None, ge=0, le=100_000)
+    label: str | None = Field(None, max_length=120)
+
+
 class ReportIn(BaseModel):
     text: str = Field(min_length=1)
     category: Category
     lat: float = Field(ge=-90, le=90)
     lng: float = Field(ge=-180, le=180)
     reporter: str = "anonymous"
+    photo: "PhotoIn | None" = None
+    location: LocationIn | None = None
 
 
 class CompleteIn(BaseModel):
     note: str = ""
-
-
-MAX_PHOTO_BYTES = 5 * 1024 * 1024
-# Generous cap on the encoded string so oversized uploads fail fast with 413 before decoding.
-MAX_PHOTO_B64 = MAX_PHOTO_BYTES * 4 // 3 + 16
 
 
 class PhotoIn(BaseModel):
@@ -92,17 +95,6 @@ class FeedbackIn(BaseModel):
     incident_id: str | None = None
 
 
-def _validate_photo(photo: PhotoIn) -> None:
-    if len(photo.data) > MAX_PHOTO_B64:
-        raise HTTPException(413, f"Photo too large (max {MAX_PHOTO_BYTES // (1024 * 1024)} MB)")
-    try:
-        raw = base64.b64decode(photo.data, validate=True)
-    except (binascii.Error, ValueError):
-        raise HTTPException(422, "photo.data is not valid base64") from None
-    if len(raw) > MAX_PHOTO_BYTES:
-        raise HTTPException(413, f"Photo too large (max {MAX_PHOTO_BYTES // (1024 * 1024)} MB)")
-
-
 def _incident(s: Session, incident_id: str) -> Incident:
     inc = s.get(Incident, incident_id)
     if inc is None:
@@ -124,7 +116,17 @@ def health():
 
 @app.post("/reports")
 def post_report(body: ReportIn, s: Session = Depends(get_session)):
-    report, inc, link = submit_report(s, body.text, body.category, body.lat, body.lng, body.reporter)
+    photo = None
+    if body.photo:
+        photo = photos.store(s, photos.decode(body.photo.data, body.photo.media_type), body.photo.media_type)
+    loc = body.location
+    report, inc, link = submit_report(
+        s, body.text, body.category, body.lat, body.lng, body.reporter,
+        photo_id=photo.id if photo else None,
+        location_source=loc.source if loc else None,
+        location_accuracy_m=loc.accuracy_m if loc else None,
+        location_label=loc.label if loc else None,
+    )
     s.commit()
     return {"report": report.to_api(), "incident": inc.to_api(), "link": link.to_api() if link else None}
 
@@ -175,18 +177,34 @@ def complete_incident(incident_id: str, body: CompleteIn | None = None, s: Sessi
 @app.post("/incidents/{incident_id}/evidence")
 def post_evidence(incident_id: str, body: EvidenceIn, s: Session = Depends(get_session)):
     inc = _incident(s, incident_id)
-    if body.photo:
-        _validate_photo(body.photo)
+    raw = photos.decode(body.photo.data, body.photo.media_type) if body.photo else None
     ev = verify.add_evidence(s, inc, body.kind, body.supports_resolution, body.note, body.source)
+    stored = None
+    if raw is not None:
+        stored = photos.store(s, raw, body.photo.media_type)
+        ev.photo_id = stored.id
+        s.add(ev)
     ai_check = None
-    if body.photo:
+    if stored is not None:
         # Signal only: recorded after the rule-based decision above, never changes status.
-        check = llm.check_photo(body.photo.data, body.photo.media_type, inc.category, inc.title)
+        # The AI sees the metadata-stripped copy, never the original upload.
+        check = llm.check_photo(base64.b64encode(stored.data).decode(), stored.media_type, inc.category, inc.title)
         if check:
             ai_ev = verify.record_ai_check(s, inc, check, ev)
             ai_check = {**check, "evidence_id": ai_ev.id}
     s.commit()
     return {"incident": inc.to_api(), "evidence": ev.to_api(), "ai_check": ai_check}
+
+
+@app.get("/photos/{photo_id}")
+def get_photo(photo_id: str, s: Session = Depends(get_session)):
+    photo = photos.get(s, photo_id)
+    if photo is None:
+        raise HTTPException(404, "Photo not found")
+    return Response(content=photo.data, media_type=photo.media_type, headers={
+        "Cache-Control": "public, max-age=31536000, immutable",
+        "X-Content-Type-Options": "nosniff",
+    })
 
 
 @app.get("/incidents/{incident_id}/impact")
@@ -356,14 +374,19 @@ def citizen_activity(limit: int = Query(50, ge=1, le=200), s: Session = Depends(
         items.append({"id": r.id, "kind": "complaint", "at": r.created_at, "citizen": r.reporter,
                       "text": r.text, "category": r.category, "supports": None,
                       "incident_id": r.incident_id, "incident_title": inc.title if inc else None,
-                      "incident_status": inc.status if inc else None})
+                      "incident_status": inc.status if inc else None,
+                      "photo_url": photo_url(r.photo_id), "lat": r.lat, "lng": r.lng,
+                      "location_source": r.location_source, "location_accuracy_m": r.location_accuracy_m,
+                      "location_label": r.location_label})
     for e in s.exec(select(Evidence).where(Evidence.kind == "citizen_followup")).all():
         inc = incidents.get(e.incident_id)
         items.append({"id": e.id, "kind": "evidence", "at": e.created_at, "citizen": e.source,
                       "text": e.note, "category": inc.category if inc else None,
                       "supports": e.supports_resolution, "incident_id": e.incident_id,
                       "incident_title": inc.title if inc else None,
-                      "incident_status": inc.status if inc else None})
+                      "incident_status": inc.status if inc else None,
+                      "photo_url": photo_url(e.photo_id), "lat": None, "lng": None,
+                      "location_source": None, "location_accuracy_m": None, "location_label": None})
     # The simulated clock can give many items the same timestamp, so ties fall back to arrival order (id).
     items.sort(key=lambda x: (x["at"], x["id"]), reverse=True)
     return items[:limit]
