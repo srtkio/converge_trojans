@@ -1,47 +1,175 @@
 # CONVERGE flows
 
-Seven process flows. **A is implemented** in the v1 backend. **B to G are design or roadmap**:
-they describe where the platform is going, not what the code does today. Each flow says which.
+This file has two parts.
 
-Notes on A: the code simplifies some steps. Validation is schema-level (bad input is rejected with an
-error, not quarantined for review). Location is a coordinate match, not a full asset lookup. Escalation
-goes to a department head or the command centre, as described in the README.
+- **Part 1: implemented.** What the code does today, with the real rule values from
+  `backend/app/config.py` and `backend/app/engine/`. Every number here is in the code.
+- **Part 2: design and roadmap.** Where the platform is going. These flows are plans, not built features.
 
-## A. V1 incident loop (implemented)
+Contents: [A1 Report intake](#a1-report-intake-and-grouping) ·
+[A2 Assignment and deadlines](#a2-assignment-replanning-and-deadlines) ·
+[A3 Verification](#a3-verification-and-closure) · [A4 Incident states](#a4-incident-state-machine) ·
+[A5 Shared cause](#a5-shared-cause-repair-v2) · [A6 Citizen and operator](#a6-citizen-and-operator-loop) ·
+[B–G roadmap](#part-2-design-and-roadmap)
+
+# Part 1: implemented
+
+## A1. Report intake and grouping
+
+Where: `POST /reports` → `engine/intake.py`, `engine/dedup.py`, `engine/trust.py`.
 
 ```mermaid
 flowchart TD
-  A1["Citizen report, sensor event or work order"] --> A2["Validate and normalise event"]
-  A2 --> A3{"Valid event?"}
-  A3 -->|"No"| A4["Quarantine and explain the validation failure"]
-  A3 -->|"Yes"| A5["Resolve location and identify assets"]
-  A5 --> A6["Retrieve nearby and historical incidents"]
-  A6 --> A7["Duplicate and relationship analysis"]
-  A7 --> A8{"Same underlying incident?"}
-  A8 -->|"Yes"| A9["Link report to existing incident"]
-  A8 -->|"No"| A10["Create new incident"]
-  A9 --> A11["Update incident graph"]
-  A10 --> A11
-  A11 --> A12["Assess severity, dependencies and SLA"]
-  A12 --> A13["Generate candidate response plans"]
-  A13 --> A14["Check hard constraints and permissions"]
-  A14 --> A15{"Feasible plan exists?"}
-  A15 -->|"No"| A16["Escalate resource conflict to authorised staff"]
-  A15 -->|"Yes"| A17["Commit plan and create work orders"]
-  A17 --> A18["Monitor events and deadlines"]
-  A18 --> A19{"New event or failure?"}
-  A19 -->|"Yes"| A20["Identify affected tasks and dependencies"]
-  A20 --> A21["Invalidate stale decisions"]
-  A21 --> A13
-  A19 -->|"No"| A22{"Completion evidence received?"}
-  A22 -->|"No"| A18
-  A22 -->|"Yes"| A23["Evaluate evidence against closure policy"]
-  A23 --> A24{"Resolution verified?"}
-  A24 -->|"Yes"| A25["Close incident with evidence provenance"]
-  A25 --> A26["Update metrics and recurrence history"]
-  A24 -->|"No"| A27["Reopen, gather evidence or replan"]
-  A27 --> A13
+  R["Citizen submits a report: text, category, location, optional photo"] --> L{"More than 5 reports from this reporter in the last hour?"}
+  L -->|"Yes"| L429["Refuse with 429 and a friendly 'please wait' message"]
+  L -->|"No"| V{"Valid fields and known category?"}
+  V -->|"No"| V422["Refuse with 422 and explain the problem"]
+  V -->|"Yes"| S["Look up department, SLA hours and severity for the category"]
+  S --> D{"Open incident in the same category within 150 m and 72 h?"}
+  D -->|"Yes"| DUP["Link as duplicate: no new work order"]
+  DUP --> DC{"Was that incident marked done or closed?"}
+  DC -->|"Yes"| RO["Reopen it: audit false_closure_detected"]
+  DC -->|"No"| T["Recompute trust badge"]
+  RO --> T
+  D -->|"No"| REL{"Incident in a dependent category within 400 m?"}
+  REL -->|"Yes"| NR["Create new incident and link it as related"]
+  REL -->|"No"| N["Create new incident"]
+  NR --> AS["Assign crew (see A2)"]
+  N --> AS
+  AS --> T
+  T --> TB{"Trust badge"}
+  TB -->|"Inspector or citizen photo evidence"| T3["confirmed_on_site"]
+  TB -->|"2+ reporters, or photo with GPS"| T2["corroborated"]
+  TB -->|"Otherwise"| T1["unverified"]
 ```
+
+Dependent pairs (only these can be "related"): water leak ↔ pothole, sewage ↔ water leak, sewage ↔ pothole.
+
+## A2. Assignment, replanning and deadlines
+
+Where: `engine/assign.py`, `engine/sla.py`. The clock is simulated so deadlines can be demoed.
+
+```mermaid
+flowchart TD
+  I["New or reopened incident"] --> P{"Free crew in the incident's department?"}
+  P -->|"Yes"| A["Assign the nearest free crew"]
+  P -->|"No"| NR["Audit no_resource and escalate"]
+  A --> W["Crew works the incident"]
+  W --> U{"Crew marked unavailable?"}
+  U -->|"Yes"| RP["Replan: release the job, plan_version + 1, audit plan_invalidated and replanned"]
+  RP --> P
+  U -->|"No"| K["Each clock tick: check the deadline"]
+  K --> AR{"Not started and under 25% of the SLA left?"}
+  AR -->|"Yes"| ARF["Flag at_risk before the breach (audit sla_at_risk)"]
+  AR -->|"No"| B{"Deadline passed and not closed?"}
+  ARF --> B
+  B -->|"No"| W
+  B -->|"Yes"| E["Status escalated, escalation level + 1, deadline extended by half the SLA"]
+  E --> LV{"Escalation level?"}
+  LV -->|"1"| H["Notify the department head"]
+  LV -->|"2 or more"| C["Notify the city command centre"]
+  H --> P
+  C --> P
+```
+
+SLA hours: water leak 12, sewage 12, streetlight 24, garbage 24, pothole 48, other 72.
+
+## A3. Verification and closure
+
+Where: `engine/verify.py`. "Done" is never the same as "fixed".
+
+```mermaid
+flowchart TD
+  S["Crew starts work: in_progress"] --> C["Crew marks the job complete"]
+  C --> PV["Status pending_verification: awaiting proof"]
+  PV --> EV{"New evidence: inspector, photo, sensor or citizen follow-up"}
+  EV -->|"Supports the fix"| CK{"Any contradicting evidence or a duplicate report since completion?"}
+  CK -->|"No"| VC["verified_closed, crew released"]
+  CK -->|"Yes"| RO["Reopen: audit false_closure_detected, reassign"]
+  EV -->|"Contradicts the fix"| RO
+  RO --> S
+  PH["Optional AI photo check"] -.->|"signal only, never changes a status"| PV
+  VC --> RD{"New duplicate report after closure?"}
+  RD -->|"Yes"| RO
+  RD -->|"No"| END["Stays closed; audit trail kept"]
+```
+
+## A4. Incident state machine
+
+```mermaid
+stateDiagram-v2
+  [*] --> open: report creates incident
+  open --> assigned: crew assigned
+  open --> escalated: no crew free
+  assigned --> in_progress: start
+  in_progress --> pending_verification: complete
+  pending_verification --> verified_closed: supporting evidence
+  pending_verification --> reopened: contradicting evidence
+  verified_closed --> reopened: new duplicate report
+  reopened --> assigned: reassign
+  assigned --> escalated: deadline missed
+  in_progress --> escalated: deadline missed
+  reopened --> escalated: deadline missed
+  escalated --> assigned: crew found
+  open --> rejected: head or command rejects
+  assigned --> rejected: head or command rejects
+  escalated --> rejected: head or command rejects
+  verified_closed --> [*]
+  rejected --> [*]
+```
+
+`rejected` needs a department head or the command centre, with a reason: `fake`, `not_civic`,
+`cannot_locate` or `duplicate_elsewhere`. Officers get 403. Every transition writes an audit event.
+
+## A5. Shared-cause repair (v2)
+
+Where: `engine/rootcause.py`. Rules decide; an LLM may only write the summary sentence.
+
+```mermaid
+flowchart TD
+  G["Incidents connected by related links"] --> H["Propose one hypothesis: the most upstream incident is the cause"]
+  H --> SC["Score it: count, distance, time order, category dependency"]
+  SC --> OP{"Operator decision"}
+  OP -->|"Reject"| RJ["Hypothesis rejected; incidents continue separately"]
+  OP -->|"Confirm"| PC["Cause becomes the parent; the others become children"]
+  PC --> CR{"Child not started yet?"}
+  CR -->|"Yes"| REL["Release the child's crew: one visit saved"]
+  CR -->|"No"| KEEP["Child keeps its crew"]
+  REL --> FX["Repair the parent"]
+  KEEP --> FX
+  FX --> PV{"Parent verified_closed?"}
+  PV -->|"No"| FX
+  PV -->|"Yes"| CH["Each child moves to pending_verification: never auto-closed"]
+  CH --> VER["Each child needs its own evidence (see A3)"]
+```
+
+Upstream order: sewage, then water leak, then pothole. In the demo, crew visits go from 3 to 1.
+
+## A6. Citizen and operator loop
+
+Where: `frontend/src/app/citizen`, `frontend/src/app/track`, `frontend/src/app/operator`, `GET /citizen/activity`.
+
+```mermaid
+flowchart TD
+  CI["Citizen signs in with a name and email"] --> FN["Only the first name is kept with reports; the email never leaves the browser"]
+  FN --> RP["Report with photo and GPS, or a pin dropped on the map"]
+  RP --> IN["Intake and grouping (see A1)"]
+  IN --> OI["Operator Incidents tab: Citizen activity list"]
+  IN --> PU["Operator pop-up on any tab: new complaint"]
+  IN --> TR["Citizen case page /track/id: status, deadline, crew, timeline"]
+  TR --> Q{"Citizen: is it fixed?"}
+  Q -->|"Yes, it's fixed"| EVS["Supporting citizen evidence"]
+  Q -->|"Still broken, with a note"| EVC["Contradicting citizen evidence"]
+  EVS --> V["Verification rules (see A3)"]
+  EVC --> V
+  V --> OI
+  V --> PU
+  V --> TR
+```
+
+# Part 2: design and roadmap
+
+The flows below are design work for later versions. They are **not** built features.
 
 ## B. Agent orchestration (design)
 
