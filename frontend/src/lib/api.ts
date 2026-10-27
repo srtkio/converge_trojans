@@ -58,5 +58,6 @@ export const api = {
   tick: (minutes: number) => post<{ now: string; escalated: Incident[] }>(`/sim/tick?minutes=${minutes}`),
   reset: () => post<{ ok: boolean }>("/sim/reset"),
   golden: (step?: number) => post<GoldenResult>(`/sim/scenario/golden${step ? `?step=${step}` : ""}`),
+  goldenStatus: () => call<GoldenResult>("/sim/scenario/golden"),
   feedback: (body: FeedbackInput) => post<{ ok?: boolean }>("/feedback", body),
 };
