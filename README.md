@@ -72,3 +72,26 @@ cd backend
 docker build -t converge-backend .
 docker run -p 8000:8000 -e CONVERGE_CORS_ORIGINS=http://localhost:3000 converge-backend
 ```
+
+## End-to-end demo check
+
+`scripts/e2e.py` drives the running app through the browser (Python Playwright) and checks the
+demo before the pitch:
+
+1. Signs in to the operator dashboard with the demo badge, if the sign-in form appears.
+2. v1 "Verified loop": Reset, then Next step to step 10. Checks the naive-vs-CONVERGE table
+   (work orders 3 vs 2, false closures accepted 1 vs 0).
+3. v2 "Root cause": Reset, then Next step to step 8. Checks crew visits 3 vs 1.
+4. `/track/inc_001` at iPhone 13 size: no horizontal overflow, no console errors.
+
+It exits 0 when everything passes and 1 on the first failure.
+
+```bash
+pip install playwright && playwright install chromium
+# with the backend on :8001 and the frontend on :3000
+python3 scripts/e2e.py
+python3 scripts/e2e.py --base http://localhost:3002 --headed   # other port, watch it run
+```
+
+The dashboard is at `/operator` once the portals PR is merged. Before that, pass
+`--dashboard-path /`.
