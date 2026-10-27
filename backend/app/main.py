@@ -1,4 +1,6 @@
 """CONVERGE API. Contracts: docs/CONTRACTS.md. Engine logic lives in app/engine/."""
+import base64
+import binascii
 import os
 from contextlib import asynccontextmanager
 from typing import Literal
@@ -36,9 +38,13 @@ app = FastAPI(title="CONVERGE", lifespan=lifespan)
 # Comma-separated, e.g. "http://localhost:3000,https://converge.vercel.app".
 CORS_ORIGINS = [o.strip() for o in os.environ.get("CONVERGE_CORS_ORIGINS", "http://localhost:3000").split(",") if o.strip()]
 
+# Optional regex, e.g. r"https://.*\.vercel\.app" to allow Vercel preview deployments.
+CORS_ORIGIN_REGEX = os.environ.get("CONVERGE_CORS_ORIGIN_REGEX") or None
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ORIGINS,
+    allow_origin_regex=CORS_ORIGIN_REGEX,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -56,11 +62,13 @@ class CompleteIn(BaseModel):
     note: str = ""
 
 
-MAX_PHOTO_B64 = 7_000_000  # ~5 MB image
+MAX_PHOTO_BYTES = 5 * 1024 * 1024
+# Generous cap on the encoded string so oversized uploads fail fast with 413 before decoding.
+MAX_PHOTO_B64 = MAX_PHOTO_BYTES * 4 // 3 + 16
 
 
 class PhotoIn(BaseModel):
-    data: str = Field(min_length=1, max_length=MAX_PHOTO_B64)
+    data: str = Field(min_length=1)
     media_type: Literal["image/jpeg", "image/png", "image/webp", "image/gif"]
 
 
@@ -82,6 +90,17 @@ class FeedbackIn(BaseModel):
     role: Literal["citizen", "operator", "judge", "other"] = "other"
     page: str | None = Field(None, max_length=200)
     incident_id: str | None = None
+
+
+def _validate_photo(photo: PhotoIn) -> None:
+    if len(photo.data) > MAX_PHOTO_B64:
+        raise HTTPException(413, f"Photo too large (max {MAX_PHOTO_BYTES // (1024 * 1024)} MB)")
+    try:
+        raw = base64.b64decode(photo.data, validate=True)
+    except (binascii.Error, ValueError):
+        raise HTTPException(422, "photo.data is not valid base64") from None
+    if len(raw) > MAX_PHOTO_BYTES:
+        raise HTTPException(413, f"Photo too large (max {MAX_PHOTO_BYTES // (1024 * 1024)} MB)")
 
 
 def _incident(s: Session, incident_id: str) -> Incident:
@@ -156,6 +175,8 @@ def complete_incident(incident_id: str, body: CompleteIn | None = None, s: Sessi
 @app.post("/incidents/{incident_id}/evidence")
 def post_evidence(incident_id: str, body: EvidenceIn, s: Session = Depends(get_session)):
     inc = _incident(s, incident_id)
+    if body.photo:
+        _validate_photo(body.photo)
     ev = verify.add_evidence(s, inc, body.kind, body.supports_resolution, body.note, body.source)
     ai_check = None
     if body.photo:

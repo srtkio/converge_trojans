@@ -6,3 +6,5 @@ anthropic
 python-dotenv
 pytest
 httpx
+psycopg[binary]
+google-genai

@@ -1,0 +1,32 @@
+# Render Blueprint: backend API + free Postgres (feedback must survive restarts; the free web
+# service has no persistent disk, so SQLite would be wiped whenever it sleeps).
+# Deploy: Render dashboard -> New -> Blueprint -> this repo. Then set the secret env vars below.
+services:
+  - type: web
+    name: converge-backend
+    runtime: docker
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /health
+    envVars:
+      - key: CONVERGE_DB_URL
+        fromDatabase:
+          name: converge-db
+          property: connectionString
+      # Exact frontend origins, comma-separated. Add the production Vercel URL here.
+      - key: CONVERGE_CORS_ORIGINS
+        value: http://localhost:3000
+      # Allows the Vercel deployment (and previews) until the exact URL is pinned above.
+      - key: CONVERGE_CORS_ORIGIN_REGEX
+        value: https://.*\.vercel\.app
+      # Optional LLM keys: set in the Render dashboard, never in git. Without them the
+      # deterministic rule text is used.
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+databases:
+  - name: converge-db
+    plan: free
