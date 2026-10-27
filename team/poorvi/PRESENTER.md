@@ -5,8 +5,9 @@
 
 ## Your lines
 **Market gap (0:45):** "India's CPGRAMS, the Swachhata app, FixMyStreet, SeeClickFix: they collect
-complaints and route them. None of them merge duplicate reports, link connected problems, or demand
-proof before closing. That's the gap."
+complaints and route them. Some group nearby duplicates, but none of them link *connected* problems
+to a shared cause or refuse to close a case until evidence proves it's fixed. That's the gap."
+(Safer wording: SeeClickFix advertises duplicate detection. See `research.md`.)
 
 **Results (4:15):** read the numbers from the dashboard's metrics and the feedback panel. Use only
 what's on screen: "N people tested it, average rating X out of 5".
