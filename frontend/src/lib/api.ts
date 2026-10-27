@@ -2,6 +2,7 @@ import type {
   AuditEvent,
   CitizenActivity,
   Category,
+  Evidence,
   EvidenceKind,
   GoldenResult,
   Hypothesis,
@@ -9,12 +10,29 @@ import type {
   Incident,
   IncidentDetail,
   Link,
+  LocationSource,
   Metrics,
   Report,
   Resource,
 } from "./types";
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+
+/** Full URL of a stored photo, from the API path in `photo_url` ("/photos/ph_…"). */
+export const photoSrc = (path: string) => `${API_URL}${path}`;
+
+/** A photo sent with a report or evidence: base64 without the "data:" prefix. */
+export interface PhotoUpload {
+  data: string;
+  media_type: "image/jpeg" | "image/png" | "image/webp";
+}
+
+/** Where a report's lat/lng came from. GPS sends the accuracy in metres; landmarks send null. */
+export interface ReportLocation {
+  source: LocationSource;
+  accuracy_m: number | null;
+  label: string | null;
+}
 
 // Shape agreed for POST /feedback (backend adds the route; the UI handles 404 until then).
 export interface FeedbackInput {
@@ -60,14 +78,21 @@ export const api = {
   audit: () => call<AuditEvent[]>("/audit"),
   citizenActivity: (limit = 30) => call<CitizenActivity[]>(`/citizen/activity?limit=${limit}`),
 
-  report: (body: { text: string; category: Category; lat: number; lng: number; reporter: string }) =>
-    post<{ report: Report; incident: Incident; link: Link | null }>("/reports", body),
+  report: (body: {
+    text: string;
+    category: Category;
+    lat: number;
+    lng: number;
+    reporter: string;
+    photo?: PhotoUpload;
+    location?: ReportLocation;
+  }) => post<{ report: Report; incident: Incident; link: Link | null }>("/reports", body),
   start: (id: string) => post<Incident>(`/incidents/${id}/start`),
   complete: (id: string, note: string) => post<Incident>(`/incidents/${id}/complete`, { note }),
   evidence: (
     id: string,
-    body: { kind: EvidenceKind; supports_resolution: boolean; note: string; source: string },
-  ) => post<{ incident: Incident }>(`/incidents/${id}/evidence`, body),
+    body: { kind: EvidenceKind; supports_resolution: boolean; note: string; source: string; photo?: PhotoUpload },
+  ) => post<{ incident: Incident; evidence?: Evidence }>(`/incidents/${id}/evidence`, body),
   setAvailable: (id: string, available: boolean) =>
     post(`/resources/${id}/${available ? "available" : "unavailable"}`),
 

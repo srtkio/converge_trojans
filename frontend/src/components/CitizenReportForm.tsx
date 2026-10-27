@@ -2,12 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { api } from "@/lib/api";
+import { PinIcon } from "@/components/CitizenIcons";
+import { PhotoPicker, usePhotoField } from "@/components/PhotoPicker";
+import { api, type ReportLocation } from "@/lib/api";
 import {
   CITIZEN_STATUS_LABEL,
   WAKING_HINT,
   distanceM,
   fixTimeText,
+  formatMetres,
   guessCategory,
   joinable,
   readDraft,
@@ -16,6 +19,8 @@ import {
 } from "@/lib/citizen";
 import { BIG_BUTTON } from "@/lib/citizenStyles";
 import { CATEGORY_ICON, CATEGORY_LABEL } from "@/lib/format";
+import { outsidePilot, useDeviceLocation } from "@/lib/location";
+import { photoRejected } from "@/lib/photo";
 import type { Category, Incident, Link } from "@/lib/types";
 
 // Landmarks inside the pilot area (about 1 km around MG Road metro, Bengaluru). The points sit
@@ -33,9 +38,13 @@ const PLACES = [
 
 const CATEGORIES = Object.keys(CATEGORY_LABEL) as Category[];
 const MAX_TEXT = 500;
-// Open cases within this distance of the chosen landmark are offered as "Me too".
+// Open cases within this distance of the report's location are offered as "Me too".
 const NEARBY_M = 300;
 const ME_TOO_TEXT = "Me too: I see the same problem here.";
+// A phone fix rougher than this gets a hint to describe the spot in words.
+const ROUGH_FIX_M = 250;
+const OUTSIDE_PILOT =
+  "You're outside this pilot's area (around MG Road, Bengaluru). We'll still log your report at your real location.";
 
 export type ReportOutcome = { incident: Incident; link: Link | null };
 
@@ -52,15 +61,31 @@ export function CitizenReportForm({
   const [restored, setRestored] = useState(false);
   const [picked, setPicked] = useState<Category | null>(null);
   const [place, setPlace] = useState(0);
-  const [nearby, setNearby] = useState<Incident[]>([]);
+  // Open cases anywhere; the ones near the active location are offered as "Me too" below.
+  const [openCases, setOpenCases] = useState<Incident[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const textRef = useRef<HTMLTextAreaElement>(null);
+  const placeRef = useRef<HTMLSelectElement>(null);
+  const switchRef = useRef<HTMLButtonElement>(null);
+  // Whether the location button had keyboard focus when tapped (it is replaced on success).
+  const refocus = useRef(false);
   const slow = useSlowHint(busy);
+  const { location: gps, locate, stop: stopGps } = useDeviceLocation();
+  const locating = gps.state === "locating";
+  const slowGps = useSlowHint(locating, 5000);
+  const photo = usePhotoField();
 
   useEffect(() => {
     if (focusOnMount) textRef.current?.focus();
   }, [focusOnMount]);
+
+  useEffect(() => {
+    // The location button gives way to the confirmation: keep keyboard focus in this area.
+    if (gps.state === "locating") return; // still waiting for the phone
+    if (gps.state === "on" && refocus.current) switchRef.current?.focus({ preventScroll: true });
+    refocus.current = false;
+  }, [gps.state]);
 
   useEffect(() => {
     // Bring back a half-written report from this device (closed tab, reload, signal drop).
@@ -72,15 +97,18 @@ export function CitizenReportForm({
     }
   }, []);
 
+  // The active location: the phone's position while it's in use, otherwise the chosen landmark.
+  const here = PLACES[place];
+  const lat = gps.state === "on" ? gps.lat : here.lat;
+  const lng = gps.state === "on" ? gps.lng : here.lng;
+
   useEffect(() => {
-    // Open cases around the chosen landmark, so people can join one instead of filing a duplicate.
+    // Open cases people can join instead of filing a duplicate; refreshed when the location changes.
     let cancelled = false;
-    const p = PLACES[place];
     api
       .incidents()
       .then((all) => {
-        if (cancelled) return;
-        setNearby(all.filter((i) => joinable(i) && distanceM(p.lat, p.lng, i.lat, i.lng) <= NEARBY_M));
+        if (!cancelled) setOpenCases(all.filter(joinable));
       })
       .catch(() => {
         // The list is a helper; the form works without it.
@@ -88,19 +116,30 @@ export function CitizenReportForm({
     return () => {
       cancelled = true;
     };
-  }, [place]);
+  }, [lat, lng]);
 
   const suggested = guessCategory(text);
   const shown = picked ?? suggested;
-  const canSubmit = text.trim().length > 0 && !busy;
-  const here = PLACES[place];
-  // Once the type is known, only offer cases of that type (so "Me too" never files a streetlight
-  // under a pothole); nearest first.
-  const suggestions = nearby
+  // Wait for a location request in progress, so the report never goes out with the wrong spot.
+  const canSubmit = text.trim().length > 0 && !busy && !photo.preparing && !locating;
+  // Cases around the active location (GPS or landmark). Once the type is known, only cases of that
+  // type (so "Me too" never files a streetlight under a pothole); nearest first.
+  const suggestions = openCases
     .filter((incident) => !shown || incident.category === shown)
-    .map((incident) => ({ incident, d: distanceM(here.lat, here.lng, incident.lat, incident.lng) }))
+    .map((incident) => ({ incident, d: distanceM(lat, lng, incident.lat, incident.lng) }))
+    .filter(({ d }) => d <= NEARBY_M)
     .sort((a, b) => a.d - b.d)
     .slice(0, 3);
+  const outside = gps.state === "on" && outsidePilot(gps.lat, gps.lng);
+  // Read out by screen readers as the location changes (the visible text is above).
+  const gpsAnnouncement =
+    gps.state === "locating"
+      ? "Finding your location…"
+      : gps.state === "on"
+        ? `Using your current location, accurate to about ${formatMetres(gps.accuracy)}.${outside ? ` ${OUTSIDE_PILOT}` : ""}`
+        : gps.state === "failed"
+          ? gps.message
+          : "";
 
   const hint = picked
     ? "Thanks. Tap another type if you change your mind."
@@ -108,17 +147,23 @@ export function CitizenReportForm({
       ? `We guessed "${CATEGORY_LABEL[suggested]}" from your description. Tap another if it's wrong.`
       : "Pick the closest match, or just describe it above.";
 
-  const send = async (body: { text: string; category: Category; lat: number; lng: number }) => {
+  const send = async (body: { text: string; category: Category; lat: number; lng: number; location: ReportLocation }) => {
     setBusy(true);
     setError(null);
+    const upload = photo.upload;
     try {
-      const r = await api.report({ ...body, reporter });
+      const r = await api.report({ ...body, reporter, photo: upload });
       setText("");
       setPicked(null);
       saveDraft("");
+      photo.clear();
       onReported({ incident: r.incident, link: r.link });
-    } catch {
-      setError("We couldn't send your report. Check your connection and try again. Your text is still here.");
+    } catch (e) {
+      setError(
+        upload && photoRejected(e)
+          ? "We couldn't send your photo. Remove it or try another one, then send again. Your text is still here."
+          : "We couldn't send your report. Check your connection and try again. Your text is still here.",
+      );
     } finally {
       setBusy(false);
     }
@@ -127,12 +172,39 @@ export function CitizenReportForm({
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!canSubmit) return;
-    void send({ text: text.trim(), category: shown ?? "other", lat: here.lat, lng: here.lng });
+    const location: ReportLocation =
+      gps.state === "on"
+        ? { source: "gps", accuracy_m: Math.round(gps.accuracy), label: "Current location" }
+        : { source: "landmark", accuracy_m: null, label: here.name };
+    void send({ text: text.trim(), category: shown ?? "other", lat, lng, location });
   };
 
   // Join an existing case: same type and spot, so the backend links it as a duplicate report.
   const meToo = (inc: Incident) =>
-    void send({ text: text.trim() || ME_TOO_TEXT, category: inc.category, lat: inc.lat, lng: inc.lng });
+    void send({
+      text: text.trim() || ME_TOO_TEXT,
+      category: inc.category,
+      lat: inc.lat,
+      lng: inc.lng,
+      location: { source: "landmark", accuracy_m: null, label: `Same spot as case ${inc.id}` },
+    });
+
+  const askForLocation = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (locating) return; // aria-disabled: the button keeps focus while the phone looks
+    refocus.current = document.activeElement === e.currentTarget;
+    locate();
+  };
+
+  const pickPlace = (i: number) => {
+    setPlace(i);
+    // Picking a place wins over a location request still running (or one that failed).
+    if (locating || gps.state === "failed") stopGps();
+  };
+
+  const backToList = () => {
+    stopGps();
+    requestAnimationFrame(() => placeRef.current?.focus());
+  };
 
   return (
     <form onSubmit={submit} className="space-y-5">
@@ -193,21 +265,85 @@ export function CitizenReportForm({
         )}
       </fieldset>
 
-      <label className="block">
-        <span className="text-sm font-medium text-slate-800">Where is it?</span>
-        <select
-          value={place}
-          onChange={(e) => setPlace(Number(e.target.value))}
-          className="mt-1.5 h-12 w-full rounded-xl border border-slate-300 bg-white px-3 text-base focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
-        >
-          {PLACES.map((p, i) => (
-            <option key={p.name} value={i}>
-              {p.name}
-            </option>
-          ))}
-        </select>
-        <span className="mt-1 block text-xs text-slate-500">This pilot covers the streets around MG Road, Bengaluru.</span>
-      </label>
+      <PhotoPicker field={photo} disabled={busy} />
+
+      <fieldset className="min-w-0">
+        <legend className="text-sm font-medium text-slate-800">Where is it?</legend>
+        {gps.state === "on" ? (
+          <div className="cz-rise mt-1.5 rounded-xl bg-emerald-50 p-3 ring-1 ring-emerald-200">
+            <p className="flex items-start gap-2 text-sm text-emerald-950">
+              <PinIcon className="mt-0.5 h-4 w-4 text-emerald-700" />
+              <span className="min-w-0">
+                Using your current location, accurate to about {formatMetres(gps.accuracy)}
+              </span>
+            </p>
+            {gps.accuracy > ROUGH_FIX_M && (
+              <p className="mt-1 pl-6 text-xs text-emerald-900">
+                {"That's a rough fix. Mention a nearby landmark in your description so the crew can find it."}
+              </p>
+            )}
+            <button
+              ref={switchRef}
+              type="button"
+              onClick={backToList}
+              disabled={busy}
+              className="mt-2 ml-6 rounded-md text-sm font-medium text-emerald-800 underline underline-offset-4 hover:text-emerald-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 disabled:opacity-50"
+            >
+              Pick a place from the list instead
+            </button>
+          </div>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={askForLocation}
+              disabled={busy}
+              aria-disabled={locating || undefined}
+              className="mt-1.5 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-white px-3 text-base font-medium text-slate-800 ring-1 ring-slate-300 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 disabled:opacity-60 aria-disabled:cursor-default aria-disabled:text-slate-600 aria-disabled:hover:bg-white motion-safe:active:scale-[0.98] motion-safe:aria-disabled:active:scale-100"
+            >
+              <PinIcon className={`h-5 w-5 text-emerald-700 ${locating ? "motion-safe:animate-pulse" : ""}`} />
+              {locating ? "Finding your location…" : "Use my current location"}
+            </button>
+            {locating && slowGps && (
+              <p className="mt-1.5 text-center text-xs text-slate-500">
+                Still looking. This can take a few seconds, especially indoors.
+              </p>
+            )}
+            {gps.state === "failed" && (
+              <p className="cz-rise mt-2 rounded-xl bg-amber-50 p-3 text-sm text-amber-950 ring-1 ring-amber-200">
+                {gps.message}
+              </p>
+            )}
+            <label className="mt-3 block">
+              <span className="text-xs font-medium text-slate-600">
+                {gps.state === "failed" ? "Nearby place" : "Or pick a nearby place"}
+              </span>
+              <select
+                ref={placeRef}
+                value={place}
+                onChange={(e) => pickPlace(Number(e.target.value))}
+                className="mt-1 h-12 w-full rounded-xl border border-slate-300 bg-white px-3 text-base focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+              >
+                {PLACES.map((p, i) => (
+                  <option key={p.name} value={i}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+              <span className="mt-1 block text-xs text-slate-500">This pilot covers the streets around MG Road, Bengaluru.</span>
+            </label>
+          </>
+        )}
+        {outside && (
+          <p className="cz-rise mt-2 flex items-start gap-2 rounded-xl bg-sky-50 p-3 text-sm text-sky-950 ring-1 ring-sky-200">
+            <span aria-hidden="true">ℹ️</span>
+            <span className="min-w-0">{OUTSIDE_PILOT}</span>
+          </p>
+        )}
+        <p className="sr-only" role="status" aria-live="polite">
+          {gpsAnnouncement}
+        </p>
+      </fieldset>
 
       {suggestions.length > 0 && (
         <section aria-labelledby="nearby-heading" className="cz-rise rounded-xl bg-amber-50/70 p-3 ring-1 ring-amber-200">
@@ -232,7 +368,7 @@ export function CitizenReportForm({
                 </span>
                 <button
                   type="button"
-                  disabled={busy}
+                  disabled={busy || photo.preparing}
                   onClick={() => meToo(incident)}
                   aria-label={`Me too: ${incident.title}`}
                   className="shrink-0 rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 disabled:opacity-50 motion-safe:active:scale-95"
