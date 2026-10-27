@@ -3,6 +3,8 @@ import type {
   Category,
   EvidenceKind,
   GoldenResult,
+  Hypothesis,
+  Impact,
   Incident,
   IncidentDetail,
   Link,
@@ -26,6 +28,15 @@ async function call<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+async function optional<T>(p: Promise<T>): Promise<T | null> {
+  try {
+    return await p;
+  } catch (e) {
+    if (e instanceof Error && e.message.startsWith("404 ")) return null;
+    throw e;
+  }
+}
+
 const post = <T>(path: string, body?: unknown) =>
   call<T>(path, { method: "POST", body: body === undefined ? undefined : JSON.stringify(body) });
 
@@ -47,6 +58,11 @@ export const api = {
   ) => post<{ incident: Incident }>(`/incidents/${id}/evidence`, body),
   setAvailable: (id: string, available: boolean) =>
     post(`/resources/${id}/${available ? "available" : "unavailable"}`),
+
+  /** v2 endpoints return null when the backend doesn't have them yet (404). */
+  hypotheses: () => optional(call<Hypothesis[]>("/hypotheses")),
+  decideHypothesis: (id: string, decision: "confirm" | "reject") => post<Hypothesis>(`/hypotheses/${id}/${decision}`),
+  impact: (id: string) => optional(call<Impact>(`/incidents/${id}/impact`)),
 
   tick: (minutes: number) => post<{ now: string; escalated: Incident[] }>(`/sim/tick?minutes=${minutes}`),
   reset: () => post<{ ok: boolean }>("/sim/reset"),

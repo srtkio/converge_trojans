@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { api } from "@/lib/api";
-import type { AuditEvent, Incident, IncidentDetail, Metrics, Resource } from "@/lib/types";
+import type { AuditEvent, Hypothesis, Impact, Incident, IncidentDetail, Metrics, Resource } from "@/lib/types";
 
 import { ActivityFeed } from "./ActivityFeed";
 import { CityMap } from "./CityMap";
@@ -12,6 +12,7 @@ import { IncidentQueue } from "./IncidentQueue";
 import { MetricsBar } from "./MetricsBar";
 import { ReportForm } from "./ReportForm";
 import { ResourcesPanel } from "./ResourcesPanel";
+import { RootCausePanel } from "./RootCausePanel";
 import { ScenarioBar } from "./ScenarioBar";
 
 const POLL_MS = 2000;
@@ -24,18 +25,22 @@ export function Dashboard() {
   const [now, setNow] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [detail, setDetail] = useState<IncidentDetail | null>(null);
+  const [impact, setImpact] = useState<Impact | null>(null);
+  const [hypotheses, setHypotheses] = useState<Hypothesis[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const refresh = useCallback(async () => {
     try {
-      const [inc, res, met, aud, clock] = await Promise.all([
+      const [inc, res, met, aud, clock, hyp] = await Promise.all([
         api.incidents(),
         api.resources(),
         api.metrics(),
         api.audit(),
         api.clock(),
+        api.hypotheses(),
       ]);
+      setHypotheses(hyp ?? []);
       setIncidents(inc);
       setResources(res);
       setMetrics(met);
@@ -51,12 +56,16 @@ export function Dashboard() {
   const refreshDetail = useCallback(async (id: string | null) => {
     if (!id) {
       setDetail(null);
+      setImpact(null);
       return;
     }
     try {
-      setDetail(await api.incident(id));
+      const [d, imp] = await Promise.all([api.incident(id), api.impact(id).catch(() => null)]);
+      setDetail(d);
+      setImpact(imp);
     } catch {
       setDetail(null);
+      setImpact(null);
     }
   }, []);
 
@@ -145,8 +154,9 @@ export function Dashboard() {
               selectedId={selectedId}
               onSelect={setSelectedId}
             />
+            <RootCausePanel hypotheses={hypotheses} incidents={incidents} busy={busy} act={act} onSelect={setSelectedId} />
             {detail ? (
-              <IncidentDetailPanel detail={detail} now={now} busy={busy} act={act} incidents={incidents} />
+              <IncidentDetailPanel detail={detail} impact={impact} now={now} busy={busy} act={act} incidents={incidents} />
             ) : (
               <div className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-500">
                 Select an incident to see linked reports, evidence, and its audit trail.

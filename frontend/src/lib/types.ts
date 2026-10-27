@@ -41,6 +41,8 @@ export interface Incident {
   related_incident_ids: string[];
   escalation_level: number;
   completed_at: string | null;
+  /** v2: set when this incident waits on a confirmed root-cause repair. */
+  parent_incident_id?: string | null;
 }
 
 export interface Link {
@@ -102,7 +104,26 @@ export interface Metrics {
   sla_breaches: number;
   escalations: number;
   replans: number;
-  baseline: { work_orders: number; false_closures_accepted: number };
+  baseline: { work_orders: number; false_closures_accepted: number; crew_visits?: number };
+  /** v2 */
+  crew_visits_saved?: number;
+}
+
+// v2: shared root cause across related incidents.
+export interface Hypothesis {
+  id: string;
+  cause_incident_id: string;
+  member_ids: string[];
+  summary: string;
+  evidence_for: string[];
+  evidence_against: string[];
+  confidence: number;
+  status: "proposed" | "confirmed" | "rejected";
+}
+
+export interface Impact {
+  services: { id: string; name: string; kind: "transit" | "school" | "health" | "commerce"; distance_m: number }[];
+  simulated: boolean;
 }
 
 export interface GoldenResult {
