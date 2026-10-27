@@ -25,7 +25,7 @@ rules in code and written to an audit trail.
 
 ![Operator overview: open cases, deadlines at risk, the escalation ladder, and naive ticketing vs CONVERGE](docs/screenshots/live-operator-overview.png)
 
-![Incidents: the queue, the street map of the Murthal–Sonipat pilot area, and an escalated case with its trust badge](docs/screenshots/live-incidents.png)
+![A case on the operator side: two citizen photos, a duplicate linked 72 m away with the reason, and the audit trail](docs/screenshots/live-incident-photo.png)
 
 Screenshots are from the live site with the Murthal–Sonipat pilot data.
 
