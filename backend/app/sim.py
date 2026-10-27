@@ -224,7 +224,7 @@ def _c1(s):
 
 
 def _c7(s):
-    _at_minute(s, 110)
+    _at_minute(s, 70)
     leak = _incident_of(s, "rep_001")
     start(s, leak)
     lights = _incident_of(s, "rep_004")
@@ -234,14 +234,14 @@ def _c7(s):
 
 
 def _c8(s):
-    _at_minute(s, 9 * 60 + 45)  # 18:45: the Koramangala sewage overflow is now at risk
+    _at_minute(s, 9 * 60 + 45)  # 18:45: the Residency Road sewage overflow is now at risk
 
 
 CITY_STEPS = [
     (_c1, "Reset; seed crews and services; sanitation crew S1 on leave"),
     *[(_city_area(i), a["title"]) for i, a in enumerate(CITY)],
-    (_c7, "Morning work: MG Road main repaired (awaiting proof); 100 Feet Road lights crew starts"),
-    (_c8, "Clock to 18:45: Koramangala sewage overflow flagged at risk before its deadline"),
+    (_c7, "Morning work: MG Road main repaired (awaiting proof); Church Street lights crew starts"),
+    (_c8, "Clock to 18:45: Residency Road sewage overflow flagged at risk before its deadline"),
 ]
 
 SCENARIOS = {"golden": GOLDEN, "rootcause": ROOTCAUSE, "city": CITY_STEPS}
