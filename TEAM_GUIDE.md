@@ -133,3 +133,4 @@ pass.
 
 - [2026-10-27] Repo set up; problem statement locked; plan, contracts, backend + frontend starters pushed.
 - [2026-10-27] Repo renamed to `srtkio/converge_trojans`; team folders and this guide added.
+- [2026-10-27] Backend done (Prachi, Claude): all CONTRACTS.md endpoints, rule engine, golden scenario end-to-end; `cd backend && pytest` = 26 passed. Merged into main.
