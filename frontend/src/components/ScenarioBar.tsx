@@ -61,9 +61,16 @@ export function ScenarioBar({
 
   // Pick up where the demo left off, so a page reload doesn't show step 0 while the backend is on step 5.
   useEffect(() => {
-    api
-      .goldenStatus()
-      .then((r) => setStep(r.step))
+    // Resetting wipes both progress counters, so at most one scenario has a step in progress.
+    Promise.all([api.scenarioStatus("golden"), api.scenarioStatus("rootcause")])
+      .then(([g, r]) => {
+        if (r && r.step > 0) {
+          setScenario("rootcause");
+          setStep(r.step);
+        } else if (g) {
+          setStep(g.step);
+        }
+      })
       .catch(() => {
         // Backend unreachable or not started yet: keep the default step 0.
       });
