@@ -47,5 +47,11 @@ pnpm install
 pnpm dev
 ```
 
+If port 8000 is taken, run the backend with `--port 8001` and put
+`NEXT_PUBLIC_API_URL=http://localhost:8001` in `frontend/.env.local`.
+
+Demo: open http://localhost:3000, press **Reset**, then **Next step →** through the 10-step golden
+scenario. `/?incident=inc_001` opens an incident directly.
+
 Set `ANTHROPIC_API_KEY` in `backend/.env` for LLM link explanations. Without it the system falls
 back to deterministic rules.
