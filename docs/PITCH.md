@@ -14,7 +14,7 @@ Numbers are from these runs:
 |---|---|---|---|---|
 | 1 | Hook and problem | Sarthak | When ten people report the same burst pipe, a city opens ten tickets. When a crew says "fixed", the ticket closes even if the water still flows. | None |
 | 2 | Market gap | Poorvi | Existing systems collect and route complaints. Most flag or point to duplicates. None we found link a shared cause or require proof before closing. Use the wording in `team/poorvi/research.md`. | None (research table) |
-| 3 | Live demo | Antriksh drives, Sarthak narrates | Live: v1 golden for the closure loop, then v2 root cause for the shared cause. See `docs/DEMO.md`. | Live counters on screen |
+| 3 | Live demo | Antriksh drives, Sarthak narrates | Live: v1 golden for the closure loop, then v2 root cause for the shared cause. See `docs/PRESENTATION_SCRIPT.md` (timing) and `docs/DEMO.md` (clicks). | Live counters on screen |
 | 4 | How it works | Prachi | Rules decide every outcome. The LLM only writes wording and never changes a status. | None |
 | 5 | Naive vs CONVERGE (v1) | Poorvi | Same three reports. The naive system opens three work orders and accepts one false closure. CONVERGE opens two, catches the false closure, and escalates the missed deadline. | v1 step 10: work orders 3 (baseline) vs 2; false closures accepted 1 (baseline) vs 0 (1 caught); duplicates linked 1; SLA breaches 1 |
 | 6 | One repair instead of three visits (v2) | Sarthak | Three complaints share one cause. CONVERGE proposes one hypothesis, an operator confirms it, and one repair covers all three. | v2 step 8: crew visits 3 → 1 (2 saved); hypotheses confirmed 1; verified closed 3 of 3 |
