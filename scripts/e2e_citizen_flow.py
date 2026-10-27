@@ -49,7 +49,7 @@ def citizen_files_complaint(page, base: str, marker: str) -> str:
     except PlaywrightTimeout as e:
         raise Check("citizen sign-in did not complete") from e
 
-    page.get_by_placeholder("e.g. Water leaking from a pipe near the metro").fill(
+    page.get_by_placeholder("e.g. Water leaking from a pipe near the university gate").fill(
         f"Water leaking by the bus stop {marker}")
     page.get_by_role("button", name="Submit report").click()
     track = page.get_by_role("link", name="Track your case")

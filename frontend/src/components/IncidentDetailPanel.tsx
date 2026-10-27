@@ -19,8 +19,8 @@ const REJECT_REASONS: { id: RejectReason; label: string }[] = [
   { id: "duplicate_elsewhere", label: "Already handled elsewhere" },
 ];
 
-// MG Road metro: reports further than this are outside the pilot area.
-const PILOT = { lat: 12.9756, lng: 77.605, radiusKm: 5 };
+// Murthal–Sonipat corridor: reports further than this from its middle are outside the pilot area.
+const PILOT = { lat: 29.005, lng: 77.055, radiusKm: 15 };
 function kmFromPilot(lat: number, lng: number): number {
   const dLat = ((lat - PILOT.lat) * Math.PI) / 180;
   const dLng = ((lng - PILOT.lng) * Math.PI) / 180;
