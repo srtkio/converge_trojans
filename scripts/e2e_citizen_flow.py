@@ -92,8 +92,10 @@ def operator_sees(page, base: str, marker: str) -> None:
     except PlaywrightTimeout as e:
         raise Check("operator dashboard with the Citizen activity panel did not load") from e
 
-    complaint = page.get_by_text(f"Water leaking by the bus stop {marker}")
-    evidence = page.get_by_text(f"Still wet near the stop {marker}")
+    # Scope to the inbox: the same text also appears in the activity log and alerts.
+    inbox = page.locator("section[aria-labelledby='inbox-heading']")
+    complaint = inbox.get_by_text(f"Water leaking by the bus stop {marker}")
+    evidence = inbox.get_by_text(f"Still wet near the stop {marker}")
     try:
         complaint.first.wait_for(timeout=INBOX_MS)
     except PlaywrightTimeout as e:

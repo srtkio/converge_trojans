@@ -201,10 +201,12 @@ export function IncidentDetailPanel({
             </div>
           ) : inc.status === "verified_closed" ? (
             <div className="mt-1 text-slate-600">Crew released after verified closure</div>
+          ) : inc.status === "rejected" ? (
+            <div className="mt-1 text-slate-600">Rejected as invalid; crew released</div>
           ) : (
             <div className="mt-1 text-red-700">No crew available — escalated</div>
           )}
-          {inc.status !== "verified_closed" && (
+          {inc.status !== "verified_closed" && inc.status !== "rejected" && (
             <div className="mt-3 flex flex-wrap gap-2">
               <button
                 disabled={busy || !canStart}
