@@ -159,6 +159,17 @@ def state(session: Session) -> dict:
     }
 
 
+def golden_status(session: Session) -> dict:
+    """Current golden progress without running anything, so the UI can recover after a reload."""
+    done = _progress(session)
+    return {
+        "step": done,
+        "description": GOLDEN[done - 1][1] if done else "Not started",
+        "log": [{"step": n, "description": GOLDEN[n - 1][1]} for n in range(1, done + 1)],
+        "state": state(session),
+    }
+
+
 def run_golden(session: Session, step: int | None) -> dict:
     """Run the demo up to `step` (default: all). Steps already done are skipped; asking for an
     earlier step replays from a reset, so the UI can step forward or jump back freely."""

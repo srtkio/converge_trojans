@@ -176,6 +176,11 @@ def sim_reset(s: Session = Depends(get_session)):
     return {"ok": True}
 
 
+@app.get("/sim/scenario/golden")
+def sim_golden_status(s: Session = Depends(get_session)):
+    return sim.golden_status(s)
+
+
 @app.post("/sim/scenario/golden")
 def sim_golden(step: int | None = Query(None, ge=1, le=len(sim.GOLDEN)), s: Session = Depends(get_session)):
     return sim.run_golden(s, step)

@@ -113,8 +113,14 @@ def test_assigns_nearest_available_crew_in_department(client):
     assert inc["id"] in res["res_roads_1"]["active_incident_ids"]
 
 
+def test_garbage_and_other_get_seeded_crews(client):
+    assert report(client, category="garbage", text="Overflowing bins")["incident"]["assigned_resource_id"] == "res_sanit_1"
+    assert report(client, category="other", north=5000, text="Fallen tree")["incident"]["assigned_resource_id"] == "res_gen_1"
+
+
 def test_no_crew_in_department_escalates(client):
-    inc = report(client, category="garbage", text="Overflowing bins")["incident"]  # no sanitation crew seeded
+    client.post("/resources/res_sanit_1/unavailable")
+    inc = report(client, category="garbage", text="Overflowing bins")["incident"]
     assert inc["assigned_resource_id"] is None
     assert inc["status"] == "escalated"
     assert inc["escalation_level"] == 1
