@@ -1,6 +1,7 @@
-import { CATEGORY_ICON, CATEGORY_LABEL, formatHours, hoursLeft } from "@/lib/format";
+import { CATEGORY_ICON, CATEGORY_LABEL } from "@/lib/format";
 import type { Incident } from "@/lib/types";
 
+import { SlaTimer } from "./SlaTimer";
 import { StatusBadge } from "./StatusBadge";
 
 // Escalated and reopened first, closed last; within a group, nearest deadline first.
@@ -12,6 +13,7 @@ const PRIORITY: Record<Incident["status"], number> = {
   assigned: 4,
   in_progress: 5,
   verified_closed: 9,
+  rejected: 10,
 };
 
 export function IncidentQueue({
@@ -30,7 +32,7 @@ export function IncidentQueue({
   );
 
   return (
-    <section className="rounded-lg border border-slate-200 bg-white shadow-sm">
+    <section className="rounded-2xl bg-white ring-1 ring-slate-900/5 shadow-[0_1px_2px_rgba(15,23,42,0.05)] overflow-hidden">
       <div className="flex items-center justify-between border-b border-slate-100 px-3 py-2">
         <h2 className="text-sm font-semibold">Incident queue</h2>
         <span className="text-xs text-slate-500">{incidents.length} incidents</span>
@@ -38,7 +40,6 @@ export function IncidentQueue({
       {sorted.length === 0 && <p className="p-4 text-sm text-slate-500">No incidents yet.</p>}
       <ul className="divide-y divide-slate-100">
         {sorted.map((inc) => {
-          const left = now ? hoursLeft(inc.deadline, now) : null;
           const closed = inc.status === "verified_closed";
           return (
             <li key={inc.id}>
@@ -74,10 +75,9 @@ export function IncidentQueue({
                   {inc.escalation_level > 0 && (
                     <span className="font-medium text-red-700">▲ escalation {inc.escalation_level}</span>
                   )}
-                  {!closed && left !== null && (
-                    <span className={left < 0 ? "font-medium text-red-700" : left < 4 ? "text-amber-700" : "text-slate-500"}>
-                      ⏱ {formatHours(left)}
-                    </span>
+                  {!closed && <SlaTimer incident={inc} now={now} />}
+                  {inc.verification === "unverified" && !closed && (
+                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600">unverified</span>
                   )}
                 </div>
               </button>
