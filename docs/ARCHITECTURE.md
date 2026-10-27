@@ -27,12 +27,14 @@ on/off toggles, live activity feed, a naive-vs-CONVERGE metrics table, and a dem
 v3 adds a mobile citizen page.
 
 ## Backend — what it does
-A rules engine behind a REST API. Every decision is plain, testable Python (35 tests). The API is
+A rules engine behind a REST API. Every decision is plain, testable Python, covered by an automated
+test suite (`cd backend && pytest`) plus a browser end-to-end check (`scripts/e2e.py`). The API is
 listed in `docs/CONTRACTS.md`.
 
 ## Database — what it stores
-SQLite: one file, no setup, resets in milliseconds for demos. Lists (report IDs, related IDs)
-are JSON columns. Swap for Postgres in production without code changes (SQLModel).
+SQLite locally: one file, no setup, resets in milliseconds for demos. The deployed backend uses
+Postgres (Render, `render.yaml`) with the same code (SQLModel; set `CONVERGE_DB_URL`). Lists
+(report IDs, related IDs) are JSON columns.
 
 ## Integrations
 - **Optional LLM (Claude Haiku 5.5 or Gemini)**: rewrites link reasons into plain English, nudges
