@@ -1,0 +1,31 @@
+{
+  "_note": "Live-city demo data for user testing and the map: 10 reports within ~1 km of MG Road. Not used for pitch metrics. Minutes are offsets from the sim start (09:00).",
+  "areas": [
+    {"step": 2, "title": "MG Road: burst main, a duplicate report, and a related pothole at Brigade Road", "reports": [
+      {"t": 0,  "category": "water_leak", "lat": 12.97560, "lng": 77.60660, "reporter": "citizen:asha",
+       "text": "Water main burst near the MG Road metro station exit, water flowing onto the road"},
+      {"t": 5,  "category": "water_leak", "lat": 12.97590, "lng": 77.60640, "reporter": "citizen:vikram",
+       "text": "Water gushing onto the MG Road footpath by the metro"},
+      {"t": 10, "category": "pothole", "lat": 12.97380, "lng": 77.60700, "reporter": "citizen:nisha",
+       "text": "Road caving in on MG Road near the Brigade Road junction"}
+    ]},
+    {"step": 3, "title": "Church Street lights out (two reports); Brigade Road garbage with no sanitation crew", "reports": [
+      {"t": 15, "category": "streetlight", "lat": 12.97540, "lng": 77.60380, "reporter": "citizen:rahul",
+       "text": "Streetlights out along Church Street"},
+      {"t": 20, "category": "streetlight", "lat": 12.97560, "lng": 77.60330, "reporter": "citizen:divya",
+       "text": "Church Street is dark near the bookshops, lights not working"},
+      {"t": 25, "category": "garbage", "lat": 12.97200, "lng": 77.60750, "reporter": "citizen:arjun",
+       "text": "Garbage piling up on Brigade Road for three days"}
+    ]},
+    {"step": 4, "title": "Residency Road sewage with a related leak; St Marks Road bins (no crew); Kasturba Road slab", "reports": [
+      {"t": 30, "category": "sewage", "lat": 12.96980, "lng": 77.60420, "reporter": "citizen:fatima",
+       "text": "Sewage overflowing on Residency Road near the junction"},
+      {"t": 55, "category": "water_leak", "lat": 12.97060, "lng": 77.60480, "reporter": "citizen:imran",
+       "text": "Water leaking from a pipe on Residency Road"},
+      {"t": 60, "category": "garbage", "lat": 12.97280, "lng": 77.60100, "reporter": "citizen:meena",
+       "text": "Overflowing bins on St Marks Road"},
+      {"t": 65, "category": "other", "lat": 12.97450, "lng": 77.59850, "reporter": "citizen:hari",
+       "text": "Broken footpath slab on Kasturba Road near Cubbon Park"}
+    ]}
+  ]
+}

@@ -131,6 +131,7 @@ Shapes as posted in CHANNEL.md. Implemented on `feat/v2-rootcause`.
 | GET | `/feedback` | | `Feedback[]` newest first |
 | GET | `/feedback/summary` | | `{count, average, distribution, by_role, recent}` |
 | GET/POST | `/sim/scenario/rootcause` | `?step=N` | same shape as golden |
+| GET/POST | `/sim/scenario/city` | `?step=N` (1-6) | same shape; small-area (~1 km, MG Road) live-city dataset for user testing and the map, not pitch metrics |
 
 `/metrics` adds `crew_visits_saved`, `coordinated_vs_independent: {independent_visits, coordinated_visits}`,
 `hypotheses: {proposed, confirmed, rejected}`, `at_risk` (count).

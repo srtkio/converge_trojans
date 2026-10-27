@@ -327,6 +327,17 @@ def sim_rootcause(step: int | None = Query(None, ge=1, le=len(sim.ROOTCAUSE)), s
     return sim.run_scenario(s, step, "rootcause")
 
 
+@app.get("/sim/scenario/city")
+def sim_city_status(s: Session = Depends(get_session)):
+    return sim.scenario_status(s, "city")
+
+
+@app.post("/sim/scenario/city")
+def sim_city(step: int | None = Query(None, ge=1, le=len(sim.CITY_STEPS)), s: Session = Depends(get_session)):
+    """Live-city dataset for user testing and the map (not the pitch metrics)."""
+    return sim.run_scenario(s, step, "city")
+
+
 @app.get("/audit")
 def get_audit(incident_id: str | None = None, s: Session = Depends(get_session)):
     q = select(AuditEvent).order_by(AuditEvent.seq)
