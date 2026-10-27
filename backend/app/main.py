@@ -13,7 +13,7 @@ from sqlmodel import Session, or_, select
 
 load_dotenv()
 
-from app import sim  # noqa: E402
+from app import auth, sim  # noqa: E402
 from app.db import engine, get_session, init_db, now  # noqa: E402
 from app.engine import feedback, impact, llm, metrics, rootcause, verify  # noqa: E402
 from app.engine.intake import submit_report  # noqa: E402
@@ -261,6 +261,31 @@ def list_feedback(s: Session = Depends(get_session)):
 @app.get("/feedback/summary")
 def feedback_summary(s: Session = Depends(get_session)):
     return feedback.summary(s)
+
+
+class OperatorLogin(BaseModel):
+    badge_id: str = Field(min_length=1, max_length=40)
+    access_code: str = Field(min_length=1, max_length=200)
+
+
+class CitizenLogin(BaseModel):
+    name: str = Field(min_length=1, max_length=80)
+    email: str = Field(min_length=3, max_length=120)
+
+
+@app.post("/auth/operator")
+def operator_login(body: OperatorLogin):
+    profile = auth.verify_operator(body.badge_id, body.access_code)
+    if profile is None:
+        raise HTTPException(401, "Access not verified: check your badge ID and access code")
+    return profile
+
+
+@app.post("/auth/citizen")
+def citizen_login(body: CitizenLogin):
+    if not auth.valid_email(body.email):
+        raise HTTPException(422, "Enter a valid email address")
+    return {"name": body.name.strip(), "email": body.email.strip().lower()}
 
 
 @app.get("/sim/clock")
