@@ -13,7 +13,7 @@ function Stat({ label, value, sub, tone = "default" }: { label: string; value: n
 
 export function MetricsBar({ metrics: m }: { metrics: Metrics }) {
   return (
-    <section className="grid gap-3 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+    <section className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
       {/* The headline: same reports, naive system vs CONVERGE. */}
       <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
         <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
