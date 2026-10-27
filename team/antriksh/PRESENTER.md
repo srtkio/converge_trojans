@@ -6,6 +6,7 @@
 ## What to do before the pitch
 1. `git pull`, start the backend and frontend (README), open http://localhost:3000.
 2. Practise `docs/DEMO.md` three times: Reset → Next step ×10. Know what appears after each step.
+   Sign in at `/operator` first with the demo badge `OPS-WTR-01` and code `water-demo-2026` (README).
 3. Know where the backup recording is (`team/sarthak/` once recorded).
 
 ## During the pitch (1:30–3:30)
