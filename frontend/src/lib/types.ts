@@ -43,6 +43,9 @@ export interface Incident {
   completed_at: string | null;
   /** v2: set when this incident waits on a confirmed root-cause repair. */
   parent_incident_id?: string | null;
+  child_incident_ids?: string[];
+  /** v3: not started, not closed, under 25% of the SLA left. */
+  at_risk?: boolean;
 }
 
 export interface Link {
@@ -104,9 +107,12 @@ export interface Metrics {
   sla_breaches: number;
   escalations: number;
   replans: number;
-  baseline: { work_orders: number; false_closures_accepted: number; crew_visits?: number };
+  baseline: { work_orders: number; false_closures_accepted: number };
   /** v2 */
   crew_visits_saved?: number;
+  coordinated_vs_independent?: { independent_visits: number; coordinated_visits: number };
+  /** v3 */
+  at_risk?: number;
 }
 
 // v2: shared root cause across related incidents.
@@ -122,8 +128,16 @@ export interface Hypothesis {
 }
 
 export interface Impact {
-  services: { id: string; name: string; kind: "transit" | "school" | "health" | "commerce"; distance_m: number }[];
+  incident_id: string;
   simulated: boolean;
+  services: {
+    id: string;
+    name: string;
+    kind: "transport" | "school" | "health";
+    distance_m: number;
+    via_incident_id: string;
+    impact: string;
+  }[];
 }
 
 export interface GoldenResult {

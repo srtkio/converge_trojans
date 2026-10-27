@@ -66,6 +66,11 @@ export function IncidentQueue({
                   {inc.related_incident_ids.length > 0 && (
                     <span className="text-violet-700">↔ {inc.related_incident_ids.length} related</span>
                   )}
+                  {inc.at_risk && <span className="font-medium text-amber-700">⚠ SLA at risk</span>}
+                  {!!inc.child_incident_ids?.length && (
+                    <span className="text-violet-700">⬢ root cause of {inc.child_incident_ids.length}</span>
+                  )}
+                  {inc.parent_incident_id && <span className="text-violet-700">↳ waits on {inc.parent_incident_id}</span>}
                   {inc.escalation_level > 0 && (
                     <span className="font-medium text-red-700">▲ escalation {inc.escalation_level}</span>
                   )}
