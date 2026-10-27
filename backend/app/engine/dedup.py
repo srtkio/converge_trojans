@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 from app import config
 from app.engine.geo import haversine_m
+from app.engine.hierarchy import CLOSED_STATES
 from app.models import Incident
 from app.timeutil import hours_between
 
@@ -23,13 +24,14 @@ def _dist(inc: Incident, lat: float, lng: float) -> float:
 def classify(category: str, lat: float, lng: float, at: str, incidents: list[Incident]) -> Match | None:
     """Return the link decision for a new report, or None for a brand-new incident.
 
-    Duplicate: same category, within 150 m, incident created within the last 72 h. Closed incidents
-    are eligible (a new duplicate reopens them); open ones win ties.
+    Duplicate: same category, within 150 m, incident created within the last 72 h. Verified-closed
+    incidents are eligible (a new duplicate reopens them); open ones win ties. Rejected (invalid)
+    complaints are never a target: a new report there opens a fresh incident.
     Related: dependent category, within 400 m, incident not closed.
     """
     dups = []
     for inc in incidents:
-        if inc.category != category:
+        if inc.category != category or inc.status == "rejected":
             continue
         d = _dist(inc, lat, lng)
         age_h = hours_between(inc.created_at, at)
@@ -46,7 +48,7 @@ def classify(category: str, lat: float, lng: float, at: str, incidents: list[Inc
 
     rel = []
     for inc in incidents:
-        if inc.status == "verified_closed":
+        if inc.status in CLOSED_STATES:
             continue
         if frozenset({inc.category, category}) not in config.DEPENDENT_CATEGORIES:
             continue

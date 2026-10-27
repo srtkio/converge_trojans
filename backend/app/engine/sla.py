@@ -2,9 +2,10 @@
 from sqlmodel import Session, select
 
 from app import config
+from app.engine import ladder
 from app.engine.assign import assign
 from app.engine.audit import record, transition
-from app.engine.hierarchy import waiting_on_parent
+from app.engine.hierarchy import CLOSED_STATES, waiting_on_parent
 from app.models import Incident
 from app.timeutil import add_hours, parse
 
@@ -12,7 +13,7 @@ from app.timeutil import add_hours, parse
 def check_breaches(session: Session, now: str) -> list[Incident]:
     escalated = []
     incidents = session.exec(
-        select(Incident).where(Incident.status != "verified_closed").order_by(Incident.id)
+        select(Incident).where(Incident.status.not_in(CLOSED_STATES)).order_by(Incident.id)
     ).all()
     for inc in incidents:
         if waiting_on_parent(session, inc):
@@ -28,9 +29,8 @@ def check_breaches(session: Session, now: str) -> list[Incident]:
                    f"new deadline {inc.deadline}")
         if not inc.assigned_resource_id:
             assign(session, inc, escalate_if_none=False)
-        else:
-            record(session, inc.id, "notified",
-                   f"{inc.department} supervisor notified of breach on {inc.id}")
+        # Escalation ladder: level 1 -> department head, level 2+ -> city command centre.
+        ladder.notify(session, inc, f"SLA breach on {inc.id}, missed deadline {old_deadline}")
         escalated.append(inc)
     return escalated
 
@@ -42,7 +42,7 @@ def check_at_risk(session: Session, now: str) -> list[Incident]:
     """v3: flag not-started incidents with under AT_RISK_SHARE of their SLA left; alert once per deadline."""
     flagged = []
     incidents = session.exec(
-        select(Incident).where(Incident.status != "verified_closed").order_by(Incident.id)
+        select(Incident).where(Incident.status.not_in(CLOSED_STATES)).order_by(Incident.id)
     ).all()
     for inc in incidents:
         sla = config.CATEGORIES[inc.category]["sla_hours"]
