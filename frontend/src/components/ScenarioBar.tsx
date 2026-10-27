@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { api } from "@/lib/api";
 import type { Incident } from "@/lib/types";
@@ -58,6 +58,16 @@ export function ScenarioBar({
   const [step, setStep] = useState(0);
   const [scenario, setScenario] = useState<ScenarioName>("golden");
   const STEPS = SCENARIOS[scenario].steps;
+
+  // Pick up where the demo left off, so a page reload doesn't show step 0 while the backend is on step 5.
+  useEffect(() => {
+    api
+      .goldenStatus()
+      .then((r) => setStep(r.step))
+      .catch(() => {
+        // Backend unreachable or not started yet: keep the default step 0.
+      });
+  }, []);
 
   const runTo = (target: number) =>
     act(async () => {

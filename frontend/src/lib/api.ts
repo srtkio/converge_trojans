@@ -69,4 +69,5 @@ export const api = {
   scenario: (name: "golden" | "rootcause", step?: number) =>
     post<GoldenResult>(`/sim/scenario/${name}${step ? `?step=${step}` : ""}`),
   golden: (step?: number) => post<GoldenResult>(`/sim/scenario/golden${step ? `?step=${step}` : ""}`),
+  goldenStatus: () => call<GoldenResult>("/sim/scenario/golden"),
 };
