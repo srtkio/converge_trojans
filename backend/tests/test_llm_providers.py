@@ -7,9 +7,10 @@ import pytest
 
 from app.engine import llm
 
+from .images import jpeg
 from .test_rules import finish_work, report
 
-PHOTO = {"data": base64.b64encode(b"\xff\xd8fakejpeg").decode(), "media_type": "image/jpeg"}
+PHOTO = {"data": base64.b64encode(jpeg()).decode(), "media_type": "image/jpeg"}
 
 
 @pytest.fixture(autouse=True)
@@ -92,7 +93,7 @@ def test_gemini_photo_check_is_signal_only(client, gemini):
     assert r["incident"]["status"] == "verified_closed"
     assert r["ai_check"]["appears_fixed"] is False
     part = fake.calls[0].contents[0]
-    assert part.inline_data.data == b"\xff\xd8fakejpeg" and part.inline_data.mime_type == "image/jpeg"
+    assert part.inline_data.data == jpeg() and part.inline_data.mime_type == "image/jpeg"
 
 
 def test_photo_must_be_valid_base64(client):

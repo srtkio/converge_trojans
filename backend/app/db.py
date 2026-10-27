@@ -1,10 +1,14 @@
+import logging
 import os
 
+from sqlalchemy import inspect, text
 from sqlalchemy.pool import StaticPool
 from sqlmodel import Session, SQLModel, create_engine
 
 from app import config
 from app.models import Counter
+
+log = logging.getLogger(__name__)
 
 def _normalise(url: str) -> str:
     # Render/Heroku hand out postgres:// or postgresql:// URLs; use the psycopg 3 driver.
@@ -24,8 +28,41 @@ else:
     engine = create_engine(DB_URL, pool_pre_ping=True)
 
 
+def add_missing_columns(target=None) -> list[str]:
+    """Add columns that the models have but an existing table lacks (all new ones are nullable).
+
+    create_all() only creates missing tables, so a database created before a release would
+    otherwise fail on the first query that touches a new column.
+
+    Additive only: nullable columns, no defaults (no table rewrite), never drops or renames, and
+    safe to run on every boot (already-present columns are skipped).
+    """
+    target = target or engine
+    inspector = inspect(target)
+    if_not_exists = "IF NOT EXISTS " if target.dialect.name == "postgresql" else ""
+    added = []
+    with target.begin() as conn:
+        for table in SQLModel.metadata.sorted_tables:
+            if not inspector.has_table(table.name):
+                continue
+            have = {c["name"] for c in inspector.get_columns(table.name)}
+            for col in table.columns:
+                if col.name in have:
+                    continue
+                if not col.nullable or col.primary_key:
+                    log.warning("not adding non-nullable column %s.%s automatically", table.name, col.name)
+                    continue
+                ddl = col.type.compile(dialect=target.dialect)
+                conn.execute(text(f'ALTER TABLE "{table.name}" ADD COLUMN {if_not_exists}"{col.name}" {ddl}'))
+                added.append(f"{table.name}.{col.name}")
+    if added:
+        log.info("added columns: %s", ", ".join(added))
+    return added
+
+
 def init_db() -> None:
     SQLModel.metadata.create_all(engine)
+    add_missing_columns()
 
 
 # Real user feedback must survive demo resets.
