@@ -4,9 +4,10 @@ import { useState } from "react";
 
 import { api } from "@/lib/api";
 import { CATEGORY_ICON, CATEGORY_LABEL, formatHours, formatTime, hoursLeft, humanize } from "@/lib/format";
-import type { AuditEvent, EvidenceKind, Incident, IncidentDetail } from "@/lib/types";
+import type { AuditEvent, EvidenceKind, Impact, Incident, IncidentDetail } from "@/lib/types";
 
 import type { Act } from "./Dashboard";
+import { ImpactPanel } from "./ImpactPanel";
 import { StatusBadge } from "./StatusBadge";
 
 // Same guards as backend/app/engine/verify.py, so buttons only show when the call will succeed.
@@ -60,12 +61,14 @@ function AuditRow({ e }: { e: AuditEvent }) {
 
 export function IncidentDetailPanel({
   detail,
+  impact,
   now,
   busy,
   act,
   incidents,
 }: {
   detail: IncidentDetail;
+  impact: Impact | null;
   now: string | null;
   busy: boolean;
   act: Act;
@@ -132,6 +135,8 @@ export function IncidentDetailPanel({
               <span className="font-medium">{resource.name}</span>
               {!resource.available && <span className="text-xs text-red-700">unavailable</span>}
             </div>
+          ) : inc.status === "verified_closed" ? (
+            <div className="mt-1 text-slate-600">Crew released after verified closure</div>
           ) : (
             <div className="mt-1 text-red-700">No crew available — escalated</div>
           )}
@@ -196,6 +201,15 @@ export function IncidentDetailPanel({
           </div>
         </div>
       </div>
+
+      {inc.parent_incident_id && (
+        <div className="rounded-md bg-violet-50 px-3 py-2 text-sm text-violet-800 ring-1 ring-violet-200">
+          Waiting on root-cause repair <span className="font-semibold">{inc.parent_incident_id}</span>. When it is verified, this
+          incident still needs its own proof before closing.
+        </div>
+      )}
+
+      {impact && <ImpactPanel impact={impact} />}
 
       {/* Linked reports with reasons */}
       <Section title={`Reports (${reports.length})`}>

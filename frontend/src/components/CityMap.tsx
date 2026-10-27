@@ -104,8 +104,10 @@ export function CityMap({
           );
         })}
 
-        {resources.map((r) => {
-          const p = clampToFrame(project(r.location));
+        {resources.map((r, idx) => {
+          const raw = clampToFrame(project(r.location));
+          // Crews pinned to the same edge would overlap; nudge each pinned crew down by its index.
+          const p = raw.clamped ? { ...raw, y: Math.min(H - EDGE, raw.y + (idx % 4) * 16) } : raw;
           const color = r.available ? "#0f172a" : "#94a3b8";
           // Keep labels inside the frame: put them left of crews pinned to the right edge.
           const right = p.x > W - 160;

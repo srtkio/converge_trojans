@@ -6,20 +6,35 @@ from sqlmodel import Session, SQLModel, create_engine
 from app import config
 from app.models import Counter
 
-DB_URL = os.environ.get("CONVERGE_DB_URL", "sqlite:///./converge.db")
+def _normalise(url: str) -> str:
+    # Render/Heroku hand out postgres:// or postgresql:// URLs; use the psycopg 3 driver.
+    for prefix in ("postgres://", "postgresql://"):
+        if url.startswith(prefix):
+            return "postgresql+psycopg://" + url[len(prefix):]
+    return url
+
+
+DB_URL = _normalise(os.environ.get("CONVERGE_DB_URL", "sqlite:///./converge.db"))
 
 if DB_URL == "sqlite://":
     engine = create_engine(DB_URL, connect_args={"check_same_thread": False}, poolclass=StaticPool)
-else:
+elif DB_URL.startswith("sqlite"):
     engine = create_engine(DB_URL, connect_args={"check_same_thread": False})
+else:
+    engine = create_engine(DB_URL, pool_pre_ping=True)
 
 
 def init_db() -> None:
     SQLModel.metadata.create_all(engine)
 
 
+# Real user feedback must survive demo resets.
+KEEP_ON_RESET = {"feedback"}
+
+
 def wipe_db() -> None:
-    SQLModel.metadata.drop_all(engine)
+    tables = [t for t in SQLModel.metadata.sorted_tables if t.name not in KEEP_ON_RESET]
+    SQLModel.metadata.drop_all(engine, tables=tables)
     SQLModel.metadata.create_all(engine)
 
 

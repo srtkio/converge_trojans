@@ -24,7 +24,7 @@ Show `docs/ARCHITECTURE.md` diagram on the slide.
 |---|---|---|---|
 | 1 | Hook + problem | Sarthak | 0:00–0:45 |
 | 2 | Market gap: what existing systems miss | Poorvi | 0:45–1:30 |
-| 3 | Live demo (golden scenario) | Antriksh drives, Sarthak narrates | 1:30–3:30 |
+| 3 | Live demo (v1 golden, or v2 root cause) | Antriksh drives, Sarthak narrates | 1:30–3:30 |
 | 4 | How it works: engine + architecture | Prachi | 3:30–4:15 |
 | 5 | Results, user testing, business, future, close | Poorvi → Sarthak | 4:15–5:00 |
 

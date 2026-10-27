@@ -100,3 +100,37 @@ Baseline = a naive system that opens one work order per report and accepts every
 8. Repaired again, inspector photo evidence supports → I1 `verified_closed`.
 9. Clock ticks 49 h with I2 untouched → I2 SLA breach → `escalated`.
 10. `/metrics` shows baseline vs CONVERGE.
+
+## v2/v3 additions (additive; v1 fields and behaviour unchanged)
+
+Shapes as posted in CHANNEL.md. Implemented on `feat/v2-rootcause`.
+
+- `Incident` gains `parent_incident_id | None`, `child_incident_ids: list[str]`, `at_risk: bool`.
+- `Evidence` gains `signal_only: bool` (true only for AI photo checks; never changes status).
+- `Hypothesis`: `{id, cause_incident_id, member_ids, evidence_for, evidence_against, confidence, status: proposed|confirmed|rejected, summary, created_at, decided_at | None}`.
+  Groups = incidents connected by `related` links; cause = most upstream category
+  (`sewage` > `water_leak` > `pothole`), earliest on tie. Scoring is deterministic; the LLM may
+  only rewrite `summary`.
+- Confirming makes the cause the parent. Children not yet started release their crew (one
+  coordinated visit), cannot be started, and their SLA waits on the parent. When the parent is
+  `verified_closed` each waiting child moves to `pending_verification` (audit `parent_resolved`);
+  it still needs its own evidence to close.
+- `at_risk`: not started, not closed, not waiting on a parent, and under 25% of the SLA left.
+  Audit `sla_at_risk` once per deadline.
+- Feedback is real user data: wall-clock timestamps, kept across `/sim/reset`.
+
+| Method | Path | Body | Returns |
+|---|---|---|---|
+| GET | `/hypotheses` | `?status=` | `Hypothesis[]` |
+| POST | `/hypotheses/{id}/confirm` | `{note?}` (body optional) | `{hypothesis, parent, children}` |
+| POST | `/hypotheses/{id}/reject` | `{note?}` (body optional) | `{hypothesis}` |
+| GET | `/incidents/{id}/impact` | | `{incident_id, simulated: true, services: [{id, name, kind, distance_m, via_incident_id, impact}]}` |
+| GET | `/services` | | `Service[]` `{id, name, kind, location, radius_m}` |
+| POST | `/incidents/{id}/evidence` | adds optional `photo: {data, media_type}` | adds `ai_check: {appears_fixed, confidence, explanation, evidence_id} \| null` |
+| POST | `/feedback` | `{rating 1-5, comment?, role?, page?, incident_id?}` | `Feedback` |
+| GET | `/feedback` | | `Feedback[]` newest first |
+| GET | `/feedback/summary` | | `{count, average, distribution, by_role, recent}` |
+| GET/POST | `/sim/scenario/rootcause` | `?step=N` | same shape as golden |
+
+`/metrics` adds `crew_visits_saved`, `coordinated_vs_independent: {independent_visits, coordinated_visits}`,
+`hypotheses: {proposed, confirmed, rejected}`, `at_risk` (count).

@@ -10,8 +10,14 @@ RESOURCES = ["res_roads_1", "res_roads_2", "res_water_1", "res_elec_1", "res_san
 
 
 def random_op(c, rng: random.Random, incidents: list[dict]):
-    op = rng.choices(["report", "start", "complete", "evidence", "down", "up", "tick"],
-                     weights=[30, 15, 15, 20, 5, 6, 9])[0]
+    op = rng.choices(["report", "start", "complete", "evidence", "down", "up", "tick", "hyp"],
+                     weights=[30, 15, 15, 20, 5, 6, 9, 6])[0]
+    if op == "hyp":
+        proposed = c.get("/hypotheses", params={"status": "proposed"}).json()
+        if proposed:
+            h = rng.choice(proposed)["id"]
+            c.post(f"/hypotheses/{h}/{rng.choice(['confirm', 'confirm', 'reject'])}")
+        return
     if op == "report" or not incidents:
         north, east = rng.uniform(-500, 500), rng.uniform(-500, 500)
         c.post("/reports", json={"text": "random report", "category": rng.choice(CATEGORIES),
@@ -59,7 +65,7 @@ def check_invariants(c):
             assert inc["completed_at"], iid
         if st == "verified_closed":
             d = c.get(f"/incidents/{iid}").json()
-            done = [a for a in d["audit"] if a["event_type"] == "work_completed"]
+            done = [a for a in d["audit"] if a["event_type"] in ("work_completed", "parent_resolved")]
             closes = [a for a in d["audit"] if a["event_type"] == "verified_closed"]
             assert done and closes, iid
             # The closing evidence supports resolution and came after the last completion.
@@ -68,6 +74,16 @@ def check_invariants(c):
             assert closing["supports_resolution"] is True
             assert closing["created_at"] >= done[-1]["timestamp"]
         assert inc["deadline"] > inc["created_at"]
+        if inc["at_risk"]:
+            assert st not in {"in_progress", "pending_verification", "verified_closed"}, iid
+        parent = incidents.get(inc["parent_incident_id"]) if inc["parent_incident_id"] else None
+        if inc["parent_incident_id"]:
+            assert parent and iid in parent["child_incident_ids"], iid
+        for ch in inc["child_incident_ids"]:
+            assert incidents[ch]["parent_incident_id"] == iid
+        waiting = parent and parent["status"] != "verified_closed" and not inc["completed_at"]
+        if waiting and st != "in_progress":
+            assert rid is None, (iid, "waiting child holds a crew")
         assert inc["report_ids"], iid
         for other in inc["related_incident_ids"]:
             assert iid in incidents[other]["related_incident_ids"]
@@ -82,6 +98,13 @@ def check_invariants(c):
     assert m["duplicate_work_orders_avoided"] == m["duplicates_linked"]
     assert sum(len(i["report_ids"]) for i in incidents.values()) == m["reports"]
     assert m["false_closures_caught"] == m["baseline"]["false_closures_accepted"]
+    assert m["coordinated_vs_independent"]["coordinated_visits"] == m["incidents"] - m["crew_visits_saved"]
+    hyps = c.get("/hypotheses").json()
+    assert len({h["cause_incident_id"] for h in hyps}) == len(hyps)
+    for h in hyps:
+        if h["status"] == "confirmed":
+            for mid in h["member_ids"]:
+                assert incidents[mid]["parent_incident_id"] == h["cause_incident_id"]
 
 
 @pytest.mark.parametrize("seed", range(12))

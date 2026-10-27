@@ -1,4 +1,6 @@
 """CONVERGE API. Contracts: docs/CONTRACTS.md. Engine logic lives in app/engine/."""
+import base64
+import binascii
 import os
 from contextlib import asynccontextmanager
 from typing import Literal
@@ -13,9 +15,9 @@ load_dotenv()
 
 from app import sim  # noqa: E402
 from app.db import engine, get_session, init_db, now  # noqa: E402
-from app.engine import metrics, verify  # noqa: E402
+from app.engine import feedback, impact, llm, metrics, rootcause, verify  # noqa: E402
 from app.engine.intake import submit_report  # noqa: E402
-from app.models import AuditEvent, Evidence, Incident, Link, Report, Resource  # noqa: E402
+from app.models import AuditEvent, Evidence, Incident, Link, Report, Resource, Service  # noqa: E402
 
 Category = Literal["pothole", "streetlight", "water_leak", "garbage", "sewage", "other"]
 EvidenceKind = Literal["photo", "sensor", "citizen_followup", "inspector"]
@@ -36,9 +38,13 @@ app = FastAPI(title="CONVERGE", lifespan=lifespan)
 # Comma-separated, e.g. "http://localhost:3000,https://converge.vercel.app".
 CORS_ORIGINS = [o.strip() for o in os.environ.get("CONVERGE_CORS_ORIGINS", "http://localhost:3000").split(",") if o.strip()]
 
+# Optional regex, e.g. r"https://.*\.vercel\.app" to allow Vercel preview deployments.
+CORS_ORIGIN_REGEX = os.environ.get("CONVERGE_CORS_ORIGIN_REGEX") or None
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ORIGINS,
+    allow_origin_regex=CORS_ORIGIN_REGEX,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -56,11 +62,45 @@ class CompleteIn(BaseModel):
     note: str = ""
 
 
+MAX_PHOTO_BYTES = 5 * 1024 * 1024
+# Generous cap on the encoded string so oversized uploads fail fast with 413 before decoding.
+MAX_PHOTO_B64 = MAX_PHOTO_BYTES * 4 // 3 + 16
+
+
+class PhotoIn(BaseModel):
+    data: str = Field(min_length=1)
+    media_type: Literal["image/jpeg", "image/png", "image/webp", "image/gif"]
+
+
 class EvidenceIn(BaseModel):
     kind: EvidenceKind
     supports_resolution: bool
     note: str = ""
     source: str = ""
+    photo: PhotoIn | None = None
+
+
+class DecisionIn(BaseModel):
+    note: str = ""
+
+
+class FeedbackIn(BaseModel):
+    rating: int = Field(ge=1, le=5)
+    comment: str = Field("", max_length=2000)
+    role: Literal["citizen", "operator", "judge", "other"] = "other"
+    page: str | None = Field(None, max_length=200)
+    incident_id: str | None = None
+
+
+def _validate_photo(photo: PhotoIn) -> None:
+    if len(photo.data) > MAX_PHOTO_B64:
+        raise HTTPException(413, f"Photo too large (max {MAX_PHOTO_BYTES // (1024 * 1024)} MB)")
+    try:
+        raw = base64.b64decode(photo.data, validate=True)
+    except (binascii.Error, ValueError):
+        raise HTTPException(422, "photo.data is not valid base64") from None
+    if len(raw) > MAX_PHOTO_BYTES:
+        raise HTTPException(413, f"Photo too large (max {MAX_PHOTO_BYTES // (1024 * 1024)} MB)")
 
 
 def _incident(s: Session, incident_id: str) -> Incident:
@@ -135,9 +175,23 @@ def complete_incident(incident_id: str, body: CompleteIn | None = None, s: Sessi
 @app.post("/incidents/{incident_id}/evidence")
 def post_evidence(incident_id: str, body: EvidenceIn, s: Session = Depends(get_session)):
     inc = _incident(s, incident_id)
+    if body.photo:
+        _validate_photo(body.photo)
     ev = verify.add_evidence(s, inc, body.kind, body.supports_resolution, body.note, body.source)
+    ai_check = None
+    if body.photo:
+        # Signal only: recorded after the rule-based decision above, never changes status.
+        check = llm.check_photo(body.photo.data, body.photo.media_type, inc.category, inc.title)
+        if check:
+            ai_ev = verify.record_ai_check(s, inc, check, ev)
+            ai_check = {**check, "evidence_id": ai_ev.id}
     s.commit()
-    return {"incident": inc.to_api(), "evidence": ev.to_api()}
+    return {"incident": inc.to_api(), "evidence": ev.to_api(), "ai_check": ai_check}
+
+
+@app.get("/incidents/{incident_id}/impact")
+def get_impact(incident_id: str, s: Session = Depends(get_session)):
+    return impact.impact(s, _incident(s, incident_id))
 
 
 @app.get("/resources")
@@ -159,6 +213,54 @@ def resource_available(resource_id: str, s: Session = Depends(get_session)):
     sim.set_available(s, res)
     s.commit()
     return res.to_api()
+
+
+@app.get("/services")
+def list_services(s: Session = Depends(get_session)):
+    return [x.to_api() for x in s.exec(select(Service).order_by(Service.id)).all()]
+
+
+HYP_STATUSES = {"proposed", "confirmed", "rejected"}
+
+
+@app.get("/hypotheses")
+def list_hypotheses(status: str | None = None, s: Session = Depends(get_session)):
+    if status and status not in HYP_STATUSES:
+        raise HTTPException(422, f"Unknown status {status}")
+    hyps = rootcause.refresh(s)
+    s.commit()
+    return [h.to_api() for h in hyps if not status or h.status == status]
+
+
+@app.post("/hypotheses/{hyp_id}/confirm")
+def confirm_hypothesis(hyp_id: str, body: DecisionIn | None = None, s: Session = Depends(get_session)):
+    hyp, parent, children = rootcause.confirm(s, hyp_id, body.note if body else "")
+    s.commit()
+    return {"hypothesis": hyp.to_api(), "parent": parent.to_api(), "children": [c.to_api() for c in children]}
+
+
+@app.post("/hypotheses/{hyp_id}/reject")
+def reject_hypothesis(hyp_id: str, body: DecisionIn | None = None, s: Session = Depends(get_session)):
+    hyp = rootcause.reject(s, hyp_id, body.note if body else "")
+    s.commit()
+    return {"hypothesis": hyp.to_api()}
+
+
+@app.post("/feedback")
+def post_feedback(body: FeedbackIn, s: Session = Depends(get_session)):
+    fb = feedback.submit(s, body.rating, body.comment, body.role, body.page, body.incident_id)
+    s.commit()
+    return fb.to_api()
+
+
+@app.get("/feedback")
+def list_feedback(s: Session = Depends(get_session)):
+    return [f.to_api() for f in feedback.all_feedback(s)]
+
+
+@app.get("/feedback/summary")
+def feedback_summary(s: Session = Depends(get_session)):
+    return feedback.summary(s)
 
 
 @app.get("/sim/clock")
@@ -188,6 +290,16 @@ def sim_golden_status(s: Session = Depends(get_session)):
 @app.post("/sim/scenario/golden")
 def sim_golden(step: int | None = Query(None, ge=1, le=len(sim.GOLDEN)), s: Session = Depends(get_session)):
     return sim.run_golden(s, step)
+
+
+@app.get("/sim/scenario/rootcause")
+def sim_rootcause_status(s: Session = Depends(get_session)):
+    return sim.scenario_status(s, "rootcause")
+
+
+@app.post("/sim/scenario/rootcause")
+def sim_rootcause(step: int | None = Query(None, ge=1, le=len(sim.ROOTCAUSE)), s: Session = Depends(get_session)):
+    return sim.run_scenario(s, step, "rootcause")
 
 
 @app.get("/audit")
