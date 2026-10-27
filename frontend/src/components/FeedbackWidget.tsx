@@ -4,6 +4,8 @@ import { useState } from "react";
 
 import { api } from "@/lib/api";
 
+import { SuccessCheck } from "./CitizenMotion";
+
 const ROLES = [
   { value: "citizen", label: "I reported a problem" },
   { value: "operator", label: "I work for a department" },
@@ -13,9 +15,12 @@ const ROLES = [
 // Shown when the backend has no /feedback route yet (it is being added in parallel).
 const NOT_READY = "Feedback isn't switched on yet. Please try again later.";
 
-export function FeedbackWidget() {
+/** `knownRole` skips the "Who are you?" question when the page already knows (signed-in citizen). */
+export function FeedbackWidget({ incidentId, page, knownRole }: { incidentId?: string; page?: string; knownRole?: string } = {}) {
   const [rating, setRating] = useState(0);
-  const [role, setRole] = useState("citizen");
+  const [sent, setSent] = useState(false);
+  const [chosenRole, setRole] = useState("citizen");
+  const role = knownRole ?? chosenRole;
   const [comment, setComment] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -28,8 +33,8 @@ export function FeedbackWidget() {
     setBusy(true);
     setMessage(null);
     try {
-      await api.feedback({ rating, role, comment: comment.trim() });
-      setMessage("Thanks, your feedback was received.");
+      await api.feedback({ rating, role, comment: comment.trim(), page, incident_id: incidentId });
+      setSent(true);
       setRating(0);
       setComment("");
     } catch (e) {
@@ -40,11 +45,39 @@ export function FeedbackWidget() {
     }
   };
 
+  if (sent) {
+    return (
+      <section
+        aria-labelledby="feedback-heading"
+        className="cz-rise flex flex-col items-center rounded-2xl bg-white p-5 text-center shadow-sm ring-1 ring-slate-200"
+      >
+        <SuccessCheck />
+        <h2 id="feedback-heading" className="mt-2 text-base font-semibold text-slate-900">
+          Thanks for your feedback
+        </h2>
+        <p role="status" className="mt-1 text-sm text-slate-600">
+          It helps us make this better for everyone.
+        </p>
+        <button
+          type="button"
+          onClick={() => {
+            setSent(false);
+            setMessage(null);
+          }}
+          className="mt-3 text-sm text-slate-600 underline underline-offset-4"
+        >
+          Send more feedback
+        </button>
+      </section>
+    );
+  }
+
   return (
-    <section aria-labelledby="feedback-heading" className="rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+    <section aria-labelledby="feedback-heading" className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
       <h2 id="feedback-heading" className="text-base font-semibold text-slate-900">
-        Rate this
+        How was your experience?
       </h2>
+      <p className="mt-1 text-sm text-slate-600">Rate this page from 1 to 5 stars.</p>
 
       <div className="mt-3 flex gap-1" role="radiogroup" aria-label="Rating">
         {[1, 2, 3, 4, 5].map((n) => (
@@ -64,20 +97,22 @@ export function FeedbackWidget() {
         ))}
       </div>
 
-      <label className="mt-4 block text-sm font-medium text-slate-700">
-        Who are you?
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-          className="mt-1 h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-base"
-        >
-          {ROLES.map((r) => (
-            <option key={r.value} value={r.value}>
-              {r.label}
-            </option>
-          ))}
-        </select>
-      </label>
+      {!knownRole && (
+        <label className="mt-4 block text-sm font-medium text-slate-700">
+          Who are you?
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            className="mt-1 h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-base"
+          >
+            {ROLES.map((r) => (
+              <option key={r.value} value={r.value}>
+                {r.label}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
 
       <label className="mt-4 block text-sm font-medium text-slate-700">
         Comment <span className="font-normal text-slate-400">(optional)</span>
