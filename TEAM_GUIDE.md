@@ -37,7 +37,7 @@ fewer duplicate work orders, false closures caught, deadlines enforced.
 |---|---|---|
 | Sarthak (`srtkio`) | Lead, dashboard (v2 UI), integration, pitch deck | Hook, demo narration, close |
 | Prachi (`Prachivats-21`) | Backend engine, v2 root cause, v3 photo check + SLA risk | How it works + architecture |
-| Antriksh (`Antrikshcodes`) | — | Drives the live demo |
+| Antriksh (`Antrikshcodes`) | Pitch Deck | Drives the live demo |
 | Poorvi (`poorvig222`) | — | Market gap, results, business, future |
 | Coordinator Claude | v3 citizen page + feedback widget, PR prep, keeps docs current | — |
 
