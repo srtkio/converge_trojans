@@ -84,4 +84,28 @@ The start page asks who you are.
   - `OPS-RDS-01` / `roads-demo-2026` (roads department)
 
 Sign-in is demo-grade: sessions are kept in the browser tab, and operator codes are stored as
-SHA-256 hashes in `backend/app/seed/operators.json`. Production auth is planned for v2.
+SHA-256 hashes in `backend/app/seed/operators.json`. The sign-in gates the dashboard screen only;
+the API itself is not locked down. Production auth is planned for v2.
+
+## End-to-end demo check
+
+`scripts/e2e.py` drives the running app through the browser (Python Playwright) and checks the
+demo before the pitch:
+
+1. Signs in to the operator dashboard with the demo badge, if the sign-in form appears.
+2. v1 "Verified loop": Reset, then Next step to step 10. Checks the naive-vs-CONVERGE table
+   (work orders 3 vs 2, false closures accepted 1 vs 0).
+3. v2 "Root cause": Reset, then Next step to step 8. Checks crew visits 3 vs 1.
+4. `/track/inc_001` at iPhone 13 size: no horizontal overflow, no console errors.
+
+It exits 0 when everything passes and 1 on the first failure.
+
+```bash
+pip install playwright && playwright install chromium
+# with the backend on :8001 and the frontend on :3000
+python3 scripts/e2e.py
+python3 scripts/e2e.py --base http://localhost:3002 --headed   # other port, watch it run
+```
+
+The script expects the dashboard at `/operator` (the default). For an older build without the
+portals, pass `--dashboard-path /`.
