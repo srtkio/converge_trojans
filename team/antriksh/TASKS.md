@@ -1,4 +1,4 @@
-> **Superseded (2026-10-27):** Uantriksh is presenting, not building. See PRESENTER.md in this folder.
+> **Superseded (2026-10-27):** Antriksh is presenting, not building. See PRESENTER.md in this folder.
 
 # Antriksh — QA and scenario data
 

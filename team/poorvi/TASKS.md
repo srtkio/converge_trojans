@@ -1,4 +1,4 @@
-> **Superseded (2026-10-27):** Upoorvi is presenting, not building. See PRESENTER.md in this folder.
+> **Superseded (2026-10-27):** Poorvi is presenting, not building. See PRESENTER.md in this folder.
 
 # Poorvi — pitch and research
 
