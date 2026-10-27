@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { PinIcon } from "@/components/CitizenIcons";
 import { PhotoPicker, usePhotoField } from "@/components/PhotoPicker";
+import { PinSheet, type PinResult } from "@/components/PinSheet";
 import { api, type ReportLocation } from "@/lib/api";
 import {
   CITIZEN_STATUS_LABEL,
@@ -19,7 +20,8 @@ import {
 } from "@/lib/citizen";
 import { BIG_BUTTON } from "@/lib/citizenStyles";
 import { CATEGORY_ICON, CATEGORY_LABEL } from "@/lib/format";
-import { outsidePilot, useDeviceLocation } from "@/lib/location";
+import { PILOT_CENTRE, outsidePilot, useDeviceLocation } from "@/lib/location";
+import { takePin, type LatLng } from "@/lib/pinHandoff";
 import { photoRejected } from "@/lib/photo";
 import type { Category, Incident, Link } from "@/lib/types";
 
@@ -43,6 +45,9 @@ const NEARBY_M = 300;
 const ME_TOO_TEXT = "Me too: I see the same problem here.";
 // A phone fix rougher than this gets a hint to describe the spot in words.
 const ROUGH_FIX_M = 250;
+// What a pinned report sends: the backend accepts "pin" as a location source.
+const PINNED_LABEL = "Pinned on the map";
+const MAP_FAILED = "The map isn't loading. Pick a nearby place instead.";
 const OUTSIDE_PILOT =
   "You're outside this pilot's area (around MG Road, Bengaluru). We'll still log your report at your real location.";
 
@@ -75,6 +80,11 @@ export function CitizenReportForm({
   const locating = gps.state === "locating";
   const slowGps = useSlowHint(locating, 5000);
   const photo = usePhotoField();
+  // A spot the citizen pinned on the map. It wins over GPS and the landmark list until undone.
+  const [pinned, setPinned] = useState<LatLng | null>(null);
+  const [pinSheet, setPinSheet] = useState(false);
+  const [mapFailed, setMapFailed] = useState(false);
+  const adjustRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (focusOnMount) textRef.current?.focus();
@@ -88,6 +98,14 @@ export function CitizenReportForm({
   }, [gps.state]);
 
   useEffect(() => {
+    // "Report something here" on the Map tab hands its pin over. This also runs when the Report
+    // screen is shown again, so a pin chosen meanwhile arrives too.
+    const handed = takePin();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (handed) setPinned(handed);
+  }, []);
+
+  useEffect(() => {
     // Bring back a half-written report from this device (closed tab, reload, signal drop).
     const draft = readDraft();
     if (draft) {
@@ -97,10 +115,10 @@ export function CitizenReportForm({
     }
   }, []);
 
-  // The active location: the phone's position while it's in use, otherwise the chosen landmark.
+  // The active location: a pinned spot, else the phone's position while it's in use, else the landmark.
   const here = PLACES[place];
-  const lat = gps.state === "on" ? gps.lat : here.lat;
-  const lng = gps.state === "on" ? gps.lng : here.lng;
+  const lat = pinned ? pinned.lat : gps.state === "on" ? gps.lat : here.lat;
+  const lng = pinned ? pinned.lng : gps.state === "on" ? gps.lng : here.lng;
 
   useEffect(() => {
     // Open cases people can join instead of filing a duplicate; refreshed when the location changes.
@@ -130,10 +148,12 @@ export function CitizenReportForm({
     .filter(({ d }) => d <= NEARBY_M)
     .sort((a, b) => a.d - b.d)
     .slice(0, 3);
-  const outside = gps.state === "on" && outsidePilot(gps.lat, gps.lng);
+  const outside = pinned ? outsidePilot(pinned.lat, pinned.lng) : gps.state === "on" && outsidePilot(gps.lat, gps.lng);
+  const pinnedFrom = pinned ? distanceM(PILOT_CENTRE.lat, PILOT_CENTRE.lng, pinned.lat, pinned.lng) : 0;
   // Read out by screen readers as the location changes (the visible text is above).
-  const gpsAnnouncement =
-    gps.state === "locating"
+  const gpsAnnouncement = pinned
+    ? `${PINNED_LABEL}, ${formatMetres(pinnedFrom)} from MG Road metro.${outside ? ` ${OUTSIDE_PILOT}` : ""}`
+    : gps.state === "locating"
       ? "Finding your location…"
       : gps.state === "on"
         ? `Using your current location, accurate to about ${formatMetres(gps.accuracy)}.${outside ? ` ${OUTSIDE_PILOT}` : ""}`
@@ -155,6 +175,7 @@ export function CitizenReportForm({
       const r = await api.report({ ...body, reporter, photo: upload });
       setText("");
       setPicked(null);
+      setPinned(null);
       saveDraft("");
       photo.clear();
       onReported({ incident: r.incident, link: r.link });
@@ -172,8 +193,9 @@ export function CitizenReportForm({
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!canSubmit) return;
-    const location: ReportLocation =
-      gps.state === "on"
+    const location: ReportLocation = pinned
+      ? { source: "pin", accuracy_m: null, label: PINNED_LABEL }
+      : gps.state === "on"
         ? { source: "gps", accuracy_m: Math.round(gps.accuracy), label: "Current location" }
         : { source: "landmark", accuracy_m: null, label: here.name };
     void send({ text: text.trim(), category: shown ?? "other", lat, lng, location });
@@ -192,11 +214,15 @@ export function CitizenReportForm({
   const askForLocation = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (locating) return; // aria-disabled: the button keeps focus while the phone looks
     refocus.current = document.activeElement === e.currentTarget;
+    setPinned(null);
+    setMapFailed(false);
     locate();
   };
 
   const pickPlace = (i: number) => {
     setPlace(i);
+    setPinned(null);
+    setMapFailed(false);
     // Picking a place wins over a location request still running (or one that failed).
     if (locating || gps.state === "failed") stopGps();
   };
@@ -205,6 +231,42 @@ export function CitizenReportForm({
     stopGps();
     requestAnimationFrame(() => placeRef.current?.focus());
   };
+
+  const openPinSheet = () => {
+    setMapFailed(false);
+    setPinSheet(true);
+  };
+
+  const pinDone = (r: PinResult) => {
+    setPinSheet(false);
+    if (r.kind === "picked") {
+      setPinned(r.spot);
+      if (locating) stopGps();
+      requestAnimationFrame(() => adjustRef.current?.focus({ preventScroll: true }));
+    } else if (r.kind === "map-failed") {
+      setMapFailed(true);
+      if (gps.state === "on") stopGps();
+      requestAnimationFrame(() => placeRef.current?.focus());
+    }
+  };
+
+  const undoPin = () => {
+    setPinned(null);
+    requestAnimationFrame(() => adjustRef.current?.focus({ preventScroll: true }));
+  };
+
+  const adjustButton = (
+    <button
+      ref={adjustRef}
+      type="button"
+      onClick={openPinSheet}
+      disabled={busy}
+      className="mt-2 flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-white px-3 text-sm font-medium text-emerald-800 ring-1 ring-emerald-200 transition hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 disabled:opacity-60 motion-safe:active:scale-[0.98]"
+    >
+      <MapGlyph />
+      Adjust on the map
+    </button>
+  );
 
   return (
     <form onSubmit={submit} className="space-y-5">
@@ -269,7 +331,36 @@ export function CitizenReportForm({
 
       <fieldset className="min-w-0">
         <legend className="text-sm font-medium text-slate-800">Where is it?</legend>
-        {gps.state === "on" ? (
+        {pinned ? (
+          <div className="cz-rise mt-1.5 rounded-xl bg-emerald-50 p-3 ring-1 ring-emerald-200">
+            <p className="flex items-start gap-2 text-sm text-emerald-950">
+              <PinIcon className="mt-0.5 h-4 w-4 text-emerald-700" />
+              <span className="min-w-0">
+                <span className="font-medium">{PINNED_LABEL}</span>
+                <span className="block text-xs text-emerald-900">{formatMetres(pinnedFrom)} from MG Road metro</span>
+              </span>
+            </p>
+            <div className="mt-2 ml-6 flex flex-wrap gap-x-4 gap-y-1">
+              <button
+                ref={adjustRef}
+                type="button"
+                onClick={openPinSheet}
+                disabled={busy}
+                className="rounded-md text-sm font-medium text-emerald-800 underline underline-offset-4 hover:text-emerald-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 disabled:opacity-50"
+              >
+                Move the pin
+              </button>
+              <button
+                type="button"
+                onClick={undoPin}
+                disabled={busy}
+                className="rounded-md text-sm font-medium text-emerald-800 underline underline-offset-4 hover:text-emerald-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 disabled:opacity-50"
+              >
+                Undo pin
+              </button>
+            </div>
+          </div>
+        ) : gps.state === "on" ? (
           <div className="cz-rise mt-1.5 rounded-xl bg-emerald-50 p-3 ring-1 ring-emerald-200">
             <p className="flex items-start gap-2 text-sm text-emerald-950">
               <PinIcon className="mt-0.5 h-4 w-4 text-emerald-700" />
@@ -291,6 +382,7 @@ export function CitizenReportForm({
             >
               Pick a place from the list instead
             </button>
+            {adjustButton}
           </div>
         ) : (
           <>
@@ -332,6 +424,13 @@ export function CitizenReportForm({
               </select>
               <span className="mt-1 block text-xs text-slate-500">This pilot covers the streets around MG Road, Bengaluru.</span>
             </label>
+            {mapFailed ? (
+              <p role="status" className="mt-2 rounded-xl bg-amber-50 p-3 text-sm text-amber-950 ring-1 ring-amber-200">
+                {MAP_FAILED}
+              </p>
+            ) : (
+              adjustButton
+            )}
           </>
         )}
         {outside && (
@@ -401,6 +500,21 @@ export function CitizenReportForm({
           {error}
         </p>
       )}
+      {pinSheet && (
+        <PinSheet
+          initial={pinned ?? { lat, lng }}
+          onDone={pinDone}
+        />
+      )}
     </form>
+  );
+}
+
+function MapGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m9 4.5-5 2v13l5-2 6 2 5-2v-13l-5 2-6-2Z" />
+      <path d="M9 4.5v13M15 6.5v13" />
+    </svg>
   );
 }

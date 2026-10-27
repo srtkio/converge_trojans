@@ -1,0 +1,203 @@
+/* Citizen app shell motion (/citizen, /citizen/cases, /citizen/map, /track/[id]).
+   Imported by app/citizen/layout.tsx and app/track/layout.tsx only, so globals.css (shared with
+   the landing and operator pages) stays untouched. Same language as the landing: the
+   cubic-bezier(0.22, 1, 0.36, 1) curve, 10px rises, 24px slides. Transform and opacity only, and
+   nothing moves for people who prefer reduced motion. */
+
+:root {
+  --cz-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --cz-ease-in: cubic-bezier(0.4, 0, 1, 1);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cz-fade {
+    animation: cz-fade-in 200ms ease-out both;
+  }
+  .cz-sheet {
+    animation: cz-sheet-in 300ms var(--cz-ease) both;
+  }
+  .cz-sheet-out {
+    animation: cz-sheet-out 200ms var(--cz-ease-in) both;
+  }
+  .cz-backdrop {
+    animation: cz-fade-in 200ms ease-out both;
+  }
+  .cz-backdrop-out {
+    animation: cz-fade-out 200ms var(--cz-ease-in) both;
+  }
+  .cz-pin {
+    transition: transform 150ms var(--cz-ease);
+  }
+  .cz-pin.is-lifted {
+    transform: translateY(-6px) scale(1.06);
+  }
+  .cz-pin-drop {
+    animation: cz-pin-drop 320ms var(--cz-ease) both;
+  }
+  .cz-ripple {
+    animation: cz-ripple 400ms ease-out both;
+  }
+  .cz-marker {
+    animation: cz-pop 380ms var(--cz-ease) both;
+  }
+  .cz-flash::after {
+    animation: cz-flash 400ms ease-out both;
+  }
+
+  /* Tabs: fade-through. Old screen leaves in 150 ms, the new one rises 10px in 250 ms. */
+  ::view-transition-old(.cz-tab) {
+    animation: cz-fade-out 150ms var(--cz-ease-in) both;
+  }
+  ::view-transition-new(.cz-tab) {
+    animation:
+      cz-fade-in 250ms var(--cz-ease) 100ms both,
+      cz-lift-in 250ms var(--cz-ease) 100ms both;
+  }
+  /* Going deeper (a case) and coming back: a short 24px slide plus fade. */
+  ::view-transition-old(.cz-forward) {
+    animation:
+      cz-fade-out 150ms var(--cz-ease-in) both,
+      cz-out-left 300ms var(--cz-ease) both;
+  }
+  ::view-transition-new(.cz-forward) {
+    animation:
+      cz-fade-in 250ms var(--cz-ease) 50ms both,
+      cz-in-right 300ms var(--cz-ease) both;
+  }
+  ::view-transition-old(.cz-back) {
+    animation:
+      cz-fade-out 150ms var(--cz-ease-in) both,
+      cz-out-right 300ms var(--cz-ease) both;
+  }
+  ::view-transition-new(.cz-back) {
+    animation:
+      cz-fade-in 250ms var(--cz-ease) 50ms both,
+      cz-in-left 300ms var(--cz-ease) both;
+  }
+}
+
+/* The live page keeps receiving taps while a transition runs. */
+::view-transition {
+  pointer-events: none;
+}
+
+/* The bottom nav stays put: one fixed anchor while the screens change. */
+::view-transition-group(cz-tabbar) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(cz-tabbar) {
+  display: none;
+}
+::view-transition-new(cz-tabbar) {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* The status flash ring sits on top of a row without moving it. */
+.cz-flash {
+  position: relative;
+}
+.cz-flash::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 2px #10b981;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Leaflet draws the attribution on its own white strip; keep it readable over our rounded box. */
+.cz-map .leaflet-control-attribution {
+  font-size: 10px;
+}
+.cz-map .leaflet-marker-icon:focus-visible {
+  outline: 3px solid #0f172a;
+  outline-offset: 2px;
+  border-radius: 9999px;
+}
+
+@keyframes cz-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes cz-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes cz-lift-in {
+  from {
+    transform: translateY(10px);
+  }
+}
+@keyframes cz-in-right {
+  from {
+    transform: translateX(24px);
+  }
+}
+@keyframes cz-in-left {
+  from {
+    transform: translateX(-24px);
+  }
+}
+@keyframes cz-out-left {
+  to {
+    transform: translateX(-24px);
+  }
+}
+@keyframes cz-out-right {
+  to {
+    transform: translateX(24px);
+  }
+}
+@keyframes cz-sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes cz-sheet-out {
+  to {
+    transform: translateY(100%);
+  }
+}
+@keyframes cz-pin-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.9);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(1px) scale(1.03);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes cz-ripple {
+  from {
+    opacity: 0.5;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+@keyframes cz-flash {
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

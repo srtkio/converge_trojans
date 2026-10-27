@@ -213,6 +213,7 @@ export function reportedWhere(r: Report | undefined): string | null {
       ? `Reported with phone location (accurate to about ${formatMetres(r.location_accuracy_m)})`
       : "Reported with phone location";
   }
+  if (r?.location_source === "pin") return "Reported at a spot pinned on the map";
   const label = r?.location_label?.trim();
   if (r?.location_source !== "landmark" || !label) return null;
   // "Me too" reports are labelled "Same spot as case inc_001".

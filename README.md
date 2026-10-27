@@ -89,7 +89,15 @@ docker run -p 8000:8000 -e CONVERGE_CORS_ORIGINS=http://localhost:3000 converge-
 
 The start page asks who you are.
 
-- **Citizen:** enter a name and email at `/citizen`, then report a problem and track it.
+- **Citizen:** enter a name and email at `/citizen`, then report a problem and track it. The citizen
+  side is a phone app with a bottom nav:
+  - **Report** (`/citizen`): the report form. "Adjust on the map" opens a full-screen map where you
+    drag the pin or tap the spot; a pinned report is sent with location source `pin`.
+  - **My cases** (`/citizen/cases`): the cases reported from this phone, with live status
+    (refreshed about every 15 s while visible; ones that need your check come first).
+  - **Map** (`/citizen/map`): open issues within 1.5 km of you (or of MG Road metro). Tap one for
+    "Me too" or "View case"; drag the pin and tap "Report something here" to report a new spot.
+  - Case pages (`/track/<id>`) stay public, so shared links work without signing in.
 - **Operator:** `/operator` checks your badge ID and access code against the backend. Demo accounts
   (demo only, not real credentials):
   - `OPS-WTR-01` / `water-demo-2026` (water department)
@@ -98,6 +106,19 @@ The start page asks who you are.
 Sign-in is demo-grade: sessions are kept in the browser tab, and operator codes are stored as
 SHA-256 hashes in `backend/app/seed/operators.json`. The sign-in gates the dashboard screen only;
 the API itself is not locked down. Production auth is planned for v2.
+
+## Install the citizen app on a phone
+
+The citizen pages link a web app manifest (`frontend/public/manifest.webmanifest`, start URL
+`/citizen`, theme `#047857`). There is no service worker: the app always shows live data.
+
+- **iPhone (Safari):** open `/citizen`, tap Share, then Add to Home Screen. My cases shows this tip
+  once (dismissible).
+- **Android (Chrome):** open `/citizen`, then menu > Install app (or Add to Home screen).
+
+Installing needs https (the live demo, or `next dev --experimental-https` on your LAN). The icons
+in `frontend/public/icons/` are committed PNGs; to change them, edit and re-run
+`cd frontend && node scripts/make-icons.mjs` (uses `next/og`, no extra dependency).
 
 ## End-to-end demo check
 
@@ -121,3 +142,15 @@ python3 scripts/e2e.py --base http://localhost:3002 --headed   # other port, wat
 
 The script expects the dashboard at `/operator` (the default). For an older build without the
 portals, pass `--dashboard-path /`.
+
+`scripts/e2e_citizen_app.py` checks the citizen app at iPhone 13 size: the manifest and icons, the
+sign-in gate, the bottom nav (tabs, back/forward, a Map round trip), a report pinned on the map
+(the backend stores `location_source: "pin"` at the dropped spot), "Me too" from a map marker,
+live status in My cases after an operator-side change, the offline map fallback (tiles blocked)
+and reduced motion. It needs the backend URL and golden step 6 data:
+
+```bash
+curl -XPOST "localhost:8001/sim/scenario/golden?step=6"
+python3 scripts/e2e_citizen_app.py --base http://localhost:3000 --api http://localhost:8001
+python3 scripts/e2e_citizen_app.py --shots /tmp/shots   # also save phone screenshots
+```
