@@ -12,7 +12,10 @@ import {
   CITIZEN_STATUS_LABEL,
   WAKING_HINT,
   explainStatus,
+  NAME_KEY,
   forgetCase,
+  forgetDevice,
+  needsCheck,
   prefersReducedMotion,
   readMyCases,
   rememberCase,
@@ -44,6 +47,7 @@ export default function CitizenPage() {
           citizen={citizen}
           onSignOut={() => {
             clearSession();
+            forgetDevice(); // shared phones: the next person starts fresh
             setCitizen(null);
           }}
         />
@@ -56,6 +60,7 @@ export default function CitizenPage() {
 
 function CitizenHome({ citizen, onSignOut }: { citizen: Citizen; onSignOut: () => void }) {
   const [outcome, setOutcome] = useState<ReportOutcome | null>(null);
+  const [focusForm, setFocusForm] = useState(false);
   const [cases, setCases] = useState<Incident[]>([]);
   const topRef = useRef<HTMLDivElement>(null);
 
@@ -100,7 +105,11 @@ function CitizenHome({ citizen, onSignOut }: { citizen: Citizen; onSignOut: () =
     );
   };
 
-  const others = cases.filter((c) => c.id !== outcome?.incident.id);
+  // Cases waiting for the citizen's confirmation come first.
+  const others = cases
+    .filter((c) => c.id !== outcome?.incident.id)
+    .sort((a, b) => Number(needsCheck(b)) - Number(needsCheck(a)));
+  const toCheck = cases.filter(needsCheck);
 
   return (
     <>
@@ -120,10 +129,40 @@ function CitizenHome({ citizen, onSignOut }: { citizen: Citizen; onSignOut: () =
       </header>
       </Reveal>
 
+      {toCheck.length > 0 && !outcome && (
+        <Reveal index={1}>
+          <Link
+            href={`/track/${toCheck[0].id}`}
+            className="flex items-center gap-3 rounded-2xl bg-amber-50 p-4 ring-1 ring-amber-300 transition hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 motion-safe:active:scale-[0.99]"
+          >
+            <span aria-hidden="true" className="text-2xl">
+              👀
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-semibold text-amber-950">
+                {toCheck.length === 1 ? "1 repair needs your check" : `${toCheck.length} repairs need your check`}
+              </span>
+              <span className="block text-xs text-amber-900">
+                {"The crew says it's fixed. Tap to confirm, or tell us it's still broken."}
+              </span>
+            </span>
+            <span aria-hidden="true" className="text-amber-900">
+              →
+            </span>
+          </Link>
+        </Reveal>
+      )}
+
       <Reveal index={1}>
       <div ref={topRef} className="scroll-mt-4">
         {outcome ? (
-          <ReportSuccess outcome={outcome} onAnother={() => setOutcome(null)} />
+          <ReportSuccess
+            outcome={outcome}
+            onAnother={() => {
+              setFocusForm(true);
+              setOutcome(null);
+            }}
+          />
         ) : (
           <section aria-labelledby="report-heading" className={CARD}>
             <h1 id="report-heading" className="text-xl font-semibold">
@@ -133,7 +172,11 @@ function CitizenHome({ citizen, onSignOut }: { citizen: Citizen; onSignOut: () =
               {"Tell us what's wrong and where. We'll follow it until the repair is checked."}
             </p>
             <div className="mt-5">
-              <CitizenReportForm reporter={`citizen:${firstName(citizen.name)}`} onReported={onReported} />
+              <CitizenReportForm
+                reporter={`citizen:${firstName(citizen.name)}`}
+                onReported={onReported}
+                focusOnMount={focusForm}
+              />
             </div>
           </section>
         )}
@@ -158,7 +201,8 @@ function CitizenHome({ citizen, onSignOut }: { citizen: Citizen; onSignOut: () =
       )}
 
       <p className="mt-auto pt-2 text-center text-xs text-slate-500">
-        Only your first name ({firstName(citizen.name)}) is attached to your reports.
+        Only your first name ({firstName(citizen.name)}) is attached to your reports. Sharing this phone? Sign out
+        when you&apos;re done.
       </p>
     </>
   );
@@ -166,6 +210,28 @@ function CitizenHome({ citizen, onSignOut }: { citizen: Citizen; onSignOut: () =
 
 function ReportSuccess({ outcome, onAnother }: { outcome: ReportOutcome; onAnother: () => void }) {
   const { incident, link } = outcome;
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    // Move focus to the confirmation so screen readers announce it and keyboard users continue from here.
+    headingRef.current?.focus({ preventScroll: true });
+  }, []);
+
+  useEffect(() => {
+    if (!copied) return;
+    const timer = setTimeout(() => setCopied(false), 2000);
+    return () => clearTimeout(timer);
+  }, [copied]);
+
+  const copyCase = async () => {
+    try {
+      await navigator.clipboard.writeText(incident.id);
+      setCopied(true);
+    } catch {
+      // Clipboard blocked: the number is on screen to copy by hand.
+    }
+  };
   const title = link?.kind === "duplicate" ? "Thanks! This was already reported" : "Thanks! Your report is in";
   const body =
     link?.kind === "duplicate"
@@ -180,19 +246,31 @@ function ReportSuccess({ outcome, onAnother }: { outcome: ReportOutcome; onAnoth
     <section aria-labelledby="success-heading" className={`${CARD} cz-rise`}>
       <div className="flex items-center gap-3">
         <SuccessCheck />
-        <h1 id="success-heading" className="text-lg font-semibold leading-snug">
+        <h1 id="success-heading" ref={headingRef} tabIndex={-1} className="text-lg font-semibold leading-snug outline-none">
           {title}
         </h1>
       </div>
       <p role="status" className="mt-3 text-sm text-slate-700">
         {body}
       </p>
-      <p className="mt-3 text-sm text-slate-600">
-        Case number <span className="font-mono font-semibold text-slate-900">{incident.id}</span>
-      </p>
+      <div className="mt-3 flex items-center gap-2 text-sm text-slate-600">
+        <span>
+          Case number <span className="font-mono font-semibold text-slate-900">{incident.id}</span>
+        </span>
+        <button
+          type="button"
+          onClick={copyCase}
+          className="rounded-md px-2 py-1 text-xs font-medium text-slate-700 ring-1 ring-slate-200 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
+        >
+          {copied ? "Copied" : "Copy"}
+        </button>
+        <span className="sr-only" aria-live="polite">
+          {copied ? "Case number copied" : ""}
+        </span>
+      </div>
       <Link
         href={`/track/${incident.id}`}
-        className={`${BIG_BUTTON} mt-5 bg-emerald-600 text-white shadow-[0_14px_30px_-16px_rgba(5,150,105,0.9)] hover:bg-emerald-700`}
+        className={`${BIG_BUTTON} mt-5 bg-emerald-700 text-white shadow-[0_14px_30px_-16px_rgba(5,150,105,0.9)] hover:bg-emerald-800`}
       >
         Track your case
       </Link>
@@ -229,6 +307,17 @@ function CaseRow({ incident }: { incident: Incident }) {
 
 function CitizenLogin({ onSignedIn }: { onSignedIn: (c: Citizen) => void }) {
   const [name, setName] = useState("");
+
+  useEffect(() => {
+    // Pre-fill the name from this device's last visit. The email is never stored.
+    try {
+      const last = window.localStorage.getItem(NAME_KEY);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (last) setName((current) => current || last);
+    } catch {
+      // Storage blocked: the field simply starts empty.
+    }
+  }, []);
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -242,6 +331,11 @@ function CitizenLogin({ onSignedIn }: { onSignedIn: (c: Citizen) => void }) {
       const profile = await api.citizenLogin({ name, email });
       const c: Citizen = { kind: "citizen", ...profile };
       saveSession(c);
+      try {
+        window.localStorage.setItem(NAME_KEY, firstName(profile.name));
+      } catch {
+        // Not remembered next time; that's fine.
+      }
       onSignedIn(c);
     } catch (err) {
       const text = err instanceof Error ? err.message : "";

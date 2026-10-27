@@ -31,7 +31,7 @@ export default function Home() {
       <Reveal index={1}>
         <Link
           href="/citizen"
-          className={`${PORTAL} bg-emerald-600 shadow-[0_14px_30px_-16px_rgba(5,150,105,0.9)] hover:bg-emerald-700`}
+          className={`${PORTAL} bg-emerald-700 shadow-[0_14px_30px_-16px_rgba(5,150,105,0.9)] hover:bg-emerald-800`}
         >
           <span className="flex items-center justify-between gap-3">
             <span>

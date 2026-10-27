@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { use, useCallback, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useRef, useState } from "react";
 
 import { Reveal, SuccessCheck, useAfterMount, useTween } from "@/components/CitizenMotion";
 import { BrandMark, CitizenShell } from "@/components/CitizenShell";
@@ -15,6 +15,9 @@ import {
   citizenTimeline,
   explainStatus,
   friendlyTimeLeft,
+  hasMeToo,
+  joinable,
+  markMeToo,
   rememberCase,
   stageOf,
   useSlowHint,
@@ -36,6 +39,9 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
   const [notice, setNotice] = useState<Notice | null>(null);
   const [note, setNote] = useState("");
   const [citizenName, setCitizenName] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+  // Last status seen, so a change made elsewhere (the crew, an inspector) can be announced.
+  const lastStatus = useRef<string | null>(null);
   const slowLoad = useSlowHint(!data && !loadError);
   const leftTarget = data && now ? hoursLeft(data.incident.deadline, now) : null;
   const left = useTween(leftTarget);
@@ -43,6 +49,11 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
   const load = useCallback(async () => {
     try {
       const [detail, clock] = await Promise.all([api.incident(id), api.clock()]);
+      const status = detail.incident.status;
+      if (lastStatus.current && lastStatus.current !== status) {
+        setToast(explainStatus(detail.incident));
+      }
+      lastStatus.current = status;
       setData(detail);
       setNow(clock.now);
       setLoadError(null);
@@ -58,6 +69,12 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
     const timer = setInterval(load, REFRESH_MS);
     return () => clearInterval(timer);
   }, [load]);
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 6000);
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   useEffect(() => {
     // The signed-in citizen's first name, so the operator inbox can show who answered.
@@ -79,6 +96,7 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
         source: `citizen:${citizenName ?? "web"}`,
       });
       rememberCase(id);
+      lastStatus.current = r.incident.status; // the citizen's own change: no "status changed" toast
       setNote("");
       const next =
         r.incident.status === "verified_closed"
@@ -150,14 +168,39 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
           <Link href="/" aria-label="CONVERGE home" className="rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900">
             <BrandMark />
           </Link>
-          <Link
-            href="/citizen"
-            className="rounded-lg px-3 py-2 text-sm font-medium text-emerald-700 ring-1 ring-emerald-200 transition hover:bg-emerald-50"
-          >
-            My reports
-          </Link>
+          <div className="flex items-center gap-2">
+            <ShareButton id={incident.id} />
+            <Link
+              href="/citizen"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-emerald-800 ring-1 ring-emerald-200 transition hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
+            >
+              My reports
+            </Link>
+          </div>
         </div>
       </Reveal>
+      {toast && (
+        <div className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-[max(0.75rem,env(safe-area-inset-top))]">
+          <div
+            key={toast}
+            role="status"
+            className="cz-rise pointer-events-auto flex w-full max-w-md items-start gap-3 rounded-2xl bg-slate-900/95 px-4 py-3 text-sm text-white shadow-[0_18px_40px_-18px_rgba(15,23,42,0.8)] backdrop-blur"
+          >
+            <span aria-hidden="true">🔔</span>
+            <p className="min-w-0 flex-1">
+              <span className="font-semibold">Update.</span> {toast}
+            </p>
+            <button
+              type="button"
+              onClick={() => setToast(null)}
+              aria-label="Dismiss update"
+              className="-m-1 rounded-md p-1 text-slate-300 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
       {loadError === "network" && (
         <p role="status" className="rounded-xl bg-amber-50 p-3 text-sm text-amber-900 ring-1 ring-amber-200">
           {"Connection lost. Showing the last update, trying again…"}
@@ -180,6 +223,9 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
           </span>
           {reports.length > 1 && <span className="text-xs text-slate-500">{reports.length} people reported this</span>}
         </div>
+        {joinable(incident) && (
+          <MeToo incident={incident} reporter={`citizen:${citizenName ?? "web"}`} onAdded={load} />
+        )}
         <p className="mt-2 text-sm text-slate-700">{explainStatus(incident)}</p>
         <Progress stage={stageOf(incident)} />
       </section>
@@ -246,7 +292,7 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
                 type="button"
                 disabled={busy}
                 onClick={() => answer(true)}
-                className={`${BIG_BUTTON} bg-emerald-600 text-white`}
+                className={`${BIG_BUTTON} bg-emerald-700 text-white hover:bg-emerald-800`}
               >
                 {"Yes, it's fixed"}
               </button>
@@ -335,7 +381,7 @@ function Progress({ stage }: { stage: number }) {
           </span>
           <span
             className={`text-[11px] leading-tight ${
-              i === stage ? "font-semibold text-slate-900" : i < stage ? "text-slate-600" : "text-slate-400"
+              i === stage ? "font-semibold text-slate-900" : i < stage ? "text-slate-600" : "text-slate-500"
             }`}
           >
             {label}
@@ -371,6 +417,116 @@ function CrewCard({
       <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Crew</p>
       <p className="mt-1 break-words text-lg font-semibold leading-tight">{title}</p>
       <p className="mt-1 text-xs text-slate-500">{detail}</p>
+    </div>
+  );
+}
+
+/** Native share sheet on phones; copies the link elsewhere. */
+function ShareButton({ id }: { id: string }) {
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!copied) return;
+    const timer = setTimeout(() => setCopied(false), 2000);
+    return () => clearTimeout(timer);
+  }, [copied]);
+
+  const share = async () => {
+    const url = window.location.href;
+    try {
+      if (typeof navigator.share === "function") {
+        await navigator.share({ title: `CONVERGE case ${id}`, text: "Follow this city repair", url });
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+    } catch {
+      // The share sheet was closed or the clipboard is blocked: nothing to do.
+    }
+  };
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={share}
+        className="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 ring-1 ring-slate-200 transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
+      >
+        {copied ? "Link copied" : "Share"}
+      </button>
+      <span className="sr-only" aria-live="polite">
+        {copied ? "Link copied" : ""}
+      </span>
+    </>
+  );
+}
+
+/** "I see this too": adds the visitor's report to this case through the normal dedup engine. */
+function MeToo({ incident, reporter, onAdded }: { incident: Incident; reporter: string; onAdded: () => Promise<void> }) {
+  const [state, setState] = useState<"idle" | "busy" | "done" | "error">("idle");
+  const [otherCase, setOtherCase] = useState<string | null>(null);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (hasMeToo(incident.id)) setState("done");
+  }, [incident.id]);
+
+  const join = async () => {
+    setState("busy");
+    try {
+      const r = await api.report({
+        text: "Me too: I see the same problem here.",
+        category: incident.category,
+        lat: incident.lat,
+        lng: incident.lng,
+        reporter,
+      });
+      markMeToo(incident.id);
+      rememberCase(r.incident.id);
+      // Normally this joins the same case; an old case (over 3 days) gets a fresh one instead.
+      setOtherCase(r.incident.id === incident.id ? null : r.incident.id);
+      setState("done");
+      await onAdded();
+    } catch {
+      setState("error");
+    }
+  };
+
+  if (state === "done") {
+    return (
+      <p role="status" className="cz-rise mt-3 flex items-center gap-2 text-sm text-emerald-900">
+        <SuccessCheck className="h-6 w-6" />
+        {otherCase ? (
+          <span>
+            Logged as a new case,{" "}
+            <Link href={`/track/${otherCase}`} className="font-mono underline">
+              {otherCase}
+            </Link>
+            , because this one is older than 3 days.
+          </span>
+        ) : (
+          <span>{"You've added your voice to this case."}</span>
+        )}
+      </p>
+    );
+  }
+
+  return (
+    <div className="mt-3">
+      <button
+        type="button"
+        onClick={join}
+        disabled={state === "busy"}
+        className="inline-flex h-10 items-center gap-2 rounded-full bg-white px-4 text-sm font-medium text-slate-800 ring-1 ring-slate-300 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 disabled:opacity-50 motion-safe:active:scale-95"
+      >
+        <span aria-hidden="true">🙋</span>
+        {state === "busy" ? "Adding…" : "Me too, I see this problem"}
+      </button>
+      {state === "error" && (
+        <p role="alert" className="mt-2 text-sm text-rose-700">
+          {"We couldn't add your report. Check your connection and try again."}
+        </p>
+      )}
     </div>
   );
 }
