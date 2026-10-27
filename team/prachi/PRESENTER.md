@@ -8,8 +8,10 @@
 "Under the hood, every decision is a rule you can read and test: duplicates within 150 metres and
 72 hours merge; related categories within 400 metres link. Assignment picks the nearest free crew,
 and if that crew drops out we replan instantly. Each category has a deadline; miss it and it
-escalates. *Complete* only means *awaiting proof*. Claude Haiku explains links in plain English
-but can't change a decision. It's capped at a ±0.15 confidence nudge. 35 automated tests cover these rules."
+escalates. *Complete* only means *awaiting proof*. An optional AI layer (Claude or Gemini) can reword
+the link reasons and give a photo hint, but it can't change a decision and is capped at a ±0.15
+confidence nudge. In this demo it's switched off, and every explanation you see comes from the rules.
+Our automated tests cover these rules (check the current count on main before saying a number)."
 
 Show `docs/ARCHITECTURE.md` diagram on the slide.
 

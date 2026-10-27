@@ -13,7 +13,7 @@
               ├─ engine/verify.py     complete ≠ resolved; evidence closes or reopens
               ├─ engine/audit.py      every change recorded with actor + reason + evidence
               ├─ engine/metrics.py    CONVERGE vs naive baseline
-              ├─ engine/llm.py        Claude Haiku: explains links (optional, never decides)
+              ├─ engine/llm.py        optional Claude/Gemini wording (never decides; off in the demo)
               └─ sim.py               simulated clock + replayable golden scenario
               │
               ▼
@@ -35,8 +35,10 @@ SQLite: one file, no setup, resets in milliseconds for demos. Lists (report IDs,
 are JSON columns. Swap for Postgres in production without code changes (SQLModel).
 
 ## Integrations
-- **Claude Haiku 5.5** (`anthropic` SDK): rewrites link reasons into plain English and nudges
-  confidence by at most ±0.15. With no API key it falls back silently. v3 adds photo checks.
+- **Optional LLM (Claude Haiku 5.5 or Gemini)**: rewrites link reasons into plain English, nudges
+  confidence by at most ±0.15, and gives a photo hint (signal only). With no key, or `CONVERGE_LLM=off`,
+  it falls back silently to the rule text. The live demo runs with it off: Gemini's free tier isn't
+  enabled on the team's Google project.
 - **Simulated clock**: makes 48-hour deadlines demoable in seconds.
 - Production path: complaint portals (CPGRAMS, city apps), GIS, IoT sensors, WhatsApp intake.
 
