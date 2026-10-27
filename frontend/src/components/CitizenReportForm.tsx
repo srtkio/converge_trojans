@@ -27,8 +27,8 @@ import type { Category, Incident, Link } from "@/lib/types";
 // OpenStreetMap). The first points sit close to the demo incidents on GT Road, so a matching
 // report joins the existing case instead of opening a new one.
 const PLACES = [
-  { name: "Rishihood University gate, GT Road (NH-44)", lat: 28.9832, lng: 77.0908 },
-  { name: "GT Road, 250 m south of Rishihood University", lat: 28.98095, lng: 77.0908 },
+  { name: "Rishihood University gate, GT Road (NH-44)", lat: 28.9832, lng: 77.0864 },
+  { name: "GT Road, 250 m south of Rishihood University", lat: 28.98095, lng: 77.0864 },
   { name: "Bahalgarh Chowk", lat: 28.9587, lng: 77.0951 },
   { name: "Murthal Chowk", lat: 29.0265, lng: 77.0737 },
   { name: "Murthal dhaba strip, GT Road", lat: 29.0396, lng: 77.0895 },

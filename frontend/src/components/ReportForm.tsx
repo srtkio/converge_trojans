@@ -11,9 +11,9 @@ import type { Act } from "./Dashboard";
 // Preset spots around the demo area (GT Road by Rishihood University, Sonipat) so reports land near
 // existing incidents: the first two are ~60 m apart (duplicate), the third ~250 m away (related).
 const PLACES = [
-  { name: "Rishihood University gate, GT Road", lat: 28.9832, lng: 77.0908 },
-  { name: "GT Road, 60 m north of the gate", lat: 28.98374, lng: 77.0908 },
-  { name: "GT Road, 250 m south of the gate", lat: 28.98095, lng: 77.0908 },
+  { name: "Rishihood University gate, GT Road", lat: 28.9832, lng: 77.0864 },
+  { name: "GT Road, 60 m north of the gate", lat: 28.98374, lng: 77.0864 },
+  { name: "GT Road, 250 m south of the gate", lat: 28.98095, lng: 77.0864 },
   { name: "Murthal Chowk", lat: 29.0265, lng: 77.0737 },
   { name: "Sonipat Junction (far away)", lat: 28.9898, lng: 77.0171 },
 ];

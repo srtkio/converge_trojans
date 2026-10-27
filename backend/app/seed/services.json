@@ -1,7 +1,7 @@
 [
-  {"id": "svc_bus_rishihood", "name": "Haryana Roadways Sonipat–Murthal route (Rishihood University stop)", "kind": "transport", "lat": 28.9806937, "lng": 77.0907966, "radius_m": 150},
-  {"id": "svc_school_bahalgarh", "name": "Government Senior Secondary School, Bahalgarh", "kind": "school", "lat": 28.9835937, "lng": 77.091465, "radius_m": 150},
-  {"id": "svc_phc_kumaspur", "name": "Primary Health Centre access road, Kumaspur", "kind": "health", "lat": 28.9845937, "lng": 77.0905738, "radius_m": 120},
+  {"id": "svc_bus_rishihood", "name": "Haryana Roadways Sonipat–Murthal route (Rishihood University stop)", "kind": "transport", "lat": 28.9807000, "lng": 77.0864000, "radius_m": 150},
+  {"id": "svc_school_bahalgarh", "name": "Government Senior Secondary School, Bahalgarh", "kind": "school", "lat": 28.9836000, "lng": 77.0870684, "radius_m": 150},
+  {"id": "svc_phc_kumaspur", "name": "Primary Health Centre access road, Kumaspur", "kind": "health", "lat": 28.9846000, "lng": 77.0861772, "radius_m": 120},
   {"id": "svc_bus_murthal_chowk", "name": "Haryana Roadways Sonipat–Murthal route (Murthal Chowk stop)", "kind": "transport", "lat": 29.0240284, "lng": 77.0736908, "radius_m": 150},
   {"id": "svc_school_murthal", "name": "Government Senior Secondary School, Murthal", "kind": "school", "lat": 29.0269284, "lng": 77.0743595, "radius_m": 150},
   {"id": "svc_phc_murthal", "name": "Primary Health Centre access road, Murthal", "kind": "health", "lat": 29.0279284, "lng": 77.0734679, "radius_m": 120}

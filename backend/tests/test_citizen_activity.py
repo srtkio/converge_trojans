@@ -1,6 +1,6 @@
 def _report(client, text, reporter):
     return client.post("/reports", json={"text": text, "category": "water_leak",
-                                         "lat": 28.9831937, "lng": 77.0907966, "reporter": reporter}).json()
+                                         "lat": 28.9832, "lng": 77.0864, "reporter": reporter}).json()
 
 
 def test_citizen_complaint_appears_with_the_citizen_name(client):
