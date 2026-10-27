@@ -12,7 +12,10 @@ import {
   CITIZEN_STATUS_LABEL,
   WAKING_HINT,
   explainStatus,
+  NAME_KEY,
   forgetCase,
+  forgetDevice,
+  needsCheck,
   prefersReducedMotion,
   readMyCases,
   rememberCase,
@@ -44,6 +47,7 @@ export default function CitizenPage() {
           citizen={citizen}
           onSignOut={() => {
             clearSession();
+            forgetDevice(); // shared phones: the next person starts fresh
             setCitizen(null);
           }}
         />
@@ -101,7 +105,11 @@ function CitizenHome({ citizen, onSignOut }: { citizen: Citizen; onSignOut: () =
     );
   };
 
-  const others = cases.filter((c) => c.id !== outcome?.incident.id);
+  // Cases waiting for the citizen's confirmation come first.
+  const others = cases
+    .filter((c) => c.id !== outcome?.incident.id)
+    .sort((a, b) => Number(needsCheck(b)) - Number(needsCheck(a)));
+  const toCheck = cases.filter(needsCheck);
 
   return (
     <>
@@ -120,6 +128,30 @@ function CitizenHome({ citizen, onSignOut }: { citizen: Citizen; onSignOut: () =
         </button>
       </header>
       </Reveal>
+
+      {toCheck.length > 0 && !outcome && (
+        <Reveal index={1}>
+          <Link
+            href={`/track/${toCheck[0].id}`}
+            className="flex items-center gap-3 rounded-2xl bg-amber-50 p-4 ring-1 ring-amber-300 transition hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 motion-safe:active:scale-[0.99]"
+          >
+            <span aria-hidden="true" className="text-2xl">
+              👀
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-semibold text-amber-950">
+                {toCheck.length === 1 ? "1 repair needs your check" : `${toCheck.length} repairs need your check`}
+              </span>
+              <span className="block text-xs text-amber-900">
+                {"The crew says it's fixed. Tap to confirm, or tell us it's still broken."}
+              </span>
+            </span>
+            <span aria-hidden="true" className="text-amber-900">
+              →
+            </span>
+          </Link>
+        </Reveal>
+      )}
 
       <Reveal index={1}>
       <div ref={topRef} className="scroll-mt-4">
@@ -169,7 +201,8 @@ function CitizenHome({ citizen, onSignOut }: { citizen: Citizen; onSignOut: () =
       )}
 
       <p className="mt-auto pt-2 text-center text-xs text-slate-500">
-        Only your first name ({firstName(citizen.name)}) is attached to your reports.
+        Only your first name ({firstName(citizen.name)}) is attached to your reports. Sharing this phone? Sign out
+        when you&apos;re done.
       </p>
     </>
   );
@@ -272,8 +305,6 @@ function CaseRow({ incident }: { incident: Incident }) {
   );
 }
 
-const NAME_KEY = "converge.lastName";
-
 function CitizenLogin({ onSignedIn }: { onSignedIn: (c: Citizen) => void }) {
   const [name, setName] = useState("");
 
@@ -301,7 +332,7 @@ function CitizenLogin({ onSignedIn }: { onSignedIn: (c: Citizen) => void }) {
       const c: Citizen = { kind: "citizen", ...profile };
       saveSession(c);
       try {
-        window.localStorage.setItem(NAME_KEY, profile.name);
+        window.localStorage.setItem(NAME_KEY, firstName(profile.name));
       } catch {
         // Not remembered next time; that's fine.
       }

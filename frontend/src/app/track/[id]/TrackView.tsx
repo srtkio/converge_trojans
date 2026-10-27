@@ -15,6 +15,9 @@ import {
   citizenTimeline,
   explainStatus,
   friendlyTimeLeft,
+  hasMeToo,
+  joinable,
+  markMeToo,
   rememberCase,
   stageOf,
   useSlowHint,
@@ -220,6 +223,9 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
           </span>
           {reports.length > 1 && <span className="text-xs text-slate-500">{reports.length} people reported this</span>}
         </div>
+        {joinable(incident) && (
+          <MeToo incident={incident} reporter={`citizen:${citizenName ?? "web"}`} onAdded={load} />
+        )}
         <p className="mt-2 text-sm text-slate-700">{explainStatus(incident)}</p>
         <Progress stage={stageOf(incident)} />
       </section>
@@ -452,5 +458,75 @@ function ShareButton({ id }: { id: string }) {
         {copied ? "Link copied" : ""}
       </span>
     </>
+  );
+}
+
+/** "I see this too": adds the visitor's report to this case through the normal dedup engine. */
+function MeToo({ incident, reporter, onAdded }: { incident: Incident; reporter: string; onAdded: () => Promise<void> }) {
+  const [state, setState] = useState<"idle" | "busy" | "done" | "error">("idle");
+  const [otherCase, setOtherCase] = useState<string | null>(null);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (hasMeToo(incident.id)) setState("done");
+  }, [incident.id]);
+
+  const join = async () => {
+    setState("busy");
+    try {
+      const r = await api.report({
+        text: "Me too: I see the same problem here.",
+        category: incident.category,
+        lat: incident.lat,
+        lng: incident.lng,
+        reporter,
+      });
+      markMeToo(incident.id);
+      rememberCase(r.incident.id);
+      // Normally this joins the same case; an old case (over 3 days) gets a fresh one instead.
+      setOtherCase(r.incident.id === incident.id ? null : r.incident.id);
+      setState("done");
+      await onAdded();
+    } catch {
+      setState("error");
+    }
+  };
+
+  if (state === "done") {
+    return (
+      <p role="status" className="cz-rise mt-3 flex items-center gap-2 text-sm text-emerald-900">
+        <SuccessCheck className="h-6 w-6" />
+        {otherCase ? (
+          <span>
+            Logged as a new case,{" "}
+            <Link href={`/track/${otherCase}`} className="font-mono underline">
+              {otherCase}
+            </Link>
+            , because this one is older than 3 days.
+          </span>
+        ) : (
+          <span>{"You've added your voice to this case."}</span>
+        )}
+      </p>
+    );
+  }
+
+  return (
+    <div className="mt-3">
+      <button
+        type="button"
+        onClick={join}
+        disabled={state === "busy"}
+        className="inline-flex h-10 items-center gap-2 rounded-full bg-white px-4 text-sm font-medium text-slate-800 ring-1 ring-slate-300 transition hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 disabled:opacity-50 motion-safe:active:scale-95"
+      >
+        <span aria-hidden="true">🙋</span>
+        {state === "busy" ? "Adding…" : "Me too, I see this problem"}
+      </button>
+      {state === "error" && (
+        <p role="alert" className="mt-2 text-sm text-rose-700">
+          {"We couldn't add your report. Check your connection and try again."}
+        </p>
+      )}
+    </div>
   );
 }
