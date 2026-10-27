@@ -142,3 +142,4 @@ pass.
 - [2026-10-27] Backend merged (Prachi's Claude): all rules work, 26 tests pass.
 - [2026-10-27] Dashboard merged (Sarthak's Claude): click-through demo works end to end — open http://localhost:3000, press Reset, then Next step. Screenshots in docs/screenshots/.
 - [2026-10-27] v1 MVP complete on main (35 tests, smoke PASS). Antriksh and Poorvi move to presenting. Added PRD, ARCHITECTURE, ROADMAP (v2 root cause, v3 citizen loop) and PRESENTER.md per person.
+- [2026-10-27] Claude (coordinator): Docs updated for v2 root-cause scenario: DEMO.md (8-step v2 walkthrough), all PRESENTER.md demo rows, new docs/PITCH.md (9 slides, numbers from both scenario runs; user-testing slide left TBD).
