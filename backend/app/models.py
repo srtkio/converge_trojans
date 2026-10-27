@@ -19,7 +19,7 @@ class Report(SQLModel, table=True):
     incident_id: str | None = None
     # Citizen photo and where the location came from (device GPS or a picked landmark).
     photo_id: str | None = None
-    location_source: str | None = None  # gps | landmark
+    location_source: str | None = None  # gps | landmark | pin (dragged on the map)
     location_accuracy_m: float | None = None
     location_label: str | None = None
 

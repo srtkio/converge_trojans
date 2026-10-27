@@ -139,7 +139,7 @@ Shapes as posted in CHANNEL.md. Implemented on `feat/v2-rootcause`.
 ## Citizen photos and location (additive)
 
 - `POST /reports` body adds optional `photo: {data: base64, media_type: "image/jpeg"|"image/png"|"image/webp"|"image/gif"}`
-  and optional `location: {source: "gps"|"landmark", accuracy_m: number|null, label: string|null}`.
+  and optional `location: {source: "gps"|"landmark"|"pin", accuracy_m: number|null, label: string|null}` ("pin" = dragged on the citizen map).
   `lat`/`lng` stay as before (GPS fills them with the device position).
 - `POST /incidents/{id}/evidence`: the optional `photo` is now stored (the AI check stays a signal only
   and only ever sees the stripped copy).

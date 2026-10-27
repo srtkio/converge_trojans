@@ -150,3 +150,8 @@ def test_migration_adds_missing_columns_to_an_old_database(tmp_path):
         row = conn.execute(text("SELECT text, photo_id, location_source FROM report WHERE id = 'rep_001'")).one()
     assert tuple(row) == ("old report", None, None)
     assert db.add_missing_columns(eng) == []  # idempotent on every boot
+
+
+def test_pin_location_source_accepted(client):
+    rep = post_report(client, location={"source": "pin", "accuracy_m": None, "label": "Pinned on the map"}).json()["report"]
+    assert (rep["location_source"], rep["location_label"]) == ("pin", "Pinned on the map")

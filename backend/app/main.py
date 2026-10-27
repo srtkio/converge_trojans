@@ -51,7 +51,7 @@ app.add_middleware(
 
 
 class LocationIn(BaseModel):
-    source: Literal["gps", "landmark"]
+    source: Literal["gps", "landmark", "pin"]
     accuracy_m: float | None = Field(None, ge=0, le=100_000)
     label: str | None = Field(None, max_length=120)
 
