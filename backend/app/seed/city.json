@@ -1,0 +1,55 @@
+{
+  "_note": "Live-city demo data for user testing and the map. Not used for pitch metrics. Minutes are offsets from the sim start (09:00).",
+  "areas": [
+    {"step": 2, "title": "MG Road: burst main, a duplicate report, and a related pothole", "reports": [
+      {"t": 0,   "category": "water_leak", "lat": 12.97560, "lng": 77.60660, "reporter": "citizen:asha",
+       "text": "Water main burst near the MG Road metro station exit, water flowing onto the road"},
+      {"t": 5,   "category": "water_leak", "lat": 12.97590, "lng": 77.60640, "reporter": "citizen:vikram",
+       "text": "Water gushing onto the MG Road footpath by the metro"},
+      {"t": 10,  "category": "pothole", "lat": 12.97380, "lng": 77.60700, "reporter": "citizen:nisha",
+       "text": "Road caving in on MG Road near the Brigade Road junction"}
+    ]},
+    {"step": 3, "title": "Indiranagar: dark stretch on 100 Feet Road (two reports), garbage with no sanitation crew", "reports": [
+      {"t": 15,  "category": "streetlight", "lat": 12.97190, "lng": 77.64120, "reporter": "citizen:rahul",
+       "text": "Streetlights out along 100 Feet Road, Indiranagar"},
+      {"t": 20,  "category": "streetlight", "lat": 12.97250, "lng": 77.64100, "reporter": "citizen:divya",
+       "text": "Dark stretch on 100 Feet Road near the metro, lights not working"},
+      {"t": 25,  "category": "garbage", "lat": 12.97010, "lng": 77.63850, "reporter": "citizen:arjun",
+       "text": "Garbage piling up at 12th Main, Indiranagar for three days"}
+    ]},
+    {"step": 4, "title": "Koramangala: sewage at Sony World junction with a related leak and pothole, fallen branch", "reports": [
+      {"t": 30,  "category": "sewage", "lat": 12.93650, "lng": 77.62700, "reporter": "citizen:fatima",
+       "text": "Sewage overflowing near the Sony World junction, Koramangala"},
+      {"t": 35,  "category": "pothole", "lat": 12.93520, "lng": 77.62450, "reporter": "citizen:kiran",
+       "text": "Deep pothole on 80 Feet Road, Koramangala"},
+      {"t": 40,  "category": "other", "lat": 12.93450, "lng": 77.61900, "reporter": "citizen:sneha",
+       "text": "Fallen tree branch blocking the 5th Block footpath, Koramangala"},
+      {"t": 55,  "category": "water_leak", "lat": 12.93720, "lng": 77.62760, "reporter": "citizen:imran",
+       "text": "Water leaking from a pipe near Sony World, Koramangala"}
+    ]},
+    {"step": 5, "title": "Jayanagar: potholes, a flickering light, overflowing bins (no crew), a manhole", "reports": [
+      {"t": 60,  "category": "pothole", "lat": 12.92890, "lng": 77.58260, "reporter": "citizen:lakshmi",
+       "text": "Potholes on 11th Main Road, Jayanagar 4th Block"},
+      {"t": 65,  "category": "streetlight", "lat": 12.92500, "lng": 77.58380, "reporter": "citizen:suresh",
+       "text": "Streetlight flickering outside the Jayanagar 4th Block shopping complex"},
+      {"t": 70,  "category": "garbage", "lat": 12.91800, "lng": 77.59000, "reporter": "citizen:meena",
+       "text": "Overflowing bins near the Jayanagar 9th Block bus stop"},
+      {"t": 75,  "category": "sewage", "lat": 12.92300, "lng": 77.58600, "reporter": "citizen:prakash",
+       "text": "Manhole overflowing on 30th Cross, Jayanagar"}
+    ]},
+    {"step": 6, "title": "Whitefield and the rest: Hope Farm pothole (two reports), ITPL Road leak and lights, Cubbon Park slab, CMH Road pothole", "reports": [
+      {"t": 80,  "category": "pothole", "lat": 12.98320, "lng": 77.75360, "reporter": "citizen:anand",
+       "text": "Large pothole on Whitefield Main Road near the Hope Farm junction"},
+      {"t": 85,  "category": "pothole", "lat": 12.98360, "lng": 77.75330, "reporter": "citizen:ritu",
+       "text": "Pothole near the Hope Farm signal damaging bikes"},
+      {"t": 90,  "category": "water_leak", "lat": 12.98600, "lng": 77.73100, "reporter": "citizen:george",
+       "text": "Leak from a water pipe along ITPL Main Road"},
+      {"t": 95,  "category": "streetlight", "lat": 12.98700, "lng": 77.73250, "reporter": "citizen:pooja",
+       "text": "Streetlights not working on the ITPL Main Road service lane"},
+      {"t": 100, "category": "other", "lat": 12.98100, "lng": 77.59750, "reporter": "citizen:hari",
+       "text": "Broken footpath slab outside the Cubbon Park metro station"},
+      {"t": 105, "category": "pothole", "lat": 12.97840, "lng": 77.64080, "reporter": "citizen:zoya",
+       "text": "Pothole at the CMH Road and 100 Feet Road junction"}
+    ]}
+  ]
+}

@@ -13,7 +13,7 @@ from app.engine.intake import submit_report
 from app.engine.sla import check_at_risk, check_breaches
 from app.engine.verify import add_evidence, complete, start
 from app.models import Counter, Incident, Report, Resource
-from app.timeutil import add_hours
+from app.timeutil import add_hours, parse
 
 SEED = Path(__file__).parent / "seed" / "resources.json"
 
@@ -197,7 +197,54 @@ ROOTCAUSE = [
     (_s10, "Metrics: 1 coordinated repair instead of 3 visits"),
 ]
 
-SCENARIOS = {"golden": GOLDEN, "rootcause": ROOTCAUSE}
+# --- live city dataset (user testing + map; not pitch metrics) ---------------------------------
+
+CITY = json.loads((Path(__file__).parent / "seed" / "city.json").read_text())["areas"]
+
+
+def _at_minute(s, minute: int) -> None:
+    """Advance the clock to SIM_START + minute (never backwards), running SLA checks."""
+    target = add_hours(config.SIM_START, minute / 60)
+    gap_min = (parse(target) - parse(now(s))).total_seconds() / 60
+    if gap_min > 0:
+        tick(s, gap_min)
+
+
+def _city_area(index: int):
+    def run(s):
+        for r in CITY[index]["reports"]:
+            _at_minute(s, r["t"])
+            submit_report(s, r["text"], r["category"], r["lat"], r["lng"], r["reporter"])
+    return run
+
+
+def _c1(s):
+    reset(s)
+    set_unavailable(s, s.get(Resource, "res_sanit_1"))  # sanitation crew on leave today
+
+
+def _c7(s):
+    _at_minute(s, 110)
+    leak = _incident_of(s, "rep_001")
+    start(s, leak)
+    lights = _incident_of(s, "rep_004")
+    start(s, lights)
+    _at_minute(s, 210)
+    complete(s, leak, "Burst section replaced; awaiting inspection")
+
+
+def _c8(s):
+    _at_minute(s, 9 * 60 + 45)  # 18:45: the Koramangala sewage overflow is now at risk
+
+
+CITY_STEPS = [
+    (_c1, "Reset; seed crews and services; sanitation crew S1 on leave"),
+    *[(_city_area(i), a["title"]) for i, a in enumerate(CITY)],
+    (_c7, "Morning work: MG Road main repaired (awaiting proof); 100 Feet Road lights crew starts"),
+    (_c8, "Clock to 18:45: Koramangala sewage overflow flagged at risk before its deadline"),
+]
+
+SCENARIOS = {"golden": GOLDEN, "rootcause": ROOTCAUSE, "city": CITY_STEPS}
 
 
 def _progress(session: Session, name: str = "golden") -> int:
