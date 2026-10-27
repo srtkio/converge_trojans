@@ -157,3 +157,66 @@ Shapes as posted in CHANNEL.md. Implemented on `feat/v2-rootcause`.
   `location_label` (complaints carry the report's location; evidence items have null location).
 - Existing databases are upgraded on startup by adding the new nullable columns (additive only,
   idempotent).
+
+## v4: trust, roles and SLA state (additive; golden/rootcause/city outputs and `/metrics` unchanged)
+
+Implemented on `feat/trust-roles`. `backend/tests/test_trust_roles.py` proves the three scenario
+outputs and `/metrics` match `origin/main` field for field, ignoring only the new computed fields.
+
+**Incident** (every Incident in every response: `/incidents`, `/incidents/{id}`, scenario `state`,
+`/sim/tick`, action responses) gains two computed, never-stored fields:
+- `verification`: `"unverified" | "corroborated" | "confirmed_on_site"` (strongest that applies)
+  - `confirmed_on_site`: any evidence of kind `inspector` or `photo` (not AI `signal_only` checks).
+  - `corroborated`: ≥2 distinct `reporter` strings among its reports, or a report with a photo and
+    GPS location (once the photos backend's Report fields exist).
+  - `unverified`: otherwise (one reporter, no on-site evidence).
+- `sla_state`: `"on_track" | "at_risk" | "breached" | null`
+  - `null` when `verified_closed` or `rejected`.
+  - `breached`: sim clock is past `deadline`, or the incident ever had an `sla_breach` (it stays
+    breached after the deadline is extended, until closed).
+  - `at_risk`: the existing v3 `at_risk` flag.
+  - A child waiting on a confirmed root-cause parent follows its parent's `sla_state`.
+  - Use `deadline` (exists) with `GET /sim/clock` for live countdowns.
+
+**New status `rejected`** (terminal, like `verified_closed`): no SLA breach / at-risk checks, no
+crew, never replanned or auto-assigned, excluded from root-cause groups, and never a duplicate or
+related target for new reports (a new report there opens a fresh incident). `GET /incidents?status=rejected` works.
+
+**Report** items in `GET /incidents/{id}` `reports[]` gain `reporter_flags: int`: the number of
+OTHER incidents, now `rejected`, that contain a report from the same `reporter`. `"anonymous"` is
+never flagged.
+
+**Rate limit** on `POST /reports` (HTTP route only; scenarios are never throttled): at most 5
+reports per `reporter` per rolling 60 wall-clock minutes. The 6th →
+`429 {"detail": "You've sent a lot of reports in a short time. Please wait a bit and try again."}`.
+In memory; cleared by `POST /sim/reset`.
+
+**Operators** (`backend/app/seed/operators.json`, SHA-256 code hashes) gain `role`:
+`"officer"` (one department) | `"head"` (department head) | `"command"` (city command centre, department `"all"`).
+
+| badge | name | department | role | demo code |
+|---|---|---|---|---|
+| `OPS-WTR-01` | Water Dept Officer | water | officer | `water-demo-2026` |
+| `OPS-RDS-01` | Roads Dept Officer | roads | officer | `roads-demo-2026` |
+| `HEAD-WTR-01` | Water Dept Head | water | head | `water-head-2026` |
+| `HEAD-RDS-01` | Roads Dept Head | roads | head | `roads-head-2026` |
+| `CMD-01` | City Command Centre | all | command | `command-demo-2026` |
+
+**Escalation ladder**: every escalation (SLA breach or no crew) writes exactly one audit
+`notified` (actor `system`). `escalation_level` 1 → detail starts `"<Department> department head
+notified (to_role: head; ...)"`, ≥2 → `"City command centre notified (to_role: command; ...)"`.
+`to_role` is in the detail text (no new AuditEvent column). This replaces the old
+"supervisor notified of breach" event rather than adding a second one.
+
+| Method | Path | Body | Returns |
+|---|---|---|---|
+| POST | `/auth/operator` | `{badge_id, access_code}` | adds `role`: `{badge_id, name, department, role}` |
+| GET | `/operators/ladder` | | `[{role, title, notified_at_escalation_level}]`: officer 0, head 1, command 2 |
+| POST | `/incidents/{id}/reject` | `{reason: "fake"\|"not_civic"\|"cannot_locate"\|"duplicate_elsewhere", note?: str, by_badge: str}` | `{incident: Incident, audit: AuditEvent}` |
+
+Reject rules: `by_badge` is looked up in `operators.json`. Unknown badge → 403; role `officer` →
+403; a `head` may only reject incidents of their own department (else 403); `command` may reject
+any. Already `verified_closed`/`rejected` → 409; unknown incident → 404; bad reason → 422. On
+success: status `rejected`, crew released, `at_risk` false, audit `rejected_invalid` (actor
+`operator:<badge>`, `to_status` `rejected`, detail includes the reason and note). Waiting children
+of a rejected root cause get audit `parent_rejected` and their own crew.

@@ -1,12 +1,13 @@
 """Rule 2 (assign) and rule 3 (replan)."""
 from sqlmodel import Session, select
 
+from app.engine import ladder
 from app.engine.audit import record, transition
 from app.engine.geo import haversine_m
-from app.engine.hierarchy import waiting_on_parent
+from app.engine.hierarchy import CLOSED_STATES, waiting_on_parent
 from app.models import Incident, Resource
 
-CLOSED = "verified_closed"
+CLOSED = CLOSED_STATES
 
 
 def _attach(resource: Resource, incident_id: str) -> None:
@@ -47,6 +48,7 @@ def pick_resource(session: Session, incident: Incident) -> Resource | None:
 def escalate(session: Session, incident: Incident, event_type: str, detail: str) -> None:
     incident.escalation_level += 1
     transition(session, incident, "escalated", event_type, detail)
+    ladder.notify(session, incident, detail)
 
 
 def assign(session: Session, incident: Incident, escalate_if_none: bool = True) -> Resource | None:
@@ -78,7 +80,7 @@ def replan_for_unavailable(session: Session, resource: Resource) -> list[Inciden
     replanned: list[Incident] = []
     for inc_id in list(resource.active_incident_ids or []):
         inc = session.get(Incident, inc_id)
-        if inc is None or inc.status == CLOSED:
+        if inc is None or inc.status in CLOSED:
             continue
         release(session, inc)
         inc.plan_version += 1
@@ -98,7 +100,7 @@ def assign_waiting(session: Session, department: str) -> list[Incident]:
     waiting = session.exec(
         select(Incident).where(
             Incident.department == department,
-            Incident.status != CLOSED,
+            Incident.status.not_in(CLOSED),
             Incident.assigned_resource_id == None,  # noqa: E711
         ).order_by(Incident.severity.desc(), Incident.created_at)
     ).all()

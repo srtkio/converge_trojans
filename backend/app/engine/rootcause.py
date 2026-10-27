@@ -11,11 +11,14 @@ from app.engine import llm
 from app.engine.assign import release
 from app.engine.audit import record, transition
 from app.engine.geo import haversine_m
-from app.engine.hierarchy import waiting_on_parent  # noqa: F401  (re-export)
+from app.engine.hierarchy import (
+    CLOSED_STATES,
+    waiting_on_parent,  # noqa: F401  (re-export)
+)
 from app.models import Hypothesis, Incident
 from app.timeutil import parse
 
-CLOSED = "verified_closed"
+CLOSED = CLOSED_STATES
 NOT_STARTED = {"open", "assigned", "escalated", "reopened"}
 
 
@@ -98,7 +101,7 @@ def _attach_child(session: Session, hyp: Hypothesis, parent: Incident, child: In
 
 def refresh(session: Session) -> list[Hypothesis]:
     """Recompute groups and keep stored hypotheses in sync. Idempotent; writes only on change."""
-    open_incs = {i.id: i for i in session.exec(select(Incident).where(Incident.status != CLOSED)).all()}
+    open_incs = {i.id: i for i in session.exec(select(Incident).where(Incident.status.not_in(CLOSED))).all()}
     hyps = {h.cause_incident_id: h for h in session.exec(select(Hypothesis)).all()}
     live_causes = set()
     for group in _components(open_incs):
@@ -178,7 +181,7 @@ def on_parent_closed(session: Session, parent: Incident) -> None:
     """Parent verified closed: each waiting child needs its own verification (never auto-closed)."""
     for cid in parent.child_incident_ids or []:
         child = session.get(Incident, cid)
-        if child is None or child.status == CLOSED or child.completed_at is not None:
+        if child is None or child.status in CLOSED or child.completed_at is not None:
             continue
         if child.status == "in_progress":
             continue  # its own crew is still working; normal completion applies
