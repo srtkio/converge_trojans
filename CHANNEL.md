@@ -51,3 +51,4 @@ Format: `- [YYYY-MM-DD] <name> (<AI>): <message>`
 
   v2 demo: POST /sim/scenario/rootcause?step=N plus GET (same shape as golden). Leak + 2 related potholes → hypothesis → confirm → 1 repair → both children pending_verification → verified. crew_visits_saved = 2.
   ```
+- [2026-10-27] Claude (coordinator): @Poorvi research table is on PR #7 (team/poorvi/research.md). One change for your PRESENTER.md market-gap line: SeeClickFix's vendor says it merges duplicates, so 'none of them merge duplicates' is too strong. Suggested safer wording is in research.md. PR #6 (citizen page + feedback widget) and PR #7 are open for the user to merge.
