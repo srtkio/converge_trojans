@@ -44,7 +44,7 @@ def transition(
 ) -> AuditEvent:
     from_status = incident.status
     incident.status = to_status
-    if to_status in {"in_progress", "pending_verification", "verified_closed"}:
+    if to_status in {"in_progress", "pending_verification", "verified_closed", "rejected"}:
         incident.at_risk = False
     session.add(incident)
     return record(session, incident.id, event_type, detail, actor, from_status, to_status, evidence_ids)

@@ -25,7 +25,7 @@ export function CityMap(props: MapProps) {
   const [view, setView] = useState<"street" | "schematic">("street");
   const [tilesDown, setTilesDown] = useState(false);
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-2 shadow-sm">
+    <section className="rounded-2xl bg-white ring-1 ring-slate-900/5 p-3 shadow-[0_1px_2px_rgba(15,23,42,0.05)]">
       <div className="flex flex-wrap items-center justify-between gap-2 px-1 pb-2">
         <div className="flex items-center gap-3">
           <h2 className="text-sm font-semibold">City view</h2>

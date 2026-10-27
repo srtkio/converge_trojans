@@ -1,4 +1,4 @@
-import { formatTime, humanize } from "@/lib/format";
+import { eventTitle, formatTime, prettyText } from "@/lib/format";
 import type { AuditEvent } from "@/lib/types";
 
 /** Audit events an operator should act on. */
@@ -29,7 +29,7 @@ export function AlertsPanel({
 }) {
   const shown = [...alerts].reverse().slice(0, limit ?? alerts.length);
   return (
-    <section className="rounded-lg border border-slate-200 bg-white shadow-sm">
+    <section className="rounded-2xl bg-white ring-1 ring-slate-900/5 shadow-[0_1px_2px_rgba(15,23,42,0.05)] overflow-hidden">
       <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
         <h2 className="text-sm font-semibold">{title}</h2>
         <span className="text-xs text-slate-500">{alerts.length} total</span>
@@ -50,12 +50,12 @@ export function AlertsPanel({
               >
                 <div className="flex justify-between gap-2 text-xs">
                   <span className="font-semibold text-slate-900">
-                    {humanize(a.event_type)}
+                    {eventTitle(a.event_type)}
                     {a.incident_id && <span className="font-normal text-slate-500"> · {a.incident_id}</span>}
                   </span>
                   <span className="shrink-0 font-mono text-slate-500">{formatTime(a.timestamp)}</span>
                 </div>
-                {a.detail && <p className="mt-0.5 text-sm text-slate-700">{a.detail}</p>}
+                {a.detail && <p className="mt-0.5 text-sm text-slate-700">{prettyText(a.detail)}</p>}
               </button>
             </li>
           ))}

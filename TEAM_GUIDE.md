@@ -65,6 +65,7 @@ Architecture explained: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 | `CHANNEL.md` | Message board for people and AIs |
 | `docs/PLAN.md` | Detailed plan |
 | `docs/CONTRACTS.md` | The exact rules and API both sides code against (developers) |
+| `docs/PRESENTATION_SCRIPT.md` | The single on-stage script: speakers, timing, demo cues, Q&A |
 | `docs/CONVERGE_Hackathon_Blueprint.pdf` | Original research blueprint |
 | `backend/` | Python API (FastAPI) |
 | `frontend/` | Web dashboard (Next.js) |
@@ -149,3 +150,6 @@ pass.
 - [2026-10-27] Merged #16 portals (start page, citizen sign-in, operator badge sign-in; dashboard now at /operator), #17 e2e demo check (`python3 scripts/e2e.py`), #18 steady street map. e2e PASS on main. Next: Render + Vercel deploy, user testing.
 - [2026-10-27] LIVE: app https://converge-web-ten.vercel.app (Vercel), backend https://converge-backend-hnp0.onrender.com (Render + Postgres). e2e and citizen-flow tests PASS on production. Merged #19 city data, #20 citizen→operator inbox, #21 Gemini fixes. AI stays off (Gemini free tier not available on the team's Google project).
 - [2026-10-28] Citizen side redesigned (Prachi, Claude): PR #25 makes /, /citizen and /track friendlier and premium. Readable on dark-mode phones, plain-language status and timeline, progress bar, "Your reports", case lookup, subtle motion. e2e + citizen-flow PASS; before/after screenshots in docs/screenshots/citizen-ux/. Open; waiting for review and merge.
+- [2026-10-28] Presentation script added (`docs/PRESENTATION_SCRIPT.md`): speakers, timing, demo cues, Q&A, limits. Open decision: the demo slot is 2 minutes but the v1 walkthrough takes about 3.
+- [2026-10-28] LIVE: judge-feedback build. Operator console redesign (sidebar, live SLA timers, alert toasts, escalation ladder), fake-complaint countermeasures (trust badge, reject as invalid, rate limit), operator hierarchy (officer → head → command), citizen photos + GPS shown to operators. Both e2e PASS on production.
+- [2026-10-28] Citizen side round 2 + photos (Prachi, Claude): #27 (contrast, live status, Share, nearby "Me too", "Needs your check", expected fix time, drafts, shared-phone-safe sign-out), #30 photos/location backend (EXIF stripped, additive migration) and #31 citizen photos + "Use my current location" all merged and live. Prod reloaded with golden step 6 for testers.

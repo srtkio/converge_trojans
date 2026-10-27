@@ -9,7 +9,8 @@ export type Status =
   | "pending_verification"
   | "verified_closed"
   | "reopened"
-  | "escalated";
+  | "escalated"
+  | "rejected";
 
 export type EvidenceKind = "photo" | "sensor" | "citizen_followup" | "inspector";
 
@@ -33,6 +34,8 @@ export interface Report {
   location_accuracy_m?: number | null;
   /** Landmark name, "Current location", or "Same spot as case inc_…". */
   location_label?: string | null;
+  /** How many of this reporter's other complaints were rejected as invalid. */
+  reporter_flags?: number;
 }
 
 export interface Incident {
@@ -57,6 +60,10 @@ export interface Incident {
   child_incident_ids?: string[];
   /** v3: not started, not closed, under 25% of the SLA left. */
   at_risk?: boolean;
+  /** Trust: how well the complaint is backed up (fake-complaint countermeasure). */
+  verification?: "unverified" | "corroborated" | "confirmed_on_site";
+  /** Deadline state for live timers; null once closed. */
+  sla_state?: "on_track" | "at_risk" | "breached" | null;
 }
 
 export interface Link {
@@ -103,6 +110,11 @@ export interface CitizenActivity {
   incident_id: string | null;
   incident_title: string | null;
   incident_status: Status | null;
+  photo_url?: string | null;
+  lat?: number | null;
+  lng?: number | null;
+  location_source?: "gps" | "landmark" | null;
+  location_label?: string | null;
 }
 
 export interface AuditEvent {
