@@ -9,7 +9,7 @@
 When a crew says *fixed*, the ticket closes, even if the water is still flowing. We built CONVERGE to
 close that gap."
 
-**Demo narration:** follow `docs/DEMO.md`; point at the naive-vs-CONVERGE table at the end.
+**Demo narration:** follow `docs/DEMO.md`. Use v1 golden for the naive-vs-CONVERGE table; use v2 root cause for the hypothesis and crew-visit moment (steps 4 and 5).
 
 **Close:** "Same reports, fewer work orders, zero false closures accepted, every decision auditable.
 CONVERGE is the verification layer every city complaint system is missing."
@@ -27,7 +27,7 @@ CONVERGE is the verification layer every city complaint system is missing."
 |---|---|---|---|
 | 1 | Hook + problem | Sarthak | 0:00–0:45 |
 | 2 | Market gap: what existing systems miss | Poorvi | 0:45–1:30 |
-| 3 | Live demo (golden scenario) | Antriksh drives, Sarthak narrates | 1:30–3:30 |
+| 3 | Live demo (v1 golden, or v2 root cause) | Antriksh drives, Sarthak narrates | 1:30–3:30 |
 | 4 | How it works: engine + architecture | Prachi | 3:30–4:15 |
 | 5 | Results, user testing, business, future, close | Poorvi → Sarthak | 4:15–5:00 |
 

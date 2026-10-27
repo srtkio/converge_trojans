@@ -110,3 +110,67 @@ Close with: "We do not stop at ticket closed. We close it when the fix is verifi
 - The LLM only rewrites link explanations when `ANTHROPIC_API_KEY` is set. The decisions do not
   depend on it, so the demo works without a key.
 - Full API details are in `docs/CONTRACTS.md`.
+
+---
+
+## Scenario 2: v2 · Root cause (8 steps, about 2 minutes)
+
+In the stepper, switch the scenario to **v2 · Root cause**. Press **Reset**, then **Next step →**.
+The stepper runs the root-cause scenario, which the backend serves from
+`POST /sim/scenario/rootcause?step=N`.
+
+**Key moments:** step 4 (hypothesis card), step 5 (confirm, crew visits 3 → 1), step 6 (children
+wait for proof).
+
+### 1. Reset (0:00)
+**Click:** Reset.
+**Say:** "Now a harder case. Several complaints in one area may have one cause underneath."
+**Point at:** an empty queue.
+
+### 2. Report A: water bubbling through MG Road (0:15)
+**Click:** Next step →.
+**Say:** "A citizen reports water coming through the road. CONVERGE opens a leak incident and assigns
+the water crew."
+**Point at:** the leak incident and its crew.
+
+### 3. Report B: pothole 120 m away (0:30)
+**Click:** Next step →.
+**Say:** "A pothole is reported 120 metres away. It is a different category, so it is not a duplicate.
+CONVERGE links it as related to the leak."
+**Point at:** the related link on the pothole. Visits so far: 2 independent.
+
+### 4. Report C: pothole at the bus stop, 280 m away (0:45) ★
+**Click:** Next step →.
+**Say:** "A third pothole. CONVERGE now sees three complaints and a likely shared cause, and proposes
+a hypothesis: the leak is the root cause."
+**Point at:** the **hypothesis card** with evidence for and against, and its confidence bar. This is
+the key moment: the system proposes one repair, it does not act on its own.
+
+### 5. Operator confirms the root cause (1:00) ★
+**Click:** Next step →.
+**Say:** "An operator confirms the hypothesis. The two potholes now wait on the leak. Three separate
+visits become one."
+**Point at:** the **crew visits** counter going from **3 to 1**, and "2 crew visits saved". This is
+the number to say out loud.
+
+### 6. One repair, verified (1:15) ★
+**Click:** Next step →.
+**Say:** "The crew repairs the leak once. The leak is verified, and both potholes move to awaiting
+proof. They are not closed yet."
+**Point at:** the two potholes in **Awaiting proof**, with the parent-child tree. This is the closure
+rule at work: a repair does not close the children on its own.
+
+### 7. Citizen and photo evidence confirm (1:30)
+**Click:** Next step →.
+**Say:** "The citizen confirms the road is level, and a photo confirms the bus stop. Only now are all
+three verified closed."
+**Point at:** all three incidents at **Verified closed**.
+
+### 8. The scorecard (1:45)
+**Click:** Next step →.
+**Say:** "Three complaints, one repair, one crew visit. Every decision is in the audit log."
+**Point at:** the metrics panel: **Crew visits saved: 2**, **Independent vs coordinated visits: 3 → 1**,
+**Hypotheses confirmed: 1**, **Verified closed: 3**.
+
+**Presenter note:** if a v2 step looks wrong, press **Reset** and start again. The scenario is
+deterministic.
