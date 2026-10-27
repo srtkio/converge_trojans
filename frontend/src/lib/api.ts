@@ -21,6 +21,8 @@ export interface FeedbackInput {
   rating: number;
   role: string;
   comment: string;
+  page?: string;
+  incident_id?: string;
 }
 
 async function call<T>(path: string, init?: RequestInit): Promise<T> {
@@ -49,6 +51,7 @@ const post = <T>(path: string, body?: unknown) =>
   call<T>(path, { method: "POST", body: body === undefined ? undefined : JSON.stringify(body) });
 
 export const api = {
+  health: () => call<{ ok: boolean }>("/health"),
   incidents: () => call<Incident[]>("/incidents"),
   incident: (id: string) => call<IncidentDetail>(`/incidents/${id}`),
   resources: () => call<Resource[]>("/resources"),
