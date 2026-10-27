@@ -143,7 +143,7 @@ export function Dashboard() {
 
         {metrics && <MetricsBar metrics={metrics} />}
 
-        <div className="grid gap-4 lg:grid-cols-[320px_minmax(0,1fr)_340px]">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[320px_minmax(0,1fr)_340px]">
           <IncidentQueue incidents={incidents} now={now} selectedId={selectedId} onSelect={setSelectedId} />
 
           <div className="space-y-4">
