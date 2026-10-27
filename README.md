@@ -95,7 +95,7 @@ The start page asks who you are.
     drag the pin or tap the spot; a pinned report is sent with location source `pin`.
   - **My cases** (`/citizen/cases`): the cases reported from this phone, with live status
     (refreshed about every 15 s while visible; ones that need your check come first).
-  - **Map** (`/citizen/map`): open issues within 1.5 km of you (or of MG Road metro). Tap one for
+  - **Map** (`/citizen/map`): open issues within 1.5 km of you (or of Rishihood University). Tap one for
     "Me too" or "View case"; drag the pin and tap "Report something here" to report a new spot.
   - Case pages (`/track/<id>`) stay public, so shared links work without signing in.
 - **Operator:** `/operator` checks your badge ID and access code against the backend. Demo accounts
