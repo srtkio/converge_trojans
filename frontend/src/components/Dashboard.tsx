@@ -311,12 +311,12 @@ export function Dashboard({ operator, onSignOut }: { operator?: Operator; onSign
       <div className="min-w-0 flex-1">
         {/* Top bar */}
         <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-white/80 backdrop-blur">
-          <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5 lg:px-8">
+          <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 px-4 py-3 sm:px-5 sm:py-3.5 lg:px-8">
             <div className="min-w-0">
-              <h1 className="text-xl font-semibold tracking-tight">{current.label}</h1>
-              <p className="text-sm text-slate-500">{current.blurb}</p>
+              <h1 className="text-lg font-semibold tracking-tight sm:text-xl">{current.label}</h1>
+              <p className="text-xs text-slate-500 sm:text-sm">{current.blurb}</p>
             </div>
-            <div className="flex items-center gap-2.5 text-sm">
+            <div className="flex items-center gap-2 text-sm sm:gap-2.5">
               <span
                 className={`flex items-center gap-2 rounded-full px-3 py-1.5 font-medium ring-1 ${
                   error ? "bg-rose-50 text-rose-700 ring-rose-200" : "bg-emerald-50 text-emerald-700 ring-emerald-200"
@@ -359,7 +359,7 @@ export function Dashboard({ operator, onSignOut }: { operator?: Operator; onSign
           </nav>
         </header>
 
-        <main className="space-y-5 px-5 pb-28 pt-6 lg:px-8">
+        <main className="space-y-5 px-4 pb-28 pt-5 sm:px-5 sm:pt-6 lg:px-8">
           {error && (
             <div className="rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-700 ring-1 ring-rose-200">
               {error.includes("Failed to fetch")
@@ -406,7 +406,7 @@ export function Dashboard({ operator, onSignOut }: { operator?: Operator; onSign
           </section>
 
           <section {...panel("rootcause")} className="motion-safe:animate-[fadeUp_.35s_ease-out]">
-            {hypotheses.some((h) => h.status !== "rejected") ? (
+            {hypotheses.length > 0 ? (
               <RootCausePanel hypotheses={hypotheses} incidents={incidents} busy={busy} act={act} onSelect={openIncident} />
             ) : (
               <EmptyCard
