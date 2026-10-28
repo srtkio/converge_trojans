@@ -32,9 +32,9 @@ export function DemoDock({ children, simClock }: { children: ReactNode; simClock
   };
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center px-4">
+    <div className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-end px-4 sm:justify-center">
       {open ? (
-        <div className="pointer-events-auto w-full max-w-5xl rounded-2xl bg-white/95 p-3 shadow-[0_24px_60px_-20px_rgba(15,23,42,0.5)] ring-1 ring-slate-900/10 backdrop-blur motion-safe:animate-[dockIn_.3s_cubic-bezier(.2,.8,.2,1)]">
+        <div className="pointer-events-auto max-h-[75vh] w-full max-w-5xl overflow-y-auto rounded-2xl bg-white/95 p-3 shadow-[0_24px_60px_-20px_rgba(15,23,42,0.5)] ring-1 ring-slate-900/10 backdrop-blur motion-safe:animate-[dockIn_.3s_cubic-bezier(.2,.8,.2,1)]">
           <div className="mb-2 flex items-center justify-between px-1">
             <span className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
               <PlayCircle className="h-4 w-4 text-emerald-600" aria-hidden /> Demo controls
@@ -50,9 +50,10 @@ export function DemoDock({ children, simClock }: { children: ReactNode; simClock
         <button
           type="button"
           onClick={() => toggle(true)}
-          className="pointer-events-auto flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2.5 text-sm font-medium text-white shadow-lg transition hover:bg-slate-800 motion-safe:hover:-translate-y-0.5"
+          className="pointer-events-auto flex h-12 w-12 items-center justify-center gap-2 rounded-full bg-slate-900 text-sm font-medium text-white shadow-lg transition hover:bg-slate-800 motion-safe:hover:-translate-y-0.5 sm:h-auto sm:w-auto sm:px-4 sm:py-2.5"
         >
-          <PlayCircle className="h-4 w-4 text-emerald-400" aria-hidden /> Demo controls
+          <PlayCircle className="h-5 w-5 text-emerald-400 sm:h-4 sm:w-4" aria-hidden />
+          <span className="sr-only sm:not-sr-only">Demo controls</span>
         </button>
       )}
     </div>

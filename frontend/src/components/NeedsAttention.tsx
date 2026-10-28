@@ -48,16 +48,24 @@ export function NeedsAttention({
           {items.map(({ i, why }) => {
             return (
               <li key={i.id}>
-                <button type="button" onClick={() => onOpen(i.id)} className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-slate-50">
-                  <span className="text-lg">{CATEGORY_ICON[i.category]}</span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-medium">{i.title}</span>
-                    <span className="text-xs text-slate-500">
+                <button
+                  type="button"
+                  onClick={() => onOpen(i.id)}
+                  className="flex w-full flex-wrap items-center gap-x-3 gap-y-1.5 px-4 py-3 text-left hover:bg-slate-50"
+                >
+                  <span className="w-6 shrink-0 text-center text-lg" aria-hidden>
+                    {CATEGORY_ICON[i.category]}
+                  </span>
+                  <span className="min-w-0 flex-1 basis-[55%]">
+                    <span className="block break-words text-sm font-medium text-slate-900 sm:truncate">{i.title}</span>
+                    <span className="block text-xs text-slate-500">
                       {why} · {i.department}
                     </span>
                   </span>
-                  <SlaTimer incident={i} now={now} />
-                  <StatusBadge status={i.status} />
+                  <span className="ml-9 flex shrink-0 flex-wrap items-center gap-2 sm:ml-0">
+                    <SlaTimer incident={i} now={now} />
+                    <StatusBadge status={i.status} />
+                  </span>
                 </button>
               </li>
             );
