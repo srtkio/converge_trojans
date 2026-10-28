@@ -29,15 +29,15 @@ import type { Category, Incident, Link } from "@/lib/types";
 // OpenStreetMap). The first points sit close to the demo incidents on GT Road, so a matching
 // report joins the existing case instead of opening a new one.
 const PLACES = [
-  { name: "Rishihood University gate, GT Road (NH-44)", lat: 28.9832, lng: 77.0864 },
-  { name: "GT Road, 250 m south of Rishihood University", lat: 28.98095, lng: 77.0864 },
+  { name: "Rishihood University gate, GT Road (NH-44)", short: "Rishihood University gate", lat: 28.9832, lng: 77.0864 },
+  { name: "GT Road, 250 m south of Rishihood University", short: "GT Road, south of Rishihood", lat: 28.98095, lng: 77.0864 },
   { name: "Bahalgarh Chowk", lat: 28.9587, lng: 77.0951 },
   { name: "Murthal Chowk", lat: 29.0265, lng: 77.0737 },
-  { name: "Murthal dhaba strip, GT Road", lat: 29.0396, lng: 77.0895 },
+  { name: "Murthal dhaba strip, GT Road", short: "Murthal dhaba strip", lat: 29.0396, lng: 77.0895 },
   { name: "Sector 15, Sonipat", lat: 29.0002, lng: 77.0395 },
   { name: "Civil Hospital, Sonipat", lat: 28.9906, lng: 77.0363 },
   { name: "Sonipat Bus Stand", lat: 28.9974, lng: 77.0234 },
-  { name: "Sonipat Junction (railway station)", lat: 28.9898, lng: 77.0171 },
+  { name: "Sonipat Junction (railway station)", short: "Sonipat railway station", lat: 28.9898, lng: 77.0171 },
 ];
 
 const CATEGORIES = Object.keys(CATEGORY_LABEL) as Category[];
@@ -416,11 +416,11 @@ export function CitizenReportForm({
                 ref={placeRef}
                 value={place}
                 onChange={(e) => pickPlace(Number(e.target.value))}
-                className="mt-1 h-12 w-full rounded-xl border border-slate-300 bg-white px-3 text-base focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                className="mt-1 h-12 w-full min-w-0 rounded-xl border border-slate-300 bg-white px-3 text-base focus:border-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-200"
               >
                 {PLACES.map((p, i) => (
                   <option key={p.name} value={i}>
-                    {p.name}
+                    {"short" in p ? p.short : p.name}
                   </option>
                 ))}
               </select>
@@ -447,7 +447,7 @@ export function CitizenReportForm({
       </fieldset>
 
       {suggestions.length > 0 && (
-        <section aria-labelledby="nearby-heading" className="cz-rise rounded-xl bg-amber-50/70 p-3 ring-1 ring-amber-200">
+        <section aria-labelledby="nearby-heading" className="cz-rise min-w-0 rounded-xl bg-amber-50/70 p-2.5 ring-1 ring-amber-200 sm:p-3">
           <h2 id="nearby-heading" className="text-sm font-semibold text-slate-900">
             Already reported nearby
           </h2>
@@ -458,13 +458,13 @@ export function CitizenReportForm({
           </p>
           <ul className="mt-2 space-y-2">
             {suggestions.map(({ incident, d }) => (
-              <li key={incident.id} className="flex items-center gap-3 rounded-lg bg-white p-2.5 ring-1 ring-slate-200">
-                <span aria-hidden="true" className="text-xl">
+              <li key={incident.id} className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg bg-white p-2.5 ring-1 ring-slate-200">
+                <span aria-hidden="true" className="shrink-0 text-xl">
                   {CATEGORY_ICON[incident.category]}
                 </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-medium text-slate-900">{incident.title}</span>
-                  <span className="block text-xs text-slate-500">
+                <span className="min-w-0 flex-1 basis-40">
+                  <span className="line-clamp-2 break-words text-sm font-medium leading-snug text-slate-900">{incident.title}</span>
+                  <span className="mt-0.5 block text-xs text-slate-500">
                     {CITIZEN_STATUS_LABEL[incident.status]} · {incident.report_ids.length}{" "}
                     {incident.report_ids.length === 1 ? "report" : "reports"} · {Math.max(10, Math.round(d / 10) * 10)} m away
                   </span>
@@ -474,7 +474,7 @@ export function CitizenReportForm({
                   disabled={busy || photo.preparing}
                   onClick={() => meToo(incident)}
                   aria-label={`Me too: ${incident.title}`}
-                  className="shrink-0 rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 disabled:opacity-50 motion-safe:active:scale-95"
+                  className="ml-auto min-h-11 shrink-0 rounded-lg bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 disabled:opacity-50 motion-safe:active:scale-95"
                 >
                   Me too
                 </button>

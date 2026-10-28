@@ -53,8 +53,8 @@ function Frame({ children, nav }: { children: ReactNode; nav?: ReactNode }) {
     <InAppShellContext value={true}>
       <div className="min-h-dvh w-full bg-slate-50 bg-[radial-gradient(130%_45%_at_50%_0%,#d1fae5_0%,rgba(248,250,252,0)_70%)] font-sans text-slate-900 antialiased [color-scheme:light]">
         <main
-          className={`mx-auto flex min-h-dvh w-full max-w-md flex-col gap-5 pt-[max(1.5rem,env(safe-area-inset-top))] pr-[max(1rem,env(safe-area-inset-right))] pl-[max(1rem,env(safe-area-inset-left))] md:pt-12 ${
-            nav ? "pb-[calc(5.5rem+env(safe-area-inset-bottom))]" : "pb-[max(1.5rem,env(safe-area-inset-bottom))]"
+          className={`mx-auto flex min-h-dvh w-full max-w-md flex-col gap-5 pt-[max(1.5rem,env(safe-area-inset-top))] pr-[max(0.75rem,env(safe-area-inset-right))] pl-[max(0.75rem,env(safe-area-inset-left))] min-[400px]:pr-[max(1rem,env(safe-area-inset-right))] min-[400px]:pl-[max(1rem,env(safe-area-inset-left))] md:pt-12 ${
+            nav ? "pb-[calc(6rem+env(safe-area-inset-bottom))]" : "pb-[max(1.5rem,env(safe-area-inset-bottom))]"
           }`}
         >
           {offline && (

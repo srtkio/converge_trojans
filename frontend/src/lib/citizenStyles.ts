@@ -9,4 +9,4 @@ export const BIG_BUTTON =
 
 /** Card surface: white, soft layered shadow, hairline ring. */
 export const CARD =
-  "rounded-2xl bg-white p-5 ring-1 ring-slate-900/5 shadow-[0_1px_2px_rgba(15,23,42,0.05),0_12px_32px_-18px_rgba(15,23,42,0.25)]";
+  "rounded-2xl bg-white p-4 sm:p-5 ring-1 ring-slate-900/5 shadow-[0_1px_2px_rgba(15,23,42,0.05),0_12px_32px_-18px_rgba(15,23,42,0.25)]";
