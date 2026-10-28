@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 import { prefersReducedMotion } from "@/lib/citizen";
 
@@ -47,6 +48,46 @@ const TABS: { key: Tab; href: string; label: string; Icon: () => React.JSX.Eleme
   { key: "map", href: "/citizen/map", label: "Map", Icon: MapIcon },
 ];
 
+const NOT_TYPING = new Set(["button", "checkbox", "color", "file", "hidden", "image", "radio", "range", "reset", "submit"]);
+
+/**
+ * True while the on-screen keyboard is up: a text field has focus and the visual viewport has
+ * shrunk well below the layout viewport. On iPhone the fixed nav would otherwise float over the
+ * form while typing. Desktop browsers never shrink the visual viewport, so the nav always shows.
+ */
+function useKeyboardOpen(): boolean {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    let frame = 0;
+    const update = () => {
+      cancelAnimationFrame(frame);
+      // Next frame: during focusout the new focus target isn't set yet.
+      frame = requestAnimationFrame(() => {
+        const el = document.activeElement;
+        const field =
+          el instanceof HTMLTextAreaElement ||
+          el instanceof HTMLSelectElement ||
+          (el instanceof HTMLInputElement && !NOT_TYPING.has(el.type)) ||
+          (el instanceof HTMLElement && el.isContentEditable);
+        const full = Math.max(window.innerHeight, document.documentElement.clientHeight);
+        setOpen(field && full - vv.height * vv.scale > 120);
+      });
+    };
+    document.addEventListener("focusin", update);
+    document.addEventListener("focusout", update);
+    vv.addEventListener("resize", update);
+    return () => {
+      cancelAnimationFrame(frame);
+      document.removeEventListener("focusin", update);
+      document.removeEventListener("focusout", update);
+      vv.removeEventListener("resize", update);
+    };
+  }, []);
+  return open;
+}
+
 /**
  * The citizen app's bottom nav: Report · My cases · Map. Fixed above the home indicator, and kept
  * still while screens change (it has its own view-transition name). `current` is false on a case
@@ -54,11 +95,14 @@ const TABS: { key: Tab; href: string; label: string; Icon: () => React.JSX.Eleme
  */
 export function BottomNav({ active, current = true, needsCheck = 0 }: { active: Tab | null; current?: boolean; needsCheck?: number }) {
   const index = TABS.findIndex((t) => t.key === active);
+  const keyboard = useKeyboardOpen();
   return (
     <nav
       aria-label="Citizen app"
       style={{ viewTransitionName: "cz-tabbar" }}
-      className="fixed inset-x-0 bottom-0 z-40 isolate border-t border-slate-200/80 bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_-18px_rgba(15,23,42,0.35)] backdrop-blur [color-scheme:light]"
+      className={`fixed inset-x-0 bottom-0 z-40 isolate border-t border-slate-200/80 bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_-18px_rgba(15,23,42,0.35)] backdrop-blur transition-[translate,opacity] duration-200 ease-out motion-reduce:transition-none [color-scheme:light] ${
+        keyboard ? "pointer-events-none translate-y-full opacity-0" : ""
+      }`}
     >
       <div className="relative mx-auto grid h-16 max-w-md grid-cols-3 px-2">
         {index >= 0 && (

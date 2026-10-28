@@ -20,17 +20,17 @@ export function CaseRow({ incident, flash }: { incident: Incident; flash?: strin
       key={flash}
       href={`/track/${incident.id}`}
       transitionTypes={["cz-forward"]}
-      className={`flex items-center gap-3 rounded-xl bg-white p-3 shadow-sm ring-1 ring-slate-200 transition hover:ring-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 motion-safe:active:scale-[0.99] ${
+      className={`flex min-h-16 items-center gap-3 rounded-xl bg-white p-3 shadow-sm ring-1 ring-slate-200 transition hover:ring-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 motion-safe:active:scale-[0.99] ${
         flash ? "cz-flash" : ""
       }`}
     >
-      <span aria-hidden="true" className="text-2xl">
+      <span aria-hidden="true" className="shrink-0 text-2xl">
         {CATEGORY_ICON[incident.category]}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-sm font-medium">{incident.title}</span>
-        <span className="block text-xs text-slate-500">{line}</span>
-        <span className="mt-0.5 block font-mono text-[11px] text-slate-400">{incident.id}</span>
+        <span className="line-clamp-2 break-words text-sm font-medium leading-snug">{incident.title}</span>
+        <span className="mt-0.5 block break-words text-xs text-slate-500">{line}</span>
+        <span className="mt-0.5 block break-all font-mono text-[11px] text-slate-400">{incident.id}</span>
       </span>
       <span
         key={`${incident.status}|${flash ?? ""}`}
