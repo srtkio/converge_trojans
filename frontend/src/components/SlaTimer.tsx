@@ -25,23 +25,23 @@ export function SlaTimer({ incident, now, size = "sm" }: { incident: Incident; n
     incident.sla_state ?? (left < 0 ? "breached" : incident.at_risk || left < 4 * 3600_000 ? "at_risk" : "on_track");
   const tone =
     state === "breached"
-      ? "bg-rose-50 text-rose-700 ring-rose-200"
+      ? "bg-bad/10 text-bad ring-bad/35"
       : state === "at_risk"
-        ? "bg-amber-50 text-amber-800 ring-amber-200"
-        : "bg-emerald-50 text-emerald-700 ring-emerald-200";
-  const dot = state === "breached" ? "bg-rose-500" : state === "at_risk" ? "bg-amber-500" : "bg-emerald-500";
+        ? "bg-warn/10 text-warn ring-warn/30"
+        : "bg-ok/[0.07] text-ok ring-ok/25";
+  const dot = state === "breached" ? "bg-bad" : state === "at_risk" ? "bg-warn" : "bg-ok";
   const text = left < 0 ? `Overdue ${fmt(left)}` : `${fmt(left)} left`;
   const big = size === "lg";
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full font-medium tabular-nums ring-1 ${tone} ${big ? "px-3 py-1 text-sm" : "px-2 py-0.5 text-xs"}`}
+      className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-md font-medium tabular-nums ring-1 ${tone} ${big ? "px-2.5 py-1 text-sm" : "px-1.5 py-0.5 text-[11px]"}`}
       title={`SLA deadline ${new Date(incident.deadline).toUTCString()}`}
     >
-      <span className="relative flex h-2 w-2">
+      <span className="relative flex h-1.5 w-1.5">
         {state !== "on_track" && <span className={`absolute inline-flex h-full w-full rounded-full opacity-60 motion-safe:animate-ping ${dot}`} />}
-        <span className={`relative inline-flex h-2 w-2 rounded-full ${dot}`} />
+        <span className={`relative inline-flex h-1.5 w-1.5 rounded-full ${dot}`} />
       </span>
-      <Timer className={big ? "h-4 w-4" : "h-3.5 w-3.5"} aria-hidden />
+      <Timer className={big ? "h-4 w-4" : "h-3 w-3"} aria-hidden />
       {text}
     </span>
   );

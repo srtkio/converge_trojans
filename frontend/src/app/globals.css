@@ -108,6 +108,111 @@ body {
   to { opacity: 1; transform: none; }
 }
 
+/* ───────────── Operator console (/operator) ─────────────
+   Everything below is operator-only and prefixed `op-`. Motion uses transform/opacity and is
+   switched off for people who prefer reduced motion. */
+.op-root {
+  background:
+    radial-gradient(1200px 500px at 85% -10%, rgba(91, 140, 255, 0.07), transparent 60%),
+    radial-gradient(900px 400px at -10% 110%, rgba(34, 211, 238, 0.04), transparent 60%),
+    var(--background);
+}
+.op-grid-bg {
+  background-image:
+    linear-gradient(rgba(148, 163, 196, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 196, 0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+.op-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 196, 0.25) transparent;
+}
+.op-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+.op-scroll::-webkit-scrollbar-thumb { background: rgba(148, 163, 196, 0.22); border-radius: 8px; }
+.op-no-scrollbar { scrollbar-width: none; }
+.op-no-scrollbar::-webkit-scrollbar { display: none; }
+
+.op-shimmer {
+  background-image: linear-gradient(90deg, transparent, rgba(148, 163, 196, 0.08), transparent);
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .op-shimmer { animation: op-shimmer 1.4s linear infinite; }
+  .op-fade-up { animation: op-fade-up 320ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .op-fade-in { animation: op-fade-in 180ms ease-out both; }
+  .op-fade-out { animation: op-fade-in 160ms ease-in reverse both; }
+  .op-pop-in { animation: op-pop 200ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .op-pop-out { animation: op-pop 160ms ease-in reverse both; }
+  .op-drawer-in { animation: op-drawer 280ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .op-drawer-out { animation: op-drawer 200ms ease-in reverse both; }
+  .op-pop-menu { animation: op-menu 160ms cubic-bezier(0.22, 1, 0.36, 1) both; transform-origin: top right; }
+  .op-toast-in { animation: op-toast 320ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .op-toast-bar { animation: op-toast-bar linear both; transform-origin: left; }
+  .op-pulse-ring { animation: op-pulse 2s ease-out infinite; }
+}
+
+@keyframes op-shimmer { from { background-position: 150% 0; } to { background-position: -50% 0; } }
+@keyframes op-fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes op-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes op-pop { from { opacity: 0; transform: translateY(8px) scale(0.97); } to { opacity: 1; transform: none; } }
+@keyframes op-drawer { from { opacity: 0.4; transform: translateX(100%); } to { opacity: 1; transform: none; } }
+@keyframes op-menu { from { opacity: 0; transform: translateY(-4px) scale(0.97); } to { opacity: 1; transform: none; } }
+@keyframes op-toast { from { opacity: 0; transform: translateX(24px) scale(0.98); } to { opacity: 1; transform: none; } }
+@keyframes op-toast-bar { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+@keyframes op-pulse { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(2.2); opacity: 0; } }
+
+/* Leaflet on the dark console */
+.op-map .leaflet-container { background: #0b0f19; font-family: inherit; }
+.op-map .leaflet-tooltip {
+  background: #131a2b;
+  color: #e6e9f2;
+  border: 1px solid rgba(148, 163, 196, 0.28);
+  border-radius: 8px;
+  box-shadow: 0 12px 28px -12px rgba(0, 0, 0, 0.8);
+  font-size: 12px;
+  padding: 4px 8px;
+}
+.op-map .leaflet-tooltip-top::before { border-top-color: #131a2b; }
+.op-map .leaflet-tooltip-right::before { border-right-color: #131a2b; }
+.op-map .leaflet-tooltip-left::before { border-left-color: #131a2b; }
+.op-map .leaflet-tooltip-bottom::before { border-bottom-color: #131a2b; }
+.op-map .leaflet-bar { border: 1px solid rgba(148, 163, 196, 0.28) !important; box-shadow: none; }
+.op-map .leaflet-bar a {
+  background: #131a2b;
+  color: #e6e9f2;
+  border-bottom-color: rgba(148, 163, 196, 0.2);
+}
+.op-map .leaflet-bar a:hover { background: #1a2238; }
+.op-map .leaflet-control-attribution {
+  background: rgba(7, 10, 18, 0.75) !important;
+  color: #8b94ab;
+}
+.op-map .leaflet-control-attribution a { color: #a9c1ff; }
+/* Darken the light OpenStreetMap tiles for the dark console (keyless; markers stay untouched). */
+.op-map-invert .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9); }
+
+/* The citizen inbox component is shared; give it the console's dark surface inside the operator. */
+.op-inbox section[aria-labelledby="inbox-heading"] {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: none;
+  --tw-ring-color: transparent;
+}
+.op-inbox section[aria-labelledby="inbox-heading"] .text-slate-900 { color: var(--foreground); }
+.op-inbox section[aria-labelledby="inbox-heading"] .text-slate-700 { color: #c3c9d8; }
+.op-inbox section[aria-labelledby="inbox-heading"] .text-slate-600,
+.op-inbox section[aria-labelledby="inbox-heading"] .text-slate-500 { color: var(--muted); }
+.op-inbox section[aria-labelledby="inbox-heading"] .divide-slate-100 > * { border-color: var(--line); }
+.op-inbox section[aria-labelledby="inbox-heading"] .bg-amber-50 { background: rgba(251, 191, 36, 0.07); }
+.op-inbox section[aria-labelledby="inbox-heading"] .bg-amber-200 { background: rgba(251, 191, 36, 0.2); color: var(--warn); }
+.op-inbox section[aria-labelledby="inbox-heading"] .text-blue-700 { color: #a9c1ff; }
+.op-inbox section[aria-labelledby="inbox-heading"] .bg-sky-50 { background: rgba(56, 189, 248, 0.1); color: #7dd3fc; }
+.op-inbox section[aria-labelledby="inbox-heading"] .bg-emerald-50 { background: rgba(52, 211, 153, 0.1); color: var(--ok); }
+.op-inbox section[aria-labelledby="inbox-heading"] .ring-slate-200 { --tw-ring-color: var(--line); }
+.op-inbox section[aria-labelledby="inbox-heading"] .text-rose-700 { color: var(--bad); }
+.op-inbox section[aria-labelledby="inbox-heading"] ul { scrollbar-width: thin; scrollbar-color: rgba(148, 163, 196, 0.25) transparent; }
 /* ───────────────────────── Landing page (ld-*) ─────────────────────────
    Native scroll only. Everything that moves animates transform/opacity, and
    nothing moves for people who prefer reduced motion. */

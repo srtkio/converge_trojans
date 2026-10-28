@@ -102,13 +102,13 @@ export function ScenarioBar({
   return (
     <section className="px-1">
       <div className="flex flex-wrap items-center gap-2">
-        <div className="mr-1 flex rounded-md bg-slate-100 p-0.5 text-xs font-medium">
+        <div className="mr-1 flex rounded-lg bg-surface-2 p-0.5 text-xs font-medium ring-1 ring-line">
           {(Object.keys(SCENARIOS) as ScenarioName[]).map((name) => (
             <button
               key={name}
               disabled={busy}
               onClick={() => switchTo(name)}
-              className={`rounded px-2 py-1 ${scenario === name ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
+              className={`rounded-md px-2.5 py-1 transition ${scenario === name ? "bg-accent text-white shadow-sm" : "text-muted hover:text-foreground"}`}
             >
               {SCENARIOS[name].label}
             </button>
@@ -124,12 +124,12 @@ export function ScenarioBar({
                 title={desc}
                 disabled={busy}
                 onClick={() => runTo(n)}
-                className={`h-7 w-7 rounded-full text-xs font-medium ring-1 transition disabled:opacity-50 ${
+                className={`h-7 w-7 rounded-md text-xs font-medium tabular-nums ring-1 transition disabled:opacity-50 ${
                   n === step
-                    ? "bg-slate-900 text-white ring-slate-900"
+                    ? "bg-accent text-white ring-accent"
                     : done
-                      ? "bg-slate-200 text-slate-700 ring-slate-300"
-                      : "bg-white text-slate-500 ring-slate-300 hover:bg-slate-100"
+                      ? "bg-accent/15 text-[#a9c1ff] ring-accent/30"
+                      : "bg-surface text-muted ring-line hover:bg-surface-2 hover:text-foreground"
                 }`}
               >
                 {n}
@@ -140,50 +140,50 @@ export function ScenarioBar({
         <button
           disabled={busy || step >= STEPS.length}
           onClick={() => runTo(next)}
-          className="rounded-md bg-slate-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-40"
+          className="rounded-lg bg-accent px-3 py-1.5 text-sm font-medium text-white shadow-[0_8px_20px_-10px_rgba(91,140,255,0.9)] hover:bg-[#6f9bff] disabled:opacity-40"
         >
           Next step →
         </button>
         <button
           disabled={busy}
           onClick={() => runTo(STEPS.length)}
-          className="rounded-md px-3 py-1.5 text-sm font-medium text-slate-700 ring-1 ring-slate-300 hover:bg-slate-100 disabled:opacity-40"
+          className="rounded-lg px-3 py-1.5 text-sm font-medium text-foreground ring-1 ring-line-strong hover:bg-surface-2 disabled:opacity-40"
         >
           Run all
         </button>
         <button
           disabled={busy}
           onClick={reset}
-          className="rounded-md px-3 py-1.5 text-sm font-medium text-slate-700 ring-1 ring-slate-300 hover:bg-slate-100 disabled:opacity-40"
+          className="rounded-lg px-3 py-1.5 text-sm font-medium text-foreground ring-1 ring-line-strong hover:bg-surface-2 disabled:opacity-40"
         >
           Reset
         </button>
 
-        <span className="mx-1 h-6 w-px bg-slate-200" />
-        <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Clock</span>
+        <span className="mx-1 hidden h-6 w-px bg-line-strong sm:block" />
+        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">Clock</span>
         {[1, 12, 48].map((h) => (
           <button
             key={h}
             disabled={busy}
             onClick={() => act(() => api.tick(h * 60))}
-            className="rounded-md px-2 py-1.5 text-sm text-slate-700 ring-1 ring-slate-300 hover:bg-slate-100 disabled:opacity-40"
+            className="rounded-lg px-2 py-1.5 font-mono text-xs text-foreground ring-1 ring-line-strong hover:bg-surface-2 disabled:opacity-40"
           >
             +{h}h
           </button>
         ))}
       </div>
-      <p className="mt-2 text-sm text-slate-600">
+      <p className="mt-2.5 text-sm text-[#c3c9d8]">
         {step > 0 ? (
           <>
-            <span className="font-medium text-slate-900">Step {step}:</span> {STEPS[step - 1]}
-            {step < STEPS.length && <span className="text-slate-400"> · next: {STEPS[step]}</span>}
+            <span className="font-medium text-foreground">Step {step}:</span> {STEPS[step - 1]}
+            {step < STEPS.length && <span className="text-muted"> · next: {STEPS[step]}</span>}
           </>
         ) : incidents.length ? (
           "Live mode: file reports and act on incidents directly, or press Reset to start the demo."
         ) : (
           <>
-            <span className="text-slate-400">Press </span>Next step
-            <span className="text-slate-400"> to walk through the demo, or file a report yourself.</span>
+            <span className="text-muted">Press </span>Next step
+            <span className="text-muted"> to walk through the demo, or file a report yourself.</span>
           </>
         )}
       </p>

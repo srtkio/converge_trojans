@@ -10,7 +10,7 @@ import { CATEGORY_ICON, STATUS_LABEL, STATUS_STYLE } from "@/lib/format";
 import type { Incident, Report, Resource } from "@/lib/types";
 
 /**
- * Real street map (OpenStreetMap tiles via Leaflet; free, no key). Needs network for tiles;
+ * Real street map (OpenStreetMap tiles via Leaflet; free, no key), darkened for the console. Needs network for tiles;
  * CityMap's schematic view is the offline fallback. Loaded with ssr:false because Leaflet needs `window`.
  *
  * Steadiness: the dashboard polls every 2 s, so icons are cached (a new icon object makes Leaflet
@@ -22,6 +22,11 @@ const DUPLICATE_RADIUS_M = 150;
 const DEFAULT_CENTER: [number, number] = [28.9832, 77.0864]; // Rishihood University, GT Road, Sonipat
 // If tiles keep failing with none loaded, tell CityMap to fall back to the schematic map.
 const TILE_FAILURES_BEFORE_FALLBACK = 6;
+
+// CARTO's dark basemap now needs an API key, so the console darkens OpenStreetMap's own tiles
+// with a CSS filter (.op-map-invert in globals.css). Free, no key.
+const TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+const TILE_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
 const iconCache = new Map<string, L.DivIcon>();
 
@@ -38,9 +43,9 @@ function crewIcon(available: boolean) {
   return cachedIcon(`crew|${available}`, () =>
     L.divIcon({
       className: "",
-      html: `<div style="width:14px;height:14px;border-radius:3px;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4);background:${
-        available ? "#0f172a" : "#94a3b8"
-      }"></div>`,
+      html: `<div style="width:14px;height:14px;border-radius:4px;border:2px solid #070a12;box-shadow:0 0 0 1px ${
+        available ? "rgba(34,211,238,.7)" : "rgba(148,163,196,.5)"
+      },0 0 12px ${available ? "rgba(34,211,238,.45)" : "transparent"};background:${available ? "#22d3ee" : "#475569"}"></div>`,
       iconSize: [14, 14],
       iconAnchor: [7, 7],
     }),
@@ -52,7 +57,7 @@ function incidentIcon(i: Incident, selected: boolean) {
     const size = selected ? 34 : 28;
     return L.divIcon({
       className: "",
-      html: `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${STATUS_STYLE[i.status].dot};border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;font-size:${
+      html: `<div style="width:${size}px;height:${size}px;border-radius:50%;background:#0d1220;border:2.5px solid ${STATUS_STYLE[i.status].dot};box-shadow:0 0 0 ${selected ? 4 : 0}px rgba(91,140,255,.35),0 0 16px ${STATUS_STYLE[i.status].dot}99,0 4px 10px rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;font-size:${
         selected ? 16 : 13
       }px">${CATEGORY_ICON[i.category]}</div>`,
       iconSize: [size, size],
@@ -113,6 +118,7 @@ export default function StreetMap({
   selectedId,
   onSelect,
   onTilesFailed,
+  className = "h-[340px]",
 }: {
   incidents: Incident[];
   resources: Resource[];
@@ -120,6 +126,7 @@ export default function StreetMap({
   selectedId: string | null;
   onSelect: (id: string) => void;
   onTilesFailed?: () => void;
+  className?: string;
 }) {
   const byId = useMemo(() => new Map(incidents.map((i) => [i.id, i])), [incidents]);
   const tiles = useRef({ loaded: 0, failed: 0, reported: false });
@@ -150,13 +157,13 @@ export default function StreetMap({
       zoom={16}
       scrollWheelZoom={false}
       zoomSnap={0.5}
-      // OSM's land colour behind the tiles: on slow Wi-Fi, tiles still loading blend in instead of flashing grey.
-      style={{ background: "#f2efe9" }}
-      className="h-[340px] w-full rounded-md"
+      // The dark basemap's land colour behind the tiles: tiles still loading blend in instead of flashing.
+      style={{ background: "#0b0f19" }}
+      className={`${className} op-map-invert w-full rounded-lg`}
     >
       <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution={TILE_ATTRIBUTION}
+        url={TILE_URL}
         keepBuffer={6}
         updateWhenZooming={false}
         eventHandlers={{
@@ -192,7 +199,7 @@ export default function StreetMap({
             [a.lat, a.lng],
             [b.lat, b.lng],
           ]}
-          pathOptions={{ color: "#7c3aed", weight: 3, dashArray: "8 6" }}
+          pathOptions={{ color: "#a78bfa", weight: 2.5, dashArray: "8 6", opacity: 0.9 }}
         />
       ))}
 
@@ -206,10 +213,10 @@ export default function StreetMap({
                   [r.lat, r.lng],
                   [inc.lat, inc.lng],
                 ]}
-                pathOptions={{ color: "#64748b", weight: 1.5 }}
+                pathOptions={{ color: "#94a3b8", weight: 1.25, opacity: 0.6 }}
               />
             )}
-            <CircleMarker center={[r.lat, r.lng]} radius={6} pathOptions={{ color: "#334155", weight: 2, fillColor: "#fff", fillOpacity: 1 }}>
+            <CircleMarker center={[r.lat, r.lng]} radius={6} pathOptions={{ color: "#cbd5e1", weight: 2, fillColor: "#0d1220", fillOpacity: 1 }}>
               <Tooltip>
                 {r.id}: “{r.text}”
               </Tooltip>
