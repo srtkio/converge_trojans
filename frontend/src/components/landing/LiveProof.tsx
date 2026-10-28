@@ -67,12 +67,19 @@ function ago(at: string, now: number): string {
   return `${Math.round(h / 24)} d ago`;
 }
 
+/** First name only: the API sends ids like "citizen:deepak". */
+function firstName(raw: string): string {
+  const word = (raw.split(":").pop() ?? "").trim().split(/[\s@._-]+/)[0] ?? "";
+  return word ? word[0].toUpperCase() + word.slice(1) : "A citizen";
+}
+
 function describe(a: CitizenActivity): string {
+  const who = firstName(a.citizen);
   const what = a.incident_title ?? (a.category ? a.category.replace(/_/g, " ") : "a problem");
-  if (a.kind === "complaint") return `${a.citizen} reported ${what}`;
-  if (a.supports === true) return `${a.citizen} confirmed the fix: ${what}`;
-  if (a.supports === false) return `${a.citizen} says it is not fixed: ${what}`;
-  return `${a.citizen} added evidence: ${what}`;
+  if (a.kind === "complaint") return `${who} reported: ${what}`;
+  if (a.supports === true) return `${who} confirmed the fix: ${what}`;
+  if (a.supports === false) return `${who} says it is not fixed: ${what}`;
+  return `${who} added evidence: ${what}`;
 }
 
 function Ticker() {

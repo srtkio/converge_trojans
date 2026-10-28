@@ -29,9 +29,10 @@ export function TryIt() {
         <Link href="/operator" className={CARD}>
           <LayoutDashboard aria-hidden="true" className="h-5 w-5 text-accent" />
           <span className="mt-3 text-lg font-semibold text-foreground">Open the operator console</span>
-          <span className="mt-1 text-sm text-muted">
-            Demo badge <code className="rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-foreground/90">CMD-01</code>, code{" "}
-            <code className="break-all rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-foreground/90">command-demo-2026</code>
+          <span className="mt-1 text-sm text-muted">Sign in with the demo badge:</span>
+          <span className="mt-2 flex flex-wrap gap-1.5 text-sm">
+            <code className="whitespace-nowrap rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-foreground/90">CMD-01</code>
+            <code className="whitespace-nowrap rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-foreground/90">command-demo-2026</code>
           </span>
           <span aria-hidden="true" className="mt-auto inline-flex items-center gap-1 pt-4 text-sm font-medium text-accent-2">
             /operator <ArrowRight className="h-4 w-4 transition-transform motion-safe:group-hover:translate-x-0.5" />
