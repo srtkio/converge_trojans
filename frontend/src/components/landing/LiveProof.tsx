@@ -131,8 +131,8 @@ export function LiveProof() {
   }
 
   return (
-    <section id="live" aria-labelledby="live-heading" className="relative z-10 scroll-mt-20 px-4 pb-6 pt-4 sm:px-6">
-      <div className="mx-auto max-w-6xl overflow-hidden rounded-[28px] border border-line-strong bg-surface/70 p-4 backdrop-blur sm:p-7">
+    <section id="live" aria-labelledby="live-heading" className="relative z-10 scroll-mt-20 px-4 pb-4 pt-2 sm:px-6">
+      <div className="mx-auto max-w-6xl overflow-hidden rounded-2xl border border-line bg-surface p-4 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)] sm:p-7">
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
           <h2 id="live-heading" className="flex items-center gap-2 font-mono text-xs font-medium uppercase tracking-[0.22em] text-accent">
             <span className="relative flex h-2 w-2" aria-hidden="true">

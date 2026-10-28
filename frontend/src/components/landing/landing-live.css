@@ -57,3 +57,20 @@
   from { transform: translate3d(-2%, -1%, 0) scale(1); }
   to { transform: translate3d(2%, 1%, 0) scale(1.06); }
 }
+
+/* One calm system: solid emerald buttons, one card surface, emerald hover glow. */
+.ld-emerald .ld-btn-primary {
+  background: #047857;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 10px 30px -14px rgba(16, 185, 129, 0.6);
+}
+.ld-emerald .ld-btn-primary:hover {
+  background: #059669;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14) inset, 0 12px 34px -14px rgba(16, 185, 129, 0.75);
+}
+.ld-emerald .ld-card {
+  background: var(--surface);
+  box-shadow: 0 18px 50px -30px rgba(0, 0, 0, 0.85);
+}
+.ld-emerald .ld-card::before {
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, -20%), rgba(16, 185, 129, 0.1), transparent 45%);
+}

@@ -18,7 +18,7 @@ export function HowItWorks() {
       <ol className="relative space-y-3">
         <span aria-hidden="true" className="absolute bottom-6 left-[1.6rem] top-6 w-px bg-gradient-to-b from-accent/60 via-line-strong to-ok/60" />
         {STEPS.map(({ icon: Icon, tag, title, body }, n) => (
-          <li key={tag} className="ld-reveal relative flex gap-4 rounded-2xl border border-line bg-surface/70 p-4 sm:p-5" style={{ "--d": n } as CSSProperties}>
+          <li key={tag} className="ld-card ld-reveal relative flex gap-4 rounded-2xl p-4 sm:p-5" style={{ "--d": n } as CSSProperties}>
             <span className="relative z-10 grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-accent to-[#047857] text-white shadow-[0_8px_24px_-10px_rgba(16,185,129,0.9)] sm:h-10 sm:w-10">
               <Icon aria-hidden="true" className="h-4 w-4 sm:h-5 sm:w-5" />
             </span>

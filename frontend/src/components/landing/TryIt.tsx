@@ -6,7 +6,7 @@ import { ArrowRight, LayoutDashboard, MapPin, Search } from "lucide-react";
 import { sharedIncidents, useLive } from "./live-data";
 
 const CARD =
-  "ld-card group flex h-full flex-col rounded-2xl border border-line bg-surface/80 p-5 transition hover:border-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent";
+  "ld-card group flex h-full flex-col rounded-2xl p-5 transition hover:border-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent";
 
 /** "For judges": three direct ways in. The case link uses the first real incident from the API. */
 export function TryIt() {
