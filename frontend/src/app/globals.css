@@ -107,3 +107,328 @@ body {
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: none; }
 }
+
+/* ───────────────────────── Landing page (ld-*) ─────────────────────────
+   Native scroll only. Everything that moves animates transform/opacity, and
+   nothing moves for people who prefer reduced motion. */
+.ld-root {
+  overflow-x: clip;
+}
+
+.ld-grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(148, 163, 196, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 196, 0.07) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 75%);
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 75%);
+}
+
+.ld-noise {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  opacity: 0.045;
+}
+
+.ld-gradient-text {
+  background: linear-gradient(100deg, #e6e9f2 0%, #a9c1ff 35%, var(--accent-2) 70%, #a9c1ff 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.ld-glass {
+  background: linear-gradient(180deg, rgba(19, 26, 43, 0.82), rgba(13, 18, 32, 0.72));
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.ld-card {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(180deg, rgba(19, 26, 43, 0.7), rgba(13, 18, 32, 0.7));
+  border: 1px solid var(--line);
+  transition: border-color 300ms ease, transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ld-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, -20%), rgba(91, 140, 255, 0.14), transparent 45%);
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.ld-card:hover {
+  border-color: var(--line-strong);
+}
+.ld-card:hover::before {
+  opacity: 1;
+}
+
+.ld-btn-primary {
+  background: linear-gradient(180deg, #6e9bff, #4a7bf2);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12) inset, 0 14px 40px -12px rgba(91, 140, 255, 0.75);
+}
+.ld-btn-primary:hover {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18) inset, 0 18px 50px -12px rgba(91, 140, 255, 0.95);
+}
+
+.ld-bar {
+  transform-origin: left center;
+}
+
+/* Story stage: state changes glide between steps. */
+.ld-t {
+  transition:
+    opacity 600ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1),
+    stroke-dashoffset 1200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ld-fb {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+.ld-fc {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.ld-marquee {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Scroll reveals: armed by RevealObserver only once JS is running, so content
+     is never hidden without it. */
+  .ld-armed .ld-reveal {
+    transition:
+      opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(var(--d, 0) * 90ms);
+  }
+  .ld-armed .ld-reveal:not(.ld-in) {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  .ld-armed .ld-reveal.ld-now {
+    transition: none;
+  }
+  .ld-armed .ld-reveal .ld-bar {
+    transition: transform 1300ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(250ms + var(--bd, 0) * 120ms);
+  }
+  .ld-armed .ld-reveal:not(.ld-in) .ld-bar {
+    transform: scaleX(0);
+  }
+
+  .ld-rise {
+    animation: ld-rise 1000ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--d, 0) * 110ms);
+  }
+  .ld-gradient-text {
+    animation: ld-shine 8s ease-in-out infinite;
+  }
+  .ld-float {
+    animation: ld-float 7s ease-in-out infinite;
+  }
+  .ld-float-slow {
+    animation: ld-float 9s ease-in-out -3s infinite;
+  }
+  .ld-aurora-a {
+    animation: ld-drift-a 18s ease-in-out infinite alternate;
+  }
+  .ld-aurora-b {
+    animation: ld-drift-b 22s ease-in-out infinite alternate;
+  }
+  .ld-marquee-track {
+    animation: ld-marquee 40s linear infinite;
+  }
+  .ld-marquee:hover .ld-marquee-track {
+    animation-play-state: paused;
+  }
+  .ld-ping {
+    animation: ld-ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+  .ld-blink {
+    animation: ld-blink 3.2s ease-in-out infinite;
+  }
+
+  .ld-merge {
+    animation: ld-merge 1500ms cubic-bezier(0.65, 0, 0.35, 1) both;
+  }
+  .ld-pulse-once {
+    animation: ld-pulse-once 1200ms ease-out both;
+  }
+
+  /* Hero map: one 10 s loop. Three reports land, converge into one incident,
+     the nearest crew drives in, and the case closes with evidence. */
+  .ld-hm-pin {
+    animation: ld-hm-pin 10s cubic-bezier(0.22, 1, 0.36, 1) infinite both;
+  }
+  .ld-hm-pin-ring {
+    animation: ld-hm-ring 10s ease-out infinite both;
+  }
+  .ld-hm-radius {
+    animation: ld-hm-radius 10s cubic-bezier(0.22, 1, 0.36, 1) infinite both;
+  }
+  .ld-hm-incident {
+    animation: ld-hm-incident 10s cubic-bezier(0.22, 1, 0.36, 1) infinite both;
+  }
+  .ld-hm-incident-glow {
+    animation: ld-hm-glow 10s ease-in-out infinite both;
+  }
+  .ld-hm-ok {
+    animation: ld-hm-ok 10s cubic-bezier(0.22, 1, 0.36, 1) infinite both;
+  }
+  .ld-hm-crew {
+    animation: ld-hm-crew 10s linear infinite both;
+  }
+  .ld-hm-route {
+    stroke-dasharray: 220;
+    animation: ld-hm-route 10s linear infinite both;
+  }
+  .ld-hm-link {
+    animation: ld-hm-link 10s ease-out infinite both;
+  }
+  .ld-hm-label {
+    animation: ld-hm-label 10s ease-out infinite both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ld-t {
+    transition: none;
+  }
+  /* Hero map at rest: the merged, verified incident with the crew on site. */
+  .ld-hm-pin,
+  .ld-hm-pin-ring,
+  .ld-hm-radius,
+  .ld-hm-link {
+    opacity: 0;
+  }
+  .ld-hm-crew {
+    transform: translate(var(--cx), var(--cy));
+  }
+}
+
+@keyframes ld-rise {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes ld-shine {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes ld-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes ld-drift-a {
+  from { transform: translate3d(-6%, -4%, 0) scale(1); }
+  to { transform: translate3d(8%, 6%, 0) scale(1.15); }
+}
+@keyframes ld-drift-b {
+  from { transform: translate3d(6%, 4%, 0) scale(1.1); }
+  to { transform: translate3d(-8%, -6%, 0) scale(0.95); }
+}
+@keyframes ld-marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes ld-ping {
+  0% { transform: scale(0.6); opacity: 0.8; }
+  80%, 100% { transform: scale(2.4); opacity: 0; }
+}
+@keyframes ld-blink {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.9; }
+}
+
+/* Each pin lands at its own delay (--t0), then slides by (--dx, --dy) into the incident. */
+@keyframes ld-hm-pin {
+  0% { opacity: 0; transform: translate(0, -26px) scale(0.6); }
+  4% { opacity: 0; transform: translate(0, -26px) scale(0.6); }
+  10% { opacity: 1; transform: translate(0, 0) scale(1); }
+  30% { opacity: 1; transform: translate(0, 0) scale(1); }
+  40% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.4); }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.4); }
+}
+@keyframes ld-hm-ring {
+  0%, 8% { opacity: 0; transform: scale(0.3); }
+  10% { opacity: 0.9; transform: scale(0.3); }
+  24% { opacity: 0; transform: scale(2.6); }
+  100% { opacity: 0; transform: scale(2.6); }
+}
+@keyframes ld-hm-radius {
+  0%, 14% { opacity: 0; transform: scale(0.6); }
+  24% { opacity: 1; transform: scale(1); }
+  42% { opacity: 1; transform: scale(1); }
+  50%, 100% { opacity: 0; transform: scale(1.08); }
+}
+@keyframes ld-hm-incident {
+  0%, 34% { opacity: 0; transform: scale(0.2); }
+  42% { opacity: 1; transform: scale(1.12); }
+  46% { opacity: 1; transform: scale(1); }
+  92% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.9); }
+}
+@keyframes ld-hm-glow {
+  0%, 36% { opacity: 0; transform: scale(0.4); }
+  46% { opacity: 1; transform: scale(1); }
+  70% { opacity: 0.6; transform: scale(1.2); }
+  76% { opacity: 1; transform: scale(1); }
+  92% { opacity: 0.8; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(1.3); }
+}
+@keyframes ld-hm-ok {
+  0%, 72% { opacity: 0; transform: scale(0.3); }
+  77% { opacity: 1; transform: scale(1.15); }
+  80% { opacity: 1; transform: scale(1); }
+  92% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1); }
+}
+@keyframes ld-hm-crew {
+  0%, 46% { opacity: 0; transform: translate(0, 0); }
+  50% { opacity: 1; transform: translate(0, 0); }
+  57.9% { transform: translate(var(--jx), var(--jy)); }
+  65.7% { transform: translate(var(--kx), var(--ky)); }
+  68% { opacity: 1; transform: translate(var(--cx), var(--cy)); }
+  92% { opacity: 1; transform: translate(var(--cx), var(--cy)); }
+  100% { opacity: 0; transform: translate(var(--cx), var(--cy)); }
+}
+@keyframes ld-hm-route {
+  0%, 48% { opacity: 0; stroke-dashoffset: 220; }
+  50% { opacity: 1; stroke-dashoffset: 220; }
+  68% { opacity: 1; stroke-dashoffset: 0; }
+  88% { opacity: 1; stroke-dashoffset: 0; }
+  96%, 100% { opacity: 0; stroke-dashoffset: 0; }
+}
+@keyframes ld-hm-link {
+  0%, 22% { opacity: 0; }
+  28% { opacity: 0.9; }
+  38% { opacity: 0.9; }
+  42%, 100% { opacity: 0; }
+}
+@keyframes ld-hm-label {
+  0%, 40% { opacity: 0; transform: translateY(6px); }
+  46% { opacity: 1; transform: none; }
+  92% { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: none; }
+}
+
+/* Story stage: a duplicate report appears at its own spot, then slides into the case. */
+@keyframes ld-merge {
+  0% { opacity: 0; transform: translate(var(--dx), calc(var(--dy) - 18px)); }
+  20% { opacity: 1; transform: translate(var(--dx), var(--dy)); }
+  60% { opacity: 1; transform: translate(var(--dx), var(--dy)); }
+  100% { opacity: 0; transform: translate(0, 0) scale(0.5); }
+}
+@keyframes ld-pulse-once {
+  0% { opacity: 0.9; transform: scale(0.4); }
+  100% { opacity: 0; transform: scale(2.2); }
+}
