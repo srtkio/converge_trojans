@@ -18,7 +18,7 @@ Click **Next step** on Sarthak's cue. After steps 3, 5, 7 and 10, pause so judge
 
 ## Judge questions you take
 - *Is this live or a video?* Live, against our running backend; the scenario is replayable.
-- *Can I file a report?* Yes, use the form on the right; pick "MG Road, 60 m east" to show a duplicate link.
+- *Can I file a report?* Yes, use the form on the right; pick a nearby place from the list to show a duplicate link.
 
 ## Pitch running order (5 min + Q&A)
 | # | Section | Presenter | Time |

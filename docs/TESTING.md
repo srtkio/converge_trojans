@@ -50,7 +50,7 @@ answers, and you can stop at any time."
 
 **0:30 – 4:00. Citizen task (phone).**
 Hand over the phone with https://converge-web-ten.vercel.app/track/inc_001 open.
-"A water leak was reported near MG Road, and a crew says it's fixed. Please look at this case and
+"A water leak was reported on the main road, and a crew says it's fixed. Please look at this case and
 tell me what you think is happening."
 - Watch for: can they find the status, the deadline, and the crew without help?
 - Ask: "Is it fixed?" Let them press a button. Note which one they pressed and whether they
