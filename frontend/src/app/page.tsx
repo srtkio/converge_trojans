@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, GitMerge, LayoutDashboard, MapPin, Network, RotateCcw, ScrollText, Siren, Truck } from "lucide-react";
+import { ArrowRight, LayoutDashboard, MapPin } from "lucide-react";
 
 import { FeatureGrid } from "@/components/landing/FeatureGrid";
 import { HeroMap } from "@/components/landing/HeroMap";
@@ -58,39 +58,8 @@ function SectionHead({ eyebrow, title, body }: { eyebrow: string; title: ReactNo
   return (
     <div className="ld-reveal max-w-2xl">
       <p className="font-mono text-xs font-medium uppercase tracking-[0.22em] text-accent">{eyebrow}</p>
-      <h2 className="mt-4 text-[2rem] font-semibold leading-[1.1] tracking-tight text-foreground sm:text-5xl">{title}</h2>
+      <h2 className="mt-3 text-[2rem] font-semibold leading-[1.1] tracking-tight text-foreground sm:text-[2.75rem]">{title}</h2>
       {body && <p className="mt-5 text-lg leading-relaxed text-muted">{body}</p>}
-    </div>
-  );
-}
-
-const CAPABILITIES = [
-  { icon: GitMerge, text: "Duplicate merge · 150 m / 72 h" },
-  { icon: Network, text: "Shared root-cause linking" },
-  { icon: Truck, text: "Nearest-crew dispatch" },
-  { icon: Siren, text: "SLA escalation ladder" },
-  { icon: BadgeCheck, text: "Evidence-gated closure" },
-  { icon: RotateCcw, text: "Citizen “still broken” reopens" },
-  { icon: ScrollText, text: "Audit trail on every case" },
-];
-
-function CapabilityStrip() {
-  const row = (hidden: boolean) => (
-    <ul className="flex shrink-0 items-center gap-3 pr-3" aria-hidden={hidden || undefined}>
-      {CAPABILITIES.map(({ icon: Icon, text }) => (
-        <li key={text} className="flex items-center gap-2 whitespace-nowrap rounded-full border border-line bg-surface/70 px-4 py-2 text-sm text-foreground/85">
-          <Icon aria-hidden="true" className="h-4 w-4 text-accent-2" />
-          {text}
-        </li>
-      ))}
-    </ul>
-  );
-  return (
-    <div className="ld-marquee overflow-hidden py-2">
-      <div className="ld-marquee-track flex w-max">
-        {row(false)}
-        {row(true)}
-      </div>
     </div>
   );
 }
@@ -99,9 +68,6 @@ export default function Home() {
   return (
     <main id={ROOT_ID} className="ld-root ld-emerald relative min-h-dvh bg-background text-foreground">
       <RevealObserver rootId={ROOT_ID} />
-
-      {/* Ambient layers */}
-      <div aria-hidden="true" className="ld-noise pointer-events-none fixed inset-0 z-0" />
 
       {/* Nav */}
       <header className="fixed inset-x-0 top-0 z-50 border-b border-line bg-background/70 backdrop-blur-md">
@@ -127,18 +93,12 @@ export default function Home() {
 
       {/* Hero */}
       <section className="relative isolate overflow-hidden pt-16">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-          <div className="ld-mesh absolute -inset-[10%]" />
-          <div className="ld-grid-bg absolute inset-0" />
-          <div className="ld-aurora-a absolute -left-[20%] -top-[30%] h-[70vh] w-[80vw] rounded-full bg-[radial-gradient(closest-side,rgba(16,185,129,0.32),transparent)]" />
-          <div className="ld-aurora-b absolute -right-[20%] top-[10%] h-[60vh] w-[70vw] rounded-full bg-[radial-gradient(closest-side,rgba(94,234,212,0.18),transparent)]" />
-          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background" />
-        </div>
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[640px] bg-[radial-gradient(60%_55%_at_50%_0%,rgba(16,185,129,0.14),transparent)]" />
 
-        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 pb-16 pt-12 sm:px-6 sm:pt-20 lg:min-h-[calc(100dvh-4rem)] lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:gap-10 lg:pb-24 lg:pt-10">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 pb-16 pt-12 sm:px-6 sm:pt-20 lg:min-h-[calc(100dvh-8rem)] lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:gap-10 lg:pb-24 lg:pt-10">
           <div>
             <div className="ld-rise" style={d(0)}>
-              <span className="inline-flex max-w-full items-center gap-2 rounded-full border border-line-strong bg-surface/80 py-1 pl-1.5 pr-3 text-xs font-medium text-foreground/90 backdrop-blur">
+              <span className="inline-flex max-w-full items-center gap-2 rounded-full border border-line bg-surface py-1 pl-1.5 pr-3 text-xs font-medium text-foreground/90">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-ok/15 px-2 py-0.5 text-ok">
                   <span className="relative flex h-1.5 w-1.5">
                     <span className="ld-ping absolute inline-flex h-full w-full rounded-full bg-ok" />
@@ -153,7 +113,7 @@ export default function Home() {
             <h1 className="ld-rise mt-7 text-[2.6rem] font-semibold leading-[1.02] tracking-[-0.03em] sm:text-6xl xl:text-7xl" style={d(1)}>
               City complaints,
               <br />
-              <span className="ld-gradient-text">closed only when they&rsquo;re really fixed.</span>
+              <span className="text-accent">closed only when they&rsquo;re really fixed.</span>
             </h1>
 
             <p className="ld-rise mt-6 max-w-xl text-lg leading-relaxed text-muted sm:text-xl" style={d(2)}>
@@ -178,30 +138,9 @@ export default function Home() {
           </div>
 
           <div className="ld-rise relative mx-auto w-full max-w-[520px]" style={d(2)}>
-            <div aria-hidden="true" className="absolute -inset-8 -z-10 rounded-[3rem] bg-[radial-gradient(closest-side,rgba(16,185,129,0.28),transparent)]" />
-            <div className="overflow-hidden rounded-[28px] shadow-[0_50px_120px_-40px_rgba(16,185,129,0.55)]">
+            <div className="overflow-hidden rounded-2xl border border-line shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)]">
               <HeroMap />
             </div>
-            <div className="ld-glass ld-float absolute -left-3 top-8 hidden rounded-2xl px-4 py-3 sm:block lg:-left-10">
-              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent-2">Dedup</p>
-              <p className="mt-1 text-sm font-semibold text-foreground">Duplicate reports → 1 case</p>
-              <p className="text-xs text-muted">within 150 m · 72 h</p>
-            </div>
-            <div className="ld-glass ld-float-slow absolute -right-3 bottom-10 hidden rounded-2xl px-4 py-3 sm:block lg:-right-8">
-              <p className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
-                <BadgeCheck aria-hidden="true" className="h-4 w-4 text-ok" /> Closed with evidence
-              </p>
-              <p className="mt-0.5 text-xs text-muted">Not just because someone said “done”</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="relative pb-10">
-          <p className="ld-rise mb-4 text-center font-mono text-[11px] uppercase tracking-[0.22em] text-muted" style={d(5)}>
-            What the system actually does
-          </p>
-          <div className="ld-rise mx-auto max-w-6xl" style={d(5)}>
-            <CapabilityStrip />
           </div>
         </div>
       </section>
@@ -227,8 +166,7 @@ export default function Home() {
       </section>
 
       {/* Features */}
-      <section id="features" className="relative z-10 scroll-mt-20 px-4 py-24 sm:px-6 sm:py-32">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-px max-w-4xl bg-gradient-to-r from-transparent via-line-strong to-transparent" />
+      <section id="features" className="relative z-10 scroll-mt-20 px-4 py-20 sm:px-6 sm:py-28">
         <div className="mx-auto max-w-6xl">
           <SectionHead
             eyebrow="Features"
@@ -247,7 +185,6 @@ export default function Home() {
 
       {/* Try it */}
       <section id="try" className="relative z-10 scroll-mt-20 px-4 py-20 sm:px-6 sm:py-28">
-        <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/3 -z-10 h-[50vh] w-[90vw] max-w-5xl -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(16,185,129,0.12),transparent)]" />
         <div className="mx-auto max-w-6xl">
           <SectionHead
             eyebrow="For judges"
@@ -266,16 +203,13 @@ export default function Home() {
 
       {/* Final CTA */}
       <section className="relative z-10 px-4 pb-24 pt-8 sm:px-6 sm:pb-32">
-        <div className="ld-reveal relative mx-auto max-w-6xl overflow-hidden rounded-[28px] border border-line-strong bg-surface px-6 py-14 sm:px-12 sm:py-20">
-          <div aria-hidden="true" className="ld-grid-bg absolute inset-0 opacity-70" />
-          <div aria-hidden="true" className="ld-aurora-a absolute -left-1/4 -top-1/2 h-[140%] w-[80%] rounded-full bg-[radial-gradient(closest-side,rgba(16,185,129,0.3),transparent)]" />
-          <div aria-hidden="true" className="ld-aurora-b absolute -bottom-1/2 -right-1/4 h-[140%] w-[70%] rounded-full bg-[radial-gradient(closest-side,rgba(94,234,212,0.18),transparent)]" />
+        <div className="ld-reveal relative mx-auto max-w-6xl overflow-hidden rounded-2xl border border-line bg-surface px-6 py-12 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.9)] sm:px-12 sm:py-16">
           <div className="relative grid items-end gap-10 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
             <div>
               <h2 className="text-[2rem] font-semibold leading-[1.08] tracking-tight sm:text-5xl">
                 See something broken?
                 <br />
-                <span className="ld-gradient-text">Report it. Watch it get fixed.</span>
+                <span className="text-accent">Report it. Watch it get fixed.</span>
               </h2>
               <p className="mt-5 max-w-lg text-lg text-muted">Citizens report in seconds. Operators see one clean queue with deadlines and evidence.</p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -283,7 +217,7 @@ export default function Home() {
                 <SecondaryCta />
               </div>
             </div>
-            <div className="rounded-2xl border border-line bg-background/50 p-5 backdrop-blur">
+            <div className="rounded-2xl border border-line bg-background/60 p-5">
               <TrackCase />
             </div>
           </div>

@@ -142,7 +142,7 @@ export function FeatureGrid() {
           className={`ld-card ld-reveal flex flex-col rounded-2xl p-6 sm:p-7 ${f.span ?? ""} ${f.wide ? "sm:col-span-2" : ""}`}
           style={{ "--d": i % 3 } as CSSProperties}
         >
-          <span className={`grid h-10 w-10 place-items-center rounded-xl border border-line-strong bg-surface-2 ${f.tone}`}>{f.icon}</span>
+          <span className={`grid h-10 w-10 place-items-center rounded-xl border border-line-strong bg-surface-2 text-accent`}>{f.icon}</span>
           <h3 className="mt-5 text-lg font-semibold tracking-tight text-foreground">{f.title}</h3>
           <p className="mt-2 text-[15px] leading-relaxed text-muted">{f.body}</p>
           {f.visual}
