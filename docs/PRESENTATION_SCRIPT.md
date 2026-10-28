@@ -94,7 +94,7 @@ Answers are in each person's `team/<name>/PRESENTER.md`. Quick answers:
 
 ## Known limits to state honestly
 
-- Sign-in is demo-grade. Citizen photos are not stored yet. AI is off on the live site.
+- Sign-in is demo-grade. Citizen photos ARE stored and shown to operators (hidden GPS/EXIF data is removed first). AI is off on the live site.
 - The map covers only the demo area around MG Road.
 - The live backend sleeps when idle.
 
