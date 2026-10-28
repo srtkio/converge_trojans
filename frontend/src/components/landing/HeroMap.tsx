@@ -70,7 +70,7 @@ export function HeroMap() {
           <stop offset="100%" stopColor="#070a12" />
         </radialGradient>
         <radialGradient id="ld-hm-glow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#5b8cff" stopOpacity="0.55" />
+          <stop offset="0%" stopColor="#10b981" stopOpacity="0.55" />
           <stop offset="45%" stopColor="#22d3ee" stopOpacity="0.18" />
           <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
         </radialGradient>
@@ -80,7 +80,7 @@ export function HeroMap() {
         </linearGradient>
         <linearGradient id="ld-hm-route" x1="0" y1="1" x2="1" y2="0">
           <stop offset="0%" stopColor="#22d3ee" />
-          <stop offset="100%" stopColor="#5b8cff" />
+          <stop offset="100%" stopColor="#10b981" />
         </linearGradient>
         <clipPath id="ld-hm-clip">
           <rect width="520" height="520" rx="28" />
@@ -99,7 +99,7 @@ export function HeroMap() {
           <rect x="20" y="210" width="130" height="90" rx="10" />
         </g>
         {/* Rishihood University campus */}
-        <rect x="40" y="350" width="118" height="70" rx="12" fill="rgba(91,140,255,0.08)" stroke="rgba(91,140,255,0.35)" strokeDasharray="4 4" />
+        <rect x="40" y="350" width="118" height="70" rx="12" fill="rgba(16,185,129,0.08)" stroke="rgba(16,185,129,0.35)" strokeDasharray="4 4" />
 
         {/* Minor streets */}
         <g stroke="rgba(148,163,196,0.16)" strokeWidth="5" strokeLinecap="round" fill="none">
@@ -188,7 +188,7 @@ export function HeroMap() {
           <circle r="70" fill="url(#ld-hm-glow)" className="ld-hm-incident-glow ld-fc" cy="-16" />
           <g className="ld-hm-incident ld-fb">
             <ellipse cx={0} cy={3} rx={10} ry={3.5} fill="#000" opacity={0.5} />
-            <path d="M0 0 C -16 -19 -16 -42 0 -46 C 16 -42 16 -19 0 0 Z" fill="#5b8cff" stroke="#e6e9f2" strokeWidth="2.5" />
+            <path d="M0 0 C -16 -19 -16 -42 0 -46 C 16 -42 16 -19 0 0 Z" fill="#10b981" stroke="#e6e9f2" strokeWidth="2.5" />
             <text x="0" y="-22" textAnchor="middle" fontSize="15" fontWeight="700" fill="#fff" fontFamily="var(--font-geist-sans), system-ui, sans-serif">
               3
             </text>
@@ -200,7 +200,7 @@ export function HeroMap() {
             </g>
           </g>
           <g className="ld-hm-label" transform="translate(-74 -96)">
-            <rect width="148" height="28" rx="14" fill="rgba(13,18,32,0.92)" stroke="rgba(91,140,255,0.55)" />
+            <rect width="148" height="28" rx="14" fill="rgba(13,18,32,0.92)" stroke="rgba(16,185,129,0.55)" />
             <text x="74" y="18.5" textAnchor="middle" fontSize="12.5" fontWeight="600" fill="#e6e9f2" fontFamily="var(--font-geist-sans), system-ui, sans-serif">
               1 incident · 3 reports
             </text>

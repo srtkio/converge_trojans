@@ -47,7 +47,7 @@ function DedupVisual() {
       <span className="absolute left-[calc(50%-26px)] top-[calc(50%-18px)] h-2.5 w-2.5 rounded-full bg-warn" />
       <span className="absolute left-[calc(50%+16px)] top-[calc(50%-8px)] h-2.5 w-2.5 rounded-full bg-warn" />
       <span className="absolute left-[calc(50%-6px)] top-[calc(50%+14px)] h-2.5 w-2.5 rounded-full bg-warn" />
-      <span className="absolute left-1/2 top-1/2 grid h-7 w-7 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-accent text-xs font-bold text-white shadow-[0_0_24px_rgba(91,140,255,0.8)]">
+      <span className="absolute left-1/2 top-1/2 grid h-7 w-7 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-accent text-xs font-bold text-white shadow-[0_0_24px_rgba(16,185,129,0.8)]">
         1
       </span>
       <span className="absolute bottom-2 right-3 font-mono text-[11px] text-accent-2">150 m · 72 h</span>
