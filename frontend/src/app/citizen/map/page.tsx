@@ -179,12 +179,12 @@ export default function MapPage() {
                   onClick={() => setSelected(incident.id)}
                   className="flex w-full items-center gap-3 rounded-xl bg-white p-3 text-left shadow-sm ring-1 ring-slate-200 transition hover:ring-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 motion-safe:active:scale-[0.99]"
                 >
-                  <span aria-hidden="true" className="text-2xl">
+                  <span aria-hidden="true" className="shrink-0 text-2xl">
                     {CATEGORY_ICON[incident.category]}
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-medium">{incident.title}</span>
-                    <span className="block text-xs text-slate-500">
+                    <span className="line-clamp-2 break-words text-sm font-medium leading-snug">{incident.title}</span>
+                    <span className="mt-0.5 block text-xs text-slate-500">
                       {CITIZEN_STATUS_LABEL[incident.status] ?? "Open"} · {formatMetres(d)} away ·{" "}
                       {incident.report_ids.length} {incident.report_ids.length === 1 ? "report" : "reports"}
                     </span>

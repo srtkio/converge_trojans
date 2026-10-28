@@ -2,12 +2,14 @@ import type { CSSProperties, ReactNode } from "react";
 import Link from "next/link";
 import { ArrowRight, BadgeCheck, GitMerge, LayoutDashboard, MapPin, Network, RotateCcw, ScrollText, Siren, Truck } from "lucide-react";
 
-import { Comparison } from "@/components/landing/Comparison";
 import { FeatureGrid } from "@/components/landing/FeatureGrid";
 import { HeroMap } from "@/components/landing/HeroMap";
-import { LoopStory } from "@/components/landing/LoopStory";
+import { HowItWorks } from "@/components/landing/HowItWorks";
+import { LiveProof } from "@/components/landing/LiveProof";
 import { RevealObserver } from "@/components/landing/RevealObserver";
 import { TrackCase } from "@/components/landing/TrackCase";
+import { TryIt } from "@/components/landing/TryIt";
+import "@/components/landing/landing-live.css";
 
 const ROOT_ID = "ld-root";
 
@@ -16,7 +18,7 @@ const d = (n: number) => ({ "--d": n }) as CSSProperties;
 function Logo() {
   return (
     <span className="inline-flex items-center gap-2.5">
-      <span aria-hidden="true" className="relative grid h-8 w-8 place-items-center rounded-[10px] bg-gradient-to-br from-accent to-accent-2 shadow-[0_8px_24px_-8px_rgba(91,140,255,0.9)]">
+      <span aria-hidden="true" className="relative grid h-8 w-8 place-items-center rounded-[10px] bg-gradient-to-br from-accent to-accent-2 shadow-[0_8px_24px_-8px_rgba(16,185,129,0.9)]">
         <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="#070a12" strokeWidth="2.6" strokeLinecap="round">
           <path d="M4 5l8 7M20 5l-8 7M12 21v-9" />
           <circle cx="12" cy="12" r="1.6" fill="#070a12" stroke="none" />
@@ -34,7 +36,7 @@ function PrimaryCta({ className = "" }: { className?: string }) {
       className={`ld-btn-primary group inline-flex h-12 items-center justify-center gap-2 rounded-xl px-6 text-base font-semibold text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-safe:active:scale-[0.98] ${className}`}
     >
       <MapPin aria-hidden="true" className="h-4 w-4" />
-      Report a problem
+      I&rsquo;m a citizen
       <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform motion-safe:group-hover:translate-x-0.5" />
     </Link>
   );
@@ -47,7 +49,7 @@ function SecondaryCta({ className = "" }: { className?: string }) {
       className={`group inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-line-strong bg-white/[0.03] px-6 text-base font-semibold text-foreground transition hover:border-accent/60 hover:bg-white/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent motion-safe:active:scale-[0.98] ${className}`}
     >
       <LayoutDashboard aria-hidden="true" className="h-4 w-4 text-muted transition-colors group-hover:text-accent" />
-      Operator console
+      I work for a department
     </Link>
   );
 }
@@ -95,7 +97,7 @@ function CapabilityStrip() {
 
 export default function Home() {
   return (
-    <main id={ROOT_ID} className="ld-root relative min-h-dvh bg-background text-foreground">
+    <main id={ROOT_ID} className="ld-root ld-emerald relative min-h-dvh bg-background text-foreground">
       <RevealObserver rootId={ROOT_ID} />
 
       {/* Ambient layers */}
@@ -110,7 +112,7 @@ export default function Home() {
           <div className="hidden items-center gap-8 text-sm text-muted md:flex">
             <a href="#how" className="transition-colors hover:text-foreground">How it works</a>
             <a href="#features" className="transition-colors hover:text-foreground">Features</a>
-            <a href="#results" className="transition-colors hover:text-foreground">Results</a>
+            <a href="#try" className="transition-colors hover:text-foreground">Try it</a>
           </div>
           <div className="flex items-center gap-2">
             <Link href="/operator" className="hidden h-9 items-center rounded-lg px-3 text-sm font-medium text-muted transition-colors hover:text-foreground sm:inline-flex">
@@ -126,9 +128,10 @@ export default function Home() {
       {/* Hero */}
       <section className="relative isolate overflow-hidden pt-16">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+          <div className="ld-mesh absolute -inset-[10%]" />
           <div className="ld-grid-bg absolute inset-0" />
-          <div className="ld-aurora-a absolute -left-[20%] -top-[30%] h-[70vh] w-[80vw] rounded-full bg-[radial-gradient(closest-side,rgba(91,140,255,0.32),transparent)]" />
-          <div className="ld-aurora-b absolute -right-[20%] top-[10%] h-[60vh] w-[70vw] rounded-full bg-[radial-gradient(closest-side,rgba(34,211,238,0.18),transparent)]" />
+          <div className="ld-aurora-a absolute -left-[20%] -top-[30%] h-[70vh] w-[80vw] rounded-full bg-[radial-gradient(closest-side,rgba(16,185,129,0.32),transparent)]" />
+          <div className="ld-aurora-b absolute -right-[20%] top-[10%] h-[60vh] w-[70vw] rounded-full bg-[radial-gradient(closest-side,rgba(94,234,212,0.18),transparent)]" />
           <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background" />
         </div>
 
@@ -165,9 +168,9 @@ export default function Home() {
 
             <div className="ld-rise mt-7 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted" style={d(4)}>
               <span>Try the live demo:</span>
-              <Link href="/track/inc_001" className="font-medium text-foreground/90 underline decoration-line-strong underline-offset-4 transition hover:decoration-accent">
-                Track case inc_001
-              </Link>
+              <a href="#try" className="font-medium text-foreground/90 underline decoration-line-strong underline-offset-4 transition hover:decoration-accent">
+                Judges: 30-second tour
+              </a>
               <Link href="/citizen/map" className="font-medium text-foreground/90 underline decoration-line-strong underline-offset-4 transition hover:decoration-accent">
                 Citizen map
               </Link>
@@ -175,13 +178,13 @@ export default function Home() {
           </div>
 
           <div className="ld-rise relative mx-auto w-full max-w-[520px]" style={d(2)}>
-            <div aria-hidden="true" className="absolute -inset-8 -z-10 rounded-[3rem] bg-[radial-gradient(closest-side,rgba(91,140,255,0.28),transparent)]" />
-            <div className="overflow-hidden rounded-[28px] shadow-[0_50px_120px_-40px_rgba(91,140,255,0.55)]">
+            <div aria-hidden="true" className="absolute -inset-8 -z-10 rounded-[3rem] bg-[radial-gradient(closest-side,rgba(16,185,129,0.28),transparent)]" />
+            <div className="overflow-hidden rounded-[28px] shadow-[0_50px_120px_-40px_rgba(16,185,129,0.55)]">
               <HeroMap />
             </div>
             <div className="ld-glass ld-float absolute -left-3 top-8 hidden rounded-2xl px-4 py-3 sm:block lg:-left-10">
               <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-accent-2">Dedup</p>
-              <p className="mt-1 text-sm font-semibold text-foreground">3 reports → 1 case</p>
+              <p className="mt-1 text-sm font-semibold text-foreground">Duplicate reports → 1 case</p>
               <p className="text-xs text-muted">within 150 m · 72 h</p>
             </div>
             <div className="ld-glass ld-float-slow absolute -right-3 bottom-10 hidden rounded-2xl px-4 py-3 sm:block lg:-right-8">
@@ -203,20 +206,22 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Scroll story */}
-      <section id="how" className="relative z-10 scroll-mt-20 px-4 py-24 sm:px-6 sm:py-32">
+      <LiveProof />
+
+      {/* How it works */}
+      <section id="how" className="relative z-10 scroll-mt-20 px-4 py-20 sm:px-6 sm:py-28">
         <div className="mx-auto max-w-6xl">
           <SectionHead
             eyebrow="How it works"
             title={
               <>
-                Follow one complaint, <span className="text-muted">from report to verified repair.</span>
+                How one complaint <span className="text-muted">gets fixed.</span>
               </>
             }
-            body="Report, dedupe, assign, deadline, evidence, verified close. Scroll through the loop CONVERGE runs for every case."
+            body="Five steps CONVERGE runs for every case, on the real Murthal–Sonipat corridor."
           />
-          <div className="mt-16 sm:mt-20">
-            <LoopStory />
+          <div className="mt-12 sm:mt-14">
+            <HowItWorks />
           </div>
         </div>
       </section>
@@ -240,21 +245,21 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Results */}
-      <section id="results" className="relative z-10 scroll-mt-20 px-4 py-24 sm:px-6 sm:py-32">
-        <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/3 -z-10 h-[50vh] w-[90vw] max-w-5xl -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(91,140,255,0.12),transparent)]" />
+      {/* Try it */}
+      <section id="try" className="relative z-10 scroll-mt-20 px-4 py-20 sm:px-6 sm:py-28">
+        <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/3 -z-10 h-[50vh] w-[90vw] max-w-5xl -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(16,185,129,0.12),transparent)]" />
         <div className="mx-auto max-w-6xl">
           <SectionHead
-            eyebrow="Naive ticketing vs CONVERGE"
+            eyebrow="For judges"
             title={
               <>
-                Same scenario. <span className="text-muted">Fewer jobs, fewer trips, no false closures.</span>
+                Try it in 30 seconds. <span className="text-muted">Three ways in.</span>
               </>
             }
-            body="We ran the demo scenario through a naive system (one work order per report, every “done” accepted) and through CONVERGE."
+            body="Everything below runs against the live backend: the same data the counters and the map above are showing."
           />
-          <div className="mt-14">
-            <Comparison />
+          <div className="ld-reveal mt-12">
+            <TryIt />
           </div>
         </div>
       </section>
@@ -263,8 +268,8 @@ export default function Home() {
       <section className="relative z-10 px-4 pb-24 pt-8 sm:px-6 sm:pb-32">
         <div className="ld-reveal relative mx-auto max-w-6xl overflow-hidden rounded-[28px] border border-line-strong bg-surface px-6 py-14 sm:px-12 sm:py-20">
           <div aria-hidden="true" className="ld-grid-bg absolute inset-0 opacity-70" />
-          <div aria-hidden="true" className="ld-aurora-a absolute -left-1/4 -top-1/2 h-[140%] w-[80%] rounded-full bg-[radial-gradient(closest-side,rgba(91,140,255,0.3),transparent)]" />
-          <div aria-hidden="true" className="ld-aurora-b absolute -bottom-1/2 -right-1/4 h-[140%] w-[70%] rounded-full bg-[radial-gradient(closest-side,rgba(34,211,238,0.18),transparent)]" />
+          <div aria-hidden="true" className="ld-aurora-a absolute -left-1/4 -top-1/2 h-[140%] w-[80%] rounded-full bg-[radial-gradient(closest-side,rgba(16,185,129,0.3),transparent)]" />
+          <div aria-hidden="true" className="ld-aurora-b absolute -bottom-1/2 -right-1/4 h-[140%] w-[70%] rounded-full bg-[radial-gradient(closest-side,rgba(94,234,212,0.18),transparent)]" />
           <div className="relative grid items-end gap-10 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
             <div>
               <h2 className="text-[2rem] font-semibold leading-[1.08] tracking-tight sm:text-5xl">

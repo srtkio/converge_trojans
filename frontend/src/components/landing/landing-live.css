@@ -1,0 +1,59 @@
+/* Landing additions: emerald brand on the dark landing, live map pins, step cards.
+   Movement is transform/opacity only and switched off under reduced motion. */
+.ld-root.ld-emerald {
+  --accent: #10b981;
+  --accent-2: #5eead4;
+}
+.ld-emerald .ld-btn-primary {
+  background: linear-gradient(180deg, #10b981, #047857);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12) inset, 0 14px 40px -12px rgba(16, 185, 129, 0.7);
+}
+.ld-emerald .ld-btn-primary:hover {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18) inset, 0 18px 50px -12px rgba(16, 185, 129, 0.9);
+}
+.ld-emerald .ld-gradient-text {
+  background-image: linear-gradient(100deg, #e6e9f2 0%, #a7f3d0 35%, var(--accent-2) 70%, #a7f3d0 100%);
+}
+.ld-mesh {
+  background:
+    radial-gradient(40% 50% at 20% 20%, rgba(16, 185, 129, 0.28), transparent 70%),
+    radial-gradient(35% 45% at 85% 30%, rgba(94, 234, 212, 0.16), transparent 70%),
+    radial-gradient(45% 40% at 50% 100%, rgba(4, 120, 87, 0.22), transparent 70%);
+}
+.cv-pin-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cv-pin-pulse {
+    animation: cv-pulse 2.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+  .cv-pin {
+    animation: cv-pop 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .cv-road {
+    animation: cv-draw 700ms ease-out both;
+  }
+  .ld-mesh {
+    animation: cv-mesh 16s ease-in-out infinite alternate;
+  }
+}
+@keyframes cv-pulse {
+  0% { transform: scale(0.6); opacity: 0.55; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+@keyframes cv-pop {
+  from { transform: scale(0.2); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes cv-draw {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes cv-mesh {
+  from { transform: translate3d(-2%, -1%, 0) scale(1); }
+  to { transform: translate3d(2%, 1%, 0) scale(1.06); }
+}

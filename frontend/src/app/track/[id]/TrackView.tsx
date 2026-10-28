@@ -261,7 +261,7 @@ export function TrackView({ params }: { params: Promise<{ id: string }> }) {
 
       <Reveal index={1}>
       <section className="grid grid-cols-2 gap-3">
-        <div className={`${CARD} p-4`}>
+        <div className={`${CARD} sm:p-4`}>
           <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Target</p>
           <p className="mt-1 text-lg font-semibold leading-tight">
             {closed ? "Done" : left === null ? "…" : friendlyTimeLeft(left)}
@@ -454,7 +454,7 @@ function CrewCard({
           ? ["Finding a crew", "A supervisor has been alerted"]
           : ["Finding a crew", "Assigned as soon as one is free"];
   return (
-    <div className={`${CARD} p-4`}>
+    <div className={`${CARD} sm:p-4`}>
       <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Crew</p>
       <p className="mt-1 break-words text-lg font-semibold leading-tight">{title}</p>
       <p className="mt-1 text-xs text-slate-500">{detail}</p>
