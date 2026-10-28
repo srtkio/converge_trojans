@@ -49,6 +49,7 @@ Read this to each tester, word for word where quoted.
 answers, and you can stop at any time."
 
 **0:30 – 4:00. Citizen task (phone).**
+- Each tester signs in with a **different first name**: reports are limited to 5 per hour per first name, so two testers called "Asha" would share one limit.
 Hand over the phone with https://converge-web-ten.vercel.app/track/inc_001 open.
 "A water leak was reported near MG Road, and a crew says it's fixed. Please look at this case and
 tell me what you think is happening."
