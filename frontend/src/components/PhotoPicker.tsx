@@ -64,8 +64,8 @@ export function usePhotoField() {
 export type PhotoField = ReturnType<typeof usePhotoField>;
 
 /**
- * "Add a photo": opens the camera or the gallery (no `capture`, so both are offered), then shows a
- * preview, the upload size and "Remove photo".
+ * Two ways to add a photo: "Take a photo" opens the camera straight away (`capture`), "Gallery"
+ * picks an existing one. Then a preview and "Remove photo".
  */
 export function PhotoPicker({
   field,
@@ -77,6 +77,7 @@ export function PhotoPicker({
   hint?: string;
 }) {
   const inputId = useId();
+  const galleryId = useId();
   const hintId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const removeRef = useRef<HTMLButtonElement>(null);
@@ -135,25 +136,54 @@ export function PhotoPicker({
         </div>
       ) : (
         <>
-          <input
-            ref={inputRef}
-            id={inputId}
-            type="file"
-            accept="image/*"
-            onChange={pick}
-            disabled={disabled || preparing}
-            aria-describedby={hintId}
-            className="peer sr-only"
-          />
-          <label
-            htmlFor={inputId}
-            className={`flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 bg-white text-base font-medium text-slate-800 transition peer-focus-visible:ring-2 peer-focus-visible:ring-slate-900 peer-focus-visible:ring-offset-2 ${
-              disabled || preparing ? "cursor-default opacity-60" : "cursor-pointer hover:border-slate-400 hover:bg-slate-50 motion-safe:active:scale-[0.98]"
-            }`}
-          >
-            <CameraIcon className={`h-5 w-5 text-slate-600 ${preparing ? "motion-safe:animate-pulse" : ""}`} />
-            {preparing ? "Preparing photo…" : "Add a photo"}
-          </label>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="min-w-0">
+              <input
+                ref={inputRef}
+                id={inputId}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={pick}
+                disabled={disabled || preparing}
+                aria-describedby={hintId}
+                className="peer sr-only"
+              />
+              <label
+                htmlFor={inputId}
+                className={`flex h-12 min-w-0 items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 bg-white px-2 text-base font-medium text-slate-800 transition peer-focus-visible:ring-2 peer-focus-visible:ring-slate-900 peer-focus-visible:ring-offset-2 ${
+                disabled || preparing ? "cursor-default opacity-60" : "cursor-pointer hover:border-slate-400 hover:bg-slate-50 motion-safe:active:scale-[0.98]"
+              }`}
+              >
+                <CameraIcon className={`h-5 w-5 shrink-0 text-slate-600 ${preparing ? "motion-safe:animate-pulse" : ""}`} />
+                <span className="truncate">{preparing ? "Preparing photo…" : "Take a photo"}</span>
+              </label>
+            </div>
+            <div className="min-w-0">
+              <input
+                id={galleryId}
+                type="file"
+                accept="image/*"
+                onChange={pick}
+                disabled={disabled || preparing}
+                aria-describedby={hintId}
+                className="peer sr-only"
+              />
+              <label
+                htmlFor={galleryId}
+                className={`flex h-12 min-w-0 items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 bg-white px-2 text-base font-medium text-slate-800 transition peer-focus-visible:ring-2 peer-focus-visible:ring-slate-900 peer-focus-visible:ring-offset-2 ${
+                disabled || preparing ? "cursor-default opacity-60" : "cursor-pointer hover:border-slate-400 hover:bg-slate-50 motion-safe:active:scale-[0.98]"
+              }`}
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5 shrink-0 text-slate-600" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="4" width="18" height="16" rx="2.5" />
+                  <circle cx="9" cy="10" r="1.8" />
+                  <path d="m21 16-5-5-8 8" />
+                </svg>
+                <span className="truncate">Gallery</span>
+              </label>
+            </div>
+          </div>
           <p id={hintId} className="mt-1 text-xs text-slate-500">
             {hint}
           </p>
