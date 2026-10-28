@@ -126,6 +126,7 @@ export default function MapPage() {
           onPinChange={setMovedPin}
           me={me}
           incidents={shown}
+          fitTo={shown.map((i) => ({ lat: i.lat, lng: i.lng }))}
           selectedId={selected}
           onIncidentTap={setSelected}
           onTilesFailed={() => setTilesFailed(true)}
