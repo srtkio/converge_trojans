@@ -319,7 +319,7 @@ function Schematic({
     <div className="mt-3 overflow-hidden rounded-xl bg-slate-50 ring-1 ring-slate-200">
       <svg
         viewBox={`0 0 ${W} ${H}`}
-        className="block h-auto w-full"
+        className="mx-auto block h-auto w-full max-w-xl"
         role="img"
         aria-label={`Schematic: ${cause.title} is the likely cause of ${kids.length} nearby case${kids.length === 1 ? "" : "s"}`}
       >
