@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { Map as MapIcon } from "lucide-react";
 import { useState } from "react";
 
 import { CATEGORY_ICON, STATUS_LABEL, STATUS_STYLE } from "@/lib/format";
@@ -9,7 +10,7 @@ import type { Incident, Report, Resource } from "@/lib/types";
 // Leaflet touches `window`, so the street map only renders in the browser.
 const StreetMap = dynamic(() => import("./StreetMap"), {
   ssr: false,
-  loading: () => <div className="h-[340px] w-full animate-pulse rounded-md bg-slate-100" />,
+  loading: () => <div className="op-shimmer h-full min-h-[340px] w-full rounded-lg bg-surface-2" />,
 });
 
 type MapProps = {
@@ -21,50 +22,58 @@ type MapProps = {
 };
 
 /** City view: real street map by default, schematic as the offline fallback. */
-export function CityMap(props: MapProps) {
+export function CityMap({ heightClass = "h-[340px]", ...props }: MapProps & { heightClass?: string }) {
   const [view, setView] = useState<"street" | "schematic">("street");
   const [tilesDown, setTilesDown] = useState(false);
   return (
-    <section className="rounded-2xl bg-white ring-1 ring-slate-900/5 p-3 shadow-[0_1px_2px_rgba(15,23,42,0.05)]">
-      <div className="flex flex-wrap items-center justify-between gap-2 px-1 pb-2">
+    <section className="op-map flex min-h-0 flex-col overflow-hidden rounded-xl border border-line bg-surface">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-3 py-2.5">
         <div className="flex items-center gap-3">
-          <h2 className="text-sm font-semibold">City view</h2>
-          <div className="flex rounded-md bg-slate-100 p-0.5 text-xs font-medium">
+          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-surface-2 text-muted ring-1 ring-line">
+            <MapIcon className="h-3.5 w-3.5" aria-hidden />
+          </span>
+          <h2 className="text-[13px] font-semibold text-foreground">City view</h2>
+          <div className="flex rounded-lg bg-surface-2 p-0.5 text-[11px] font-medium ring-1 ring-line">
             {(["street", "schematic"] as const).map((v) => (
               <button
                 key={v}
+                type="button"
                 onClick={() => setView(v)}
-                className={`rounded px-2 py-0.5 ${view === v ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
+                aria-pressed={view === v}
+                className={`rounded-md px-2 py-0.5 transition ${view === v ? "bg-accent text-white" : "text-muted hover:text-foreground"}`}
               >
-                {v === "street" ? "Street map" : "Schematic (offline)"}
+                {v === "street" ? "Street" : "Schematic"}
               </button>
             ))}
           </div>
         </div>
-        <div className="flex flex-wrap gap-3 text-[11px] text-slate-500">
-          <span>● incident</span>
-          <span>◦ report</span>
-          <span>■ crew</span>
-          <span className="text-violet-600">┅ related</span>
-          <span>dashed ring = 150 m duplicate radius</span>
+        <div className="hidden flex-wrap items-center gap-3 text-[10px] text-muted md:flex">
+          <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full border-2 border-accent bg-surface" /> incident</span>
+          <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full border-2 border-slate-300 bg-surface" /> report</span>
+          <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-sm bg-accent-2" /> crew</span>
+          <span className="flex items-center gap-1"><span className="w-3 border-t-2 border-dashed border-violet-400" /> related</span>
+          <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full border border-dashed border-slate-400" /> 150 m duplicate radius</span>
         </div>
       </div>
       {tilesDown && view === "schematic" && (
-        <p className="mb-2 rounded-md bg-amber-50 px-3 py-1.5 text-xs text-amber-800 ring-1 ring-amber-200">
+        <p className="mx-3 mt-2 rounded-md bg-warn/10 px-3 py-1.5 text-xs text-warn ring-1 ring-warn/25">
           Street map tiles couldn’t load (no internet?), so this is the offline schematic view.
         </p>
       )}
-      {view === "street" ? (
-        <StreetMap
-          {...props}
-          onTilesFailed={() => {
-            setTilesDown(true);
-            setView("schematic");
-          }}
-        />
-      ) : (
-        <SchematicMap {...props} />
-      )}
+      <div className={`relative p-2 ${heightClass}`}>
+        {view === "street" ? (
+          <StreetMap
+            {...props}
+            className="h-full"
+            onTilesFailed={() => {
+              setTilesDown(true);
+              setView("schematic");
+            }}
+          />
+        ) : (
+          <SchematicMap {...props} />
+        )}
+      </div>
     </section>
   );
 }
@@ -86,7 +95,7 @@ function SchematicMap({ incidents, resources, reports, selectedId, onSelect }: M
 
   if (points.length === 0) {
     return (
-      <div className="flex h-[300px] items-center justify-center rounded-md bg-slate-50 text-sm text-slate-500">
+      <div className="flex h-full min-h-[300px] items-center justify-center rounded-lg bg-[#0a0f1b] text-sm text-muted">
         Map appears when there are incidents or crews.
       </div>
     );
@@ -124,17 +133,17 @@ function SchematicMap({ incidents, resources, reports, selectedId, onSelect }: M
   const scaleBarM = spanM > 1500 ? 500 : 100;
 
   return (
-      <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full rounded-md bg-slate-50" role="img" aria-label="Map of incidents and crews">
+      <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet" className="h-full w-full rounded-lg bg-[#0a0f1b]" role="img" aria-label="Map of incidents and crews">
         <defs>
           <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#e2e8f0" strokeWidth="1" />
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(148,163,196,0.08)" strokeWidth="1" />
           </pattern>
         </defs>
         <rect width={W} height={H} fill="url(#grid)" />
 
         {[...relatedPairs].map((pair) => {
           const [a, b] = pair.split("|").map((id) => project(byId.get(id)!));
-          return <line key={pair} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="#7c3aed" strokeWidth="2" strokeDasharray="6 4" />;
+          return <line key={pair} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="#a78bfa" strokeWidth="2" strokeDasharray="6 4" />;
         })}
 
         {reports.map((r) => {
@@ -143,8 +152,8 @@ function SchematicMap({ incidents, resources, reports, selectedId, onSelect }: M
           const ip = inc ? project(inc) : p;
           return (
             <g key={r.id}>
-              <line x1={p.x} y1={p.y} x2={ip.x} y2={ip.y} stroke="#94a3b8" strokeWidth="1" />
-              <circle cx={p.x} cy={p.y} r="5" fill="white" stroke="#475569" strokeWidth="1.5" />
+              <line x1={p.x} y1={p.y} x2={ip.x} y2={ip.y} stroke="#64748b" strokeWidth="1" />
+              <circle cx={p.x} cy={p.y} r="5" fill="#0d1220" stroke="#cbd5e1" strokeWidth="1.5" />
             </g>
           );
         })}
@@ -153,12 +162,12 @@ function SchematicMap({ incidents, resources, reports, selectedId, onSelect }: M
           const raw = clampToFrame(project(r.location));
           // Crews pinned to the same edge would overlap; nudge each pinned crew down by its index.
           const p = raw.clamped ? { ...raw, y: Math.min(H - EDGE, raw.y + (idx % 4) * 16) } : raw;
-          const color = r.available ? "#0f172a" : "#94a3b8";
+          const color = r.available ? "#67e8f9" : "#64748b";
           // Keep labels inside the frame: put them left of crews pinned to the right edge.
           const right = p.x > W - 160;
           return (
             <g key={r.id} opacity={p.clamped ? 0.7 : 1}>
-              <rect x={p.x - 6} y={p.y - 6} width="12" height="12" rx="2" fill={r.available ? "#0f172a" : "#cbd5e1"} />
+              <rect x={p.x - 6} y={p.y - 6} width="12" height="12" rx="2" fill={r.available ? "#22d3ee" : "#475569"} />
               <text x={right ? p.x - 9 : p.x + 9} y={p.y + 4} fontSize="11" fill={color} textAnchor={right ? "end" : "start"}>
                 {r.name}
                 {!r.available && " (off)"}
@@ -176,11 +185,11 @@ function SchematicMap({ incidents, resources, reports, selectedId, onSelect }: M
             <g key={i.id} onClick={() => onSelect(i.id)} className="cursor-pointer">
               <title>{`${i.title} — ${STATUS_LABEL[i.status]}`}</title>
               {sel && <circle cx={p.x} cy={p.y} r={150 * scale} fill={color} fillOpacity="0.06" stroke={color} strokeDasharray="4 3" />}
-              <circle cx={p.x} cy={p.y} r={sel ? 14 : 11} fill={color} stroke="white" strokeWidth="2" />
+              <circle cx={p.x} cy={p.y} r={sel ? 14 : 11} fill="#0d1220" stroke={color} strokeWidth="2.5" />
               <text x={p.x} y={p.y + 4} fontSize="11" textAnchor="middle">
                 {CATEGORY_ICON[i.category]}
               </text>
-              <text x={p.x + 18} y={p.y + 4} fontSize="11" fontWeight={sel ? 700 : 500} fill="#0f172a">
+              <text x={p.x + 18} y={p.y + 4} fontSize="11" fontWeight={sel ? 700 : 500} fill="#e6e9f2">
                 {i.id}
               </text>
             </g>
@@ -188,8 +197,8 @@ function SchematicMap({ incidents, resources, reports, selectedId, onSelect }: M
         })}
 
         <g transform={`translate(${W - PAD - scaleBarM * scale}, ${H - 14})`}>
-          <line x1="0" y1="0" x2={scaleBarM * scale} y2="0" stroke="#475569" strokeWidth="2" />
-          <text x={(scaleBarM * scale) / 2} y="-4" fontSize="10" textAnchor="middle" fill="#475569">
+          <line x1="0" y1="0" x2={scaleBarM * scale} y2="0" stroke="#8b94ab" strokeWidth="2" />
+          <text x={(scaleBarM * scale) / 2} y="-4" fontSize="10" textAnchor="middle" fill="#8b94ab">
             {scaleBarM} m
           </text>
         </g>

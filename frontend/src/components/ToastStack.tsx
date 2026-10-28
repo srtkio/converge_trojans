@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, Bell, CheckCircle2, X } from "lucide-react";
+import { AlertTriangle, ArrowRight, Bell, CheckCircle2, X } from "lucide-react";
 import { useEffect } from "react";
 
 export type Toast = {
@@ -11,16 +11,16 @@ export type Toast = {
   incidentId?: string | null;
 };
 
-const STYLE: Record<Toast["tone"], { ring: string; icon: typeof Bell; iconColor: string }> = {
-  info: { ring: "ring-sky-200", icon: Bell, iconColor: "text-sky-600" },
-  warn: { ring: "ring-amber-200", icon: AlertTriangle, iconColor: "text-amber-600" },
-  danger: { ring: "ring-rose-200", icon: AlertTriangle, iconColor: "text-rose-600" },
-  good: { ring: "ring-emerald-200", icon: CheckCircle2, iconColor: "text-emerald-600" },
+const STYLE: Record<Toast["tone"], { icon: typeof Bell; chip: string; bar: string }> = {
+  info: { icon: Bell, chip: "bg-accent/15 text-accent ring-accent/30", bar: "bg-accent" },
+  warn: { icon: AlertTriangle, chip: "bg-warn/15 text-warn ring-warn/30", bar: "bg-warn" },
+  danger: { icon: AlertTriangle, chip: "bg-bad/15 text-bad ring-bad/30", bar: "bg-bad" },
+  good: { icon: CheckCircle2, chip: "bg-ok/15 text-ok ring-ok/30", bar: "bg-ok" },
 };
 
 const LIFETIME_MS = 8000;
 
-/** Bottom-right notifications: slide in, auto-dismiss, click to open the incident. */
+/** Top-right notifications: slide in, auto-dismiss with a countdown bar, click to open the incident. */
 export function ToastStack({
   toasts,
   onDismiss,
@@ -31,7 +31,7 @@ export function ToastStack({
   onOpen: (incidentId: string) => void;
 }) {
   return (
-    <div aria-live="polite" className="pointer-events-none fixed right-4 top-20 z-50 flex w-[22rem] max-w-[calc(100vw-2rem)] flex-col gap-3">
+    <div aria-live="polite" className="pointer-events-none fixed right-3 top-[4.5rem] z-[80] flex w-[23rem] max-w-[calc(100vw-1.5rem)] flex-col gap-2.5">
       {toasts.slice(-4).map((t) => (
         <ToastCard key={t.id} toast={t} onDismiss={onDismiss} onOpen={onOpen} />
       ))}
@@ -47,12 +47,17 @@ function ToastCard({ toast, onDismiss, onOpen }: { toast: Toast; onDismiss: (id:
   const s = STYLE[toast.tone];
   const Icon = s.icon;
   return (
-    <div className={`pointer-events-auto rounded-2xl bg-white p-4 shadow-[0_18px_40px_-18px_rgba(15,23,42,0.45)] ring-1 ${s.ring} motion-safe:animate-[toastIn_.35s_cubic-bezier(.2,.8,.2,1)]`}>
+    <div
+      role="status"
+      className="op-toast-in pointer-events-auto relative overflow-hidden rounded-xl border border-line-strong bg-surface-2/95 p-3.5 shadow-[0_24px_48px_-16px_rgba(0,0,0,0.85)] backdrop-blur"
+    >
       <div className="flex gap-3">
-        <Icon className={`mt-0.5 h-5 w-5 shrink-0 ${s.iconColor}`} aria-hidden />
+        <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ring-1 ${s.chip}`}>
+          <Icon className="h-4 w-4" aria-hidden />
+        </span>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-slate-900">{toast.title}</p>
-          {toast.body && <p className="mt-0.5 line-clamp-2 text-sm text-slate-600">{toast.body}</p>}
+          <p className="text-[13px] font-semibold text-foreground">{toast.title}</p>
+          {toast.body && <p className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-[#aab2c5]">{toast.body}</p>}
           {toast.incidentId && (
             <button
               type="button"
@@ -60,16 +65,17 @@ function ToastCard({ toast, onDismiss, onOpen }: { toast: Toast; onDismiss: (id:
                 onOpen(toast.incidentId!);
                 onDismiss(toast.id);
               }}
-              className="mt-2 text-sm font-medium text-emerald-700 hover:text-emerald-800"
+              className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-accent hover:text-[#8fb0ff]"
             >
-              Open case →
+              Open case <ArrowRight className="h-3 w-3" aria-hidden />
             </button>
           )}
         </div>
-        <button type="button" onClick={() => onDismiss(toast.id)} aria-label="Dismiss" className="h-6 w-6 shrink-0 rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-700">
-          <X className="mx-auto h-4 w-4" />
+        <button type="button" onClick={() => onDismiss(toast.id)} aria-label="Dismiss" className="h-6 w-6 shrink-0 rounded-md text-muted hover:bg-surface hover:text-foreground">
+          <X className="mx-auto h-3.5 w-3.5" />
         </button>
       </div>
+      <span className={`op-toast-bar absolute bottom-0 left-0 h-0.5 w-full opacity-60 ${s.bar}`} style={{ animationDuration: `${LIFETIME_MS}ms` }} aria-hidden />
     </div>
   );
 }

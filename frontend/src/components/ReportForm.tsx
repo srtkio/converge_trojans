@@ -1,5 +1,6 @@
 "use client";
 
+import { PhoneCall } from "lucide-react";
 import { useState } from "react";
 
 import { api } from "@/lib/api";
@@ -7,6 +8,7 @@ import { CATEGORY_LABEL } from "@/lib/format";
 import type { Category, Link } from "@/lib/types";
 
 import type { Act } from "./Dashboard";
+import { CARD, CardHeader, FIELD } from "./OpUi";
 
 // Preset spots around the demo area (GT Road by Rishihood University, Sonipat) so reports land near
 // existing incidents: the first two are ~60 m apart (duplicate), the third ~250 m away (related).
@@ -18,6 +20,7 @@ const PLACES = [
   { name: "Sonipat Junction (far away)", lat: 28.9898, lng: 77.0171 },
 ];
 
+/** Operators log complaints that came in by phone or at the counter. */
 export function ReportForm({
   busy,
   act,
@@ -47,61 +50,62 @@ export function ReportForm({
   };
 
   return (
-    <section className="rounded-2xl bg-white ring-1 ring-slate-900/5 p-4 shadow-[0_1px_2px_rgba(15,23,42,0.05)]">
-      <h2 className="text-sm font-semibold">File a citizen report</h2>
-      <form onSubmit={submit} className="mt-2 space-y-2">
-        <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          rows={2}
-          placeholder="e.g. Water leaking from a pipe near the university gate"
-          className="w-full resize-none rounded-md border border-slate-300 px-2 py-1.5 text-sm"
-        />
-        <div className="grid grid-cols-2 gap-2">
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value as Category)}
-            className="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs"
-          >
-            {Object.entries(CATEGORY_LABEL).map(([k, v]) => (
-              <option key={k} value={k}>
-                {v}
-              </option>
-            ))}
-          </select>
-          <select
-            value={place}
-            onChange={(e) => setPlace(Number(e.target.value))}
-            className="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs"
-          >
-            {PLACES.map((p, i) => (
-              <option key={p.name} value={i}>
-                {p.name}
-              </option>
-            ))}
-          </select>
+    <section className={`${CARD} overflow-hidden`}>
+      <CardHeader icon={PhoneCall} title="Log a phone-in complaint" subtitle="Calls and counter visits go through the same dedup and routing" />
+      <form onSubmit={submit} className="space-y-3 p-4">
+        <label className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">
+          What was reported
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            rows={3}
+            placeholder="e.g. Water leaking from a pipe near the university gate"
+            className={`${FIELD} mt-1.5 resize-none py-2 normal-case tracking-normal`}
+          />
+        </label>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <label className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">
+            Category
+            <select value={category} onChange={(e) => setCategory(e.target.value as Category)} className={`${FIELD} mt-1.5 h-9 normal-case tracking-normal`}>
+              {Object.entries(CATEGORY_LABEL).map(([k, v]) => (
+                <option key={k} value={k}>
+                  {v}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="block text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">
+            Location
+            <select value={place} onChange={(e) => setPlace(Number(e.target.value))} className={`${FIELD} mt-1.5 h-9 normal-case tracking-normal`}>
+              {PLACES.map((p, i) => (
+                <option key={p.name} value={i}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
         <button
+          type="submit"
           disabled={busy || !text.trim()}
-          className="w-full rounded-md bg-slate-900 py-1.5 text-sm font-medium text-white disabled:opacity-40"
+          className="h-10 w-full rounded-lg bg-accent text-sm font-semibold text-white shadow-[0_8px_20px_-10px_rgba(91,140,255,0.9)] transition hover:bg-[#6f9bff] disabled:opacity-40"
         >
           Submit report
         </button>
+        {result && (
+          <p className="rounded-lg bg-surface-2 p-2.5 text-xs text-[#c3c9d8] ring-1 ring-line">
+            {result.link ? (
+              <>
+                Linked as <span className="font-semibold text-violet-300">{result.link.kind}</span> of {result.link.incident_id}: {result.link.reason}
+              </>
+            ) : (
+              <>
+                New incident <span className="font-semibold text-foreground">{result.incidentId}</span> created and routed.
+              </>
+            )}
+          </p>
+        )}
       </form>
-      {result && (
-        <p className="mt-2 rounded-md bg-slate-50 p-2 text-xs text-slate-700">
-          {result.link ? (
-            <>
-              Linked as <span className="font-semibold text-violet-700">{result.link.kind}</span> of {result.link.incident_id}
-              : {result.link.reason}
-            </>
-          ) : (
-            <>
-              New incident <span className="font-semibold">{result.incidentId}</span> created and routed.
-            </>
-          )}
-        </p>
-      )}
     </section>
   );
 }
