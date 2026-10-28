@@ -79,6 +79,8 @@ export type CitizenMapProps = {
   /** The phone's position: a blue dot with an accuracy ring. */
   me?: MapMe | null;
   incidents?: Incident[];
+  /** Points to frame once, when they first arrive after the map opens (with `focus`), unless the citizen already moved the map. */
+  fitTo?: LatLng[];
   selectedId?: string | null;
   onIncidentTap?: (id: string) => void;
   onTilesFailed?: () => void;
@@ -93,6 +95,7 @@ export default function CitizenMap({
   onPinChange,
   me,
   incidents,
+  fitTo,
   selectedId,
   onIncidentTap,
   onTilesFailed,
@@ -105,6 +108,8 @@ export default function CitizenMap({
   const meRef = useRef<L.LayerGroup | null>(null);
   // The viewKey the current map was built for: its first recentre would be a no-op.
   const builtFor = useRef<string | number | undefined>(undefined);
+  // Framed the nearby issues for this map yet? Reset on every (re)build; set by a fit or a user move.
+  const framed = useRef(false);
 
   const startView = useEffectEvent(() => ({ focus, viewKey }));
   const tilesFailed = useEffectEvent(() => onTilesFailed?.());
@@ -119,6 +124,7 @@ export default function CitizenMap({
     const reduced = prefersReducedMotion();
     const { focus: start, viewKey: key } = startView();
     builtFor.current = key;
+    framed.current = false;
     const map = L.map(el, {
       center: [start.lat, start.lng],
       zoom: FOCUS_ZOOM,
@@ -128,6 +134,10 @@ export default function CitizenMap({
       fadeAnimation: !reduced,
       markerZoomAnimation: !reduced,
       inertia: !reduced,
+    });
+    map.on("dragstart zoomstart", (e: L.LeafletEvent) => {
+      // Only real gestures count; programmatic setView/fitBounds don't carry an originalEvent.
+      if ((e as L.LeafletEvent & { originalEvent?: Event }).originalEvent) framed.current = true;
     });
     const tiles = { loaded: 0, failed: 0, reported: false };
     L.tileLayer(TILE_URL, { attribution: ATTRIBUTION, keepBuffer: 6, updateWhenZooming: false })
@@ -266,6 +276,18 @@ export default function CitizenMap({
   }, [meLat, meLng, meAcc]);
 
   // Recentre only when asked (a GPS fix, a landmark, opening the sheet), never on a drag or a poll.
+  // Show every nearby issue on first load instead of a street-level view of just one.
+  const fitPoints = fitTo && fitTo.length ? fitTo.map((p) => `${p.lat},${p.lng}`).join(";") : "";
+  const frameNow = useEffectEvent(() => ({ focus, points: fitTo ?? [] }));
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || framed.current || !fitPoints) return;
+    framed.current = true;
+    const { focus: f, points } = frameNow();
+    const bounds = L.latLngBounds([[f.lat, f.lng], ...points.map((p) => [p.lat, p.lng] as [number, number])]);
+    map.fitBounds(bounds, { padding: [48, 48], maxZoom: FOCUS_ZOOM - 1, animate: false });
+  }, [fitPoints]);
+
   const focusNow = useEffectEvent(() => focus);
   useEffect(() => {
     const map = mapRef.current;
