@@ -255,12 +255,25 @@ def _c1(s):
 
 def _c7(s):
     _at_minute(s, 120)
+    # Operator reviews the proposed root causes: confirms two, leaves the bus stand one proposed.
+    gt_leak = _incident_of(s, "rep_007")  # GT Road service-lane leak, potholes opening above it
+    chowk_drain = _incident_of(s, "rep_011")  # Murthal Chowk choked drain, pothole beside it
+    proposed = {h.cause_incident_id: h for h in rootcause.refresh(s) if h.status == "proposed"}
+    rootcause.confirm(s, proposed[gt_leak.id].id, "Operator: the service-lane leak is washing out the road base")
+    rootcause.confirm(s, proposed[chowk_drain.id].id, "Operator: drain overflow is undermining SH20 at the chowk")
     leak = _incident_of(s, "rep_001")
     start(s, leak)
     lights = _incident_of(s, "rep_004")
     start(s, lights)
     _at_minute(s, 210)
     complete(s, leak, "Burst section replaced; awaiting inspection")
+    # The same water crew then fixes the GT Road leak once; the inspector verifies it, so the
+    # pothole that waited on it moves to pending_verification (one visit instead of two).
+    start(s, gt_leak)
+    _at_minute(s, 330)
+    complete(s, gt_leak, "Service-lane water line repaired, trench backfilled and road base re-compacted")
+    _at_minute(s, 350)
+    add_evidence(s, gt_leak, "inspector", True, "Inspector: service lane dry, road base firm", "inspector:kumar")
 
 
 def _c8(s):
@@ -270,7 +283,7 @@ def _c8(s):
 CITY_STEPS = [
     (_c1, "Reset; seed crews and services; sanitation crew S1 on leave"),
     *[(_city_area(i), a["title"]) for i, a in enumerate(CITY)],
-    (_c7, "Morning work: Civil Hospital main repaired (awaiting proof); university-gate lights crew starts"),
+    (_c7, "Root causes: GT Road leak and Murthal Chowk drain confirmed (2 visits saved); Civil Hospital main repaired (awaiting proof); GT Road leak repaired and verified, its pothole awaits proof"),
     (_c8, "Clock to 18:45: Sonipat bus stand sewage overflow flagged at risk before its deadline"),
 ]
 

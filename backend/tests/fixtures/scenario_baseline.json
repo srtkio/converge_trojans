@@ -132,53 +132,59 @@
     "verification": "unverified"
    },
    {
-    "assigned_resource_id": "res_roads_1",
-    "at_risk": false,
-    "category": "pothole",
-    "child_incident_ids": [],
-    "completed_at": null,
-    "created_at": "2026-10-27T09:40:00Z",
-    "deadline": "2026-10-29T09:40:00Z",
-    "department": "roads",
-    "escalation_level": 0,
-    "id": "inc_006",
-    "lat": 28.9591327,
-    "lng": 77.0965998,
-    "parent_incident_id": null,
-    "plan_version": 1,
-    "related_incident_ids": [],
-    "report_ids": [
-     "rep_007"
-    ],
-    "severity": 3,
-    "sla_state": "on_track",
-    "status": "assigned",
-    "title": "Row of potholes on the GT Road stretch at Bahalgarh, wate...",
-    "verification": "unverified"
-   },
-   {
-    "assigned_resource_id": "res_water_1",
+    "assigned_resource_id": null,
     "at_risk": false,
     "category": "water_leak",
-    "child_incident_ids": [],
-    "completed_at": null,
-    "created_at": "2026-10-27T09:55:00Z",
-    "deadline": "2026-10-27T21:55:00Z",
+    "child_incident_ids": [
+     "inc_007"
+    ],
+    "completed_at": "2026-10-27T14:30:00Z",
+    "created_at": "2026-10-27T09:40:00Z",
+    "deadline": "2026-10-27T21:40:00Z",
     "department": "water",
     "escalation_level": 0,
-    "id": "inc_007",
+    "id": "inc_006",
     "lat": 28.9809542,
     "lng": 77.0860919,
     "parent_incident_id": null,
     "plan_version": 1,
-    "related_incident_ids": [],
+    "related_incident_ids": [
+     "inc_007"
+    ],
+    "report_ids": [
+     "rep_007"
+    ],
+    "severity": 4,
+    "sla_state": null,
+    "status": "verified_closed",
+    "title": "Water line leaking under the GT Road service lane south o...",
+    "verification": "confirmed_on_site"
+   },
+   {
+    "assigned_resource_id": null,
+    "at_risk": false,
+    "category": "pothole",
+    "child_incident_ids": [],
+    "completed_at": "2026-10-27T14:50:00Z",
+    "created_at": "2026-10-27T09:55:00Z",
+    "deadline": "2026-10-29T09:55:00Z",
+    "department": "roads",
+    "escalation_level": 0,
+    "id": "inc_007",
+    "lat": 28.9816729,
+    "lng": 77.0866054,
+    "parent_incident_id": "inc_006",
+    "plan_version": 2,
+    "related_incident_ids": [
+     "inc_006"
+    ],
     "report_ids": [
      "rep_008"
     ],
-    "severity": 4,
+    "severity": 3,
     "sla_state": "on_track",
-    "status": "assigned",
-    "title": "Water line leaking under the GT Road service lane south o...",
+    "status": "pending_verification",
+    "title": "Potholes opening on the GT Road service lane south of the...",
     "verification": "unverified"
    },
    {
@@ -211,29 +217,33 @@
     "assigned_resource_id": "res_water_1",
     "at_risk": false,
     "category": "sewage",
-    "child_incident_ids": [],
+    "child_incident_ids": [
+     "inc_010"
+    ],
     "completed_at": null,
     "created_at": "2026-10-27T10:10:00Z",
     "deadline": "2026-10-27T22:10:00Z",
     "department": "water",
     "escalation_level": 0,
     "id": "inc_009",
-    "lat": 29.0382674,
-    "lng": 77.0890425,
+    "lat": 29.0261691,
+    "lng": 77.0734853,
     "parent_incident_id": null,
     "plan_version": 1,
-    "related_incident_ids": [],
+    "related_incident_ids": [
+     "inc_010"
+    ],
     "report_ids": [
      "rep_011"
     ],
     "severity": 4,
     "sla_state": "on_track",
     "status": "assigned",
-    "title": "Drain choked behind the Murthal dhabas, dirty water spill...",
+    "title": "Drain choked at Murthal Chowk, dirty water spilling acros...",
     "verification": "unverified"
    },
    {
-    "assigned_resource_id": "res_roads_2",
+    "assigned_resource_id": null,
     "at_risk": false,
     "category": "pothole",
     "child_incident_ids": [],
@@ -245,9 +255,11 @@
     "id": "inc_010",
     "lat": 29.0265284,
     "lng": 77.0743072,
-    "parent_incident_id": null,
-    "plan_version": 1,
-    "related_incident_ids": [],
+    "parent_incident_id": "inc_009",
+    "plan_version": 2,
+    "related_incident_ids": [
+     "inc_009"
+    ],
     "report_ids": [
      "rep_012"
     ],
@@ -415,16 +427,16 @@
     "work_orders": 18
    },
    "coordinated_vs_independent": {
-    "coordinated_visits": 16,
+    "coordinated_visits": 14,
     "independent_visits": 16
    },
-   "crew_visits_saved": 0,
+   "crew_visits_saved": 2,
    "duplicate_work_orders_avoided": 2,
    "duplicates_linked": 2,
    "escalations": 2,
    "false_closures_caught": 0,
    "hypotheses": {
-    "confirmed": 0,
+    "confirmed": 2,
     "proposed": 1,
     "rejected": 0
    },
@@ -432,7 +444,7 @@
    "replans": 0,
    "reports": 18,
    "sla_breaches": 0,
-   "verified_closures": 0
+   "verified_closures": 1
   },
   "run": {
    "description": "Clock to 18:45: Sonipat bus stand sewage overflow flagged at risk before its deadline",
@@ -446,11 +458,11 @@
      "step": 2
     },
     {
-     "description": "GT Road (NH-44): lights out at the Rishihood University gate (two reports); fallen tree and potholes at Bahalgarh; a leak on the service lane",
+     "description": "GT Road (NH-44): lights out at the Rishihood University gate (two reports); fallen tree at Bahalgarh; a service-lane water leak with potholes opening above it",
      "step": 3
     },
     {
-     "description": "Murthal: garbage behind the dhabas (two reports, sanitation crew on leave), a choked drain, a pothole at Murthal Chowk",
+     "description": "Murthal: garbage behind the dhabas (two reports, sanitation crew on leave); a choked drain at Murthal Chowk with a pothole opening beside it",
      "step": 4
     },
     {
@@ -458,7 +470,7 @@
      "step": 5
     },
     {
-     "description": "Morning work: Civil Hospital main repaired (awaiting proof); university-gate lights crew starts",
+     "description": "Root causes: GT Road leak and Murthal Chowk drain confirmed (2 visits saved); Civil Hospital main repaired (awaiting proof); GT Road leak repaired and verified, its pothole awaits proof",
      "step": 6
     },
     {
@@ -599,53 +611,59 @@
       "verification": "unverified"
      },
      {
-      "assigned_resource_id": "res_roads_1",
-      "at_risk": false,
-      "category": "pothole",
-      "child_incident_ids": [],
-      "completed_at": null,
-      "created_at": "2026-10-27T09:40:00Z",
-      "deadline": "2026-10-29T09:40:00Z",
-      "department": "roads",
-      "escalation_level": 0,
-      "id": "inc_006",
-      "lat": 28.9591327,
-      "lng": 77.0965998,
-      "parent_incident_id": null,
-      "plan_version": 1,
-      "related_incident_ids": [],
-      "report_ids": [
-       "rep_007"
-      ],
-      "severity": 3,
-      "sla_state": "on_track",
-      "status": "assigned",
-      "title": "Row of potholes on the GT Road stretch at Bahalgarh, wate...",
-      "verification": "unverified"
-     },
-     {
-      "assigned_resource_id": "res_water_1",
+      "assigned_resource_id": null,
       "at_risk": false,
       "category": "water_leak",
-      "child_incident_ids": [],
-      "completed_at": null,
-      "created_at": "2026-10-27T09:55:00Z",
-      "deadline": "2026-10-27T21:55:00Z",
+      "child_incident_ids": [
+       "inc_007"
+      ],
+      "completed_at": "2026-10-27T14:30:00Z",
+      "created_at": "2026-10-27T09:40:00Z",
+      "deadline": "2026-10-27T21:40:00Z",
       "department": "water",
       "escalation_level": 0,
-      "id": "inc_007",
+      "id": "inc_006",
       "lat": 28.9809542,
       "lng": 77.0860919,
       "parent_incident_id": null,
       "plan_version": 1,
-      "related_incident_ids": [],
+      "related_incident_ids": [
+       "inc_007"
+      ],
+      "report_ids": [
+       "rep_007"
+      ],
+      "severity": 4,
+      "sla_state": null,
+      "status": "verified_closed",
+      "title": "Water line leaking under the GT Road service lane south o...",
+      "verification": "confirmed_on_site"
+     },
+     {
+      "assigned_resource_id": null,
+      "at_risk": false,
+      "category": "pothole",
+      "child_incident_ids": [],
+      "completed_at": "2026-10-27T14:50:00Z",
+      "created_at": "2026-10-27T09:55:00Z",
+      "deadline": "2026-10-29T09:55:00Z",
+      "department": "roads",
+      "escalation_level": 0,
+      "id": "inc_007",
+      "lat": 28.9816729,
+      "lng": 77.0866054,
+      "parent_incident_id": "inc_006",
+      "plan_version": 2,
+      "related_incident_ids": [
+       "inc_006"
+      ],
       "report_ids": [
        "rep_008"
       ],
-      "severity": 4,
+      "severity": 3,
       "sla_state": "on_track",
-      "status": "assigned",
-      "title": "Water line leaking under the GT Road service lane south o...",
+      "status": "pending_verification",
+      "title": "Potholes opening on the GT Road service lane south of the...",
       "verification": "unverified"
      },
      {
@@ -678,29 +696,33 @@
       "assigned_resource_id": "res_water_1",
       "at_risk": false,
       "category": "sewage",
-      "child_incident_ids": [],
+      "child_incident_ids": [
+       "inc_010"
+      ],
       "completed_at": null,
       "created_at": "2026-10-27T10:10:00Z",
       "deadline": "2026-10-27T22:10:00Z",
       "department": "water",
       "escalation_level": 0,
       "id": "inc_009",
-      "lat": 29.0382674,
-      "lng": 77.0890425,
+      "lat": 29.0261691,
+      "lng": 77.0734853,
       "parent_incident_id": null,
       "plan_version": 1,
-      "related_incident_ids": [],
+      "related_incident_ids": [
+       "inc_010"
+      ],
       "report_ids": [
        "rep_011"
       ],
       "severity": 4,
       "sla_state": "on_track",
       "status": "assigned",
-      "title": "Drain choked behind the Murthal dhabas, dirty water spill...",
+      "title": "Drain choked at Murthal Chowk, dirty water spilling acros...",
       "verification": "unverified"
      },
      {
-      "assigned_resource_id": "res_roads_2",
+      "assigned_resource_id": null,
       "at_risk": false,
       "category": "pothole",
       "child_incident_ids": [],
@@ -712,9 +734,11 @@
       "id": "inc_010",
       "lat": 29.0265284,
       "lng": 77.0743072,
-      "parent_incident_id": null,
-      "plan_version": 1,
-      "related_incident_ids": [],
+      "parent_incident_id": "inc_009",
+      "plan_version": 2,
+      "related_incident_ids": [
+       "inc_009"
+      ],
       "report_ids": [
        "rep_012"
       ],
@@ -882,16 +906,16 @@
       "work_orders": 18
      },
      "coordinated_vs_independent": {
-      "coordinated_visits": 16,
+      "coordinated_visits": 14,
       "independent_visits": 16
      },
-     "crew_visits_saved": 0,
+     "crew_visits_saved": 2,
      "duplicate_work_orders_avoided": 2,
      "duplicates_linked": 2,
      "escalations": 2,
      "false_closures_caught": 0,
      "hypotheses": {
-      "confirmed": 0,
+      "confirmed": 2,
       "proposed": 1,
       "rejected": 0
      },
@@ -899,7 +923,7 @@
      "replans": 0,
      "reports": 18,
      "sla_breaches": 0,
-     "verified_closures": 0
+     "verified_closures": 1
     },
     "now": "2026-10-27T18:45:00Z",
     "resources": [
@@ -933,9 +957,7 @@
       "name": "General Works Crew G1"
      },
      {
-      "active_incident_ids": [
-       "inc_006"
-      ],
+      "active_incident_ids": [],
       "available": true,
       "department": "roads",
       "id": "res_roads_1",
@@ -947,8 +969,7 @@
      },
      {
       "active_incident_ids": [
-       "inc_003",
-       "inc_010"
+       "inc_003"
       ],
       "available": true,
       "department": "roads",
@@ -974,7 +995,6 @@
       "active_incident_ids": [
        "inc_001",
        "inc_002",
-       "inc_007",
        "inc_009",
        "inc_012",
        "inc_014"

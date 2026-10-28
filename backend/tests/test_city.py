@@ -1,5 +1,6 @@
 """Live-city dataset: 18 photo-backed complaints on the Murthal-Sonipat corridor, deterministic,
-with a realistic mix of states for user testing and the map."""
+with three root-cause groups (two confirmed, one repaired and verified),
+and a realistic mix of states for user testing and the map."""
 import json
 from collections import Counter
 from pathlib import Path
@@ -19,15 +20,29 @@ def test_city_dataset_has_required_mix(client):
     m = st["metrics"]
     assert (m["reports"], m["incidents"], m["duplicates_linked"]) == (18, 16, 2)
     assert m["sla_breaches"] == 0 and m["at_risk"] == 1
+    # Root cause: three groups; two confirmed (one visit saved each), one repaired and verified.
+    assert m["hypotheses"] == {"proposed": 1, "confirmed": 2, "rejected": 0}
+    assert m["crew_visits_saved"] == 2 and m["verified_closures"] == 1
+    assert m["coordinated_vs_independent"] == {"independent_visits": 16, "coordinated_visits": 14}
     incs = {i["id"]: i for i in st["incidents"]}
     statuses = Counter(i["status"] for i in incs.values())
-    assert statuses["escalated"] == 2  # sanitation crew S1 on leave: both garbage incidents
-    assert {i["category"] for i in incs.values() if i["status"] == "escalated"} == {"garbage"}
-    assert [i for i in incs if incs[i]["status"] == "pending_verification"] == ["inc_001"]  # Civil Hospital main
+    assert m["escalations"] == 2 and statuses["escalated"] == 2  # a small, explainable minority:
+    assert {i["category"] for i in incs.values() if i["status"] == "escalated"} == {"garbage"}  # S1 on leave
+    # Awaiting proof: Civil Hospital main (crew repair) and the GT Road pothole (its root cause was fixed).
+    assert [i for i in incs if incs[i]["status"] == "pending_verification"] == ["inc_001", "inc_007"]
+    assert [i for i in incs if incs[i]["status"] == "verified_closed"] == ["inc_006"]  # GT Road service-lane leak
     assert [i for i in incs if incs[i]["at_risk"]] == ["inc_002"]  # bus stand sewage
     assert sorted(i for i in incs if len(incs[i]["report_ids"]) == 2) == ["inc_004", "inc_008"]  # duplicate pairs
-    hyps = client.get("/hypotheses", params={"status": "proposed"}).json()
-    assert [(h["cause_incident_id"], h["member_ids"]) for h in hyps] == [("inc_002", ["inc_003"])]
+    hyps = client.get("/hypotheses").json()
+    assert [(h["status"], h["cause_incident_id"], h["member_ids"]) for h in hyps] == [
+        ("proposed", "inc_002", ["inc_003"]),  # Sonipat bus stand: sewage overflow -> road caving in
+        ("confirmed", "inc_006", ["inc_007"]),  # GT Road: service-lane leak -> potholes above it
+        ("confirmed", "inc_009", ["inc_010"]),  # Murthal Chowk: choked drain -> pothole beside it
+    ]
+    tree = {i: (incs[i]["parent_incident_id"], incs[i]["child_incident_ids"]) for i in incs
+            if incs[i]["parent_incident_id"] or incs[i]["child_incident_ids"]}
+    assert tree == {"inc_006": (None, ["inc_007"]), "inc_007": ("inc_006", []),
+                    "inc_009": (None, ["inc_010"]), "inc_010": ("inc_009", [])}
     assert Counter(i["category"] for i in incs.values()) == {
         "pothole": 3, "water_leak": 3, "sewage": 3, "streetlight": 2, "garbage": 2, "other": 3}
 

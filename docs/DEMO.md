@@ -195,7 +195,10 @@ Rishihood University gate and Bahalgarh on GT Road (NH-44), the Murthal dhabas a
 in Sonipat the bus stand, Sonipat Junction railway station, Civil Hospital, Sector 15 and the city
 centre. Each complaint has a photo (CC-licensed stock photos credited in
 `backend/app/seed/photos/ATTRIBUTION.md`; they are not pictures of these exact spots) and the place
-name as its location. It shows 2 duplicate pairs, 1 root-cause hypothesis (bus stand sewage and a
-pothole 180 m away), 2 garbage incidents escalated because the sanitation crew is on leave, 1 repair
-awaiting proof (Civil Hospital main) and 1 incident at risk of missing its deadline. These are test
+name as its location. It shows 2 duplicate pairs and 3 root-cause hypotheses: the bus stand sewage
+and a pothole 180 m away (proposed), the GT Road service-lane leak and the potholes above it
+(confirmed, repaired once and verified, so its pothole awaits proof) and the Murthal Chowk choked drain
+and a pothole beside it (confirmed): 2 crew visits saved, 1 verified closure. It also has 2 garbage
+incidents escalated because the sanitation crew is on leave, 2 cases awaiting proof (Civil Hospital
+main and the GT Road pothole) and 1 incident at risk of missing its deadline. These are test
 data, not pitch numbers.

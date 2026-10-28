@@ -1,5 +1,5 @@
 {
-  "_note": "Live-city demo data for user testing and the map: 18 photo-backed complaints along the Murthal-Sonipat corridor (Haryana). Not used for pitch metrics. 't' is minutes after the sim start (09:00). Each point is 'north_m'/'east_m' metres from a real place in app/places.py (OpenStreetMap), at most 300 m. Photos are CC-licensed stock photos in seed/photos (see ATTRIBUTION.md), not pictures of these places.",
+  "_note": "Live-city demo data for user testing and the map: 18 photo-backed complaints along the Murthal-Sonipat corridor (Haryana). Not used for pitch metrics. 't' is minutes after the sim start (09:00). Each point is 'north_m'/'east_m' metres from a real place in app/places.py (OpenStreetMap), at most 300 m. Three root-cause groups (dependent categories within 400 m): Sonipat bus stand sewage + pothole, GT Road service-lane leak + pothole, Murthal Chowk drain + pothole. Photos are CC-licensed stock photos in seed/photos (see ATTRIBUTION.md), not pictures of these places.",
   "areas": [
     {"step": 2, "title": "Sonipat city: burst main outside Civil Hospital; sewage overflow at the bus stand and a related pothole", "reports": [
       {"t": 0, "category": "water_leak", "place": "civil_hospital", "north_m": 0, "east_m": 40, "reporter": "citizen:asha", "photo": "water_leak_1.jpg",
@@ -9,25 +9,25 @@
       {"t": 12, "category": "pothole", "place": "sonipat_bus_stand", "north_m": 0, "east_m": 180, "reporter": "citizen:nisha", "photo": "pothole_1.jpg",
        "text": "Road caving in on NH352A just past the Sonipat bus stand, buses swerving around it"}
     ]},
-    {"step": 3, "title": "GT Road (NH-44): lights out at the Rishihood University gate (two reports); fallen tree and potholes at Bahalgarh; a leak on the service lane", "reports": [
+    {"step": 3, "title": "GT Road (NH-44): lights out at the Rishihood University gate (two reports); fallen tree at Bahalgarh; a service-lane water leak with potholes opening above it", "reports": [
       {"t": 15, "category": "streetlight", "place": "rishihood", "north_m": 40, "east_m": -30, "reporter": "citizen:rahul", "photo": "streetlight_1.jpg",
        "text": "Streetlights out on the GT Road service lane by the Rishihood University gate, one pole bent"},
       {"t": 20, "category": "streetlight", "place": "rishihood", "north_m": 120, "east_m": -30, "reporter": "citizen:divya", "photo": "streetlight_2.jpg",
        "text": "Service lane near the university gate is completely dark at night, lights not working"},
       {"t": 30, "category": "other", "place": "bahalgarh", "north_m": 100, "east_m": 0, "reporter": "citizen:hari", "photo": "other_1.jpg",
        "text": "Tree fallen across the Bahalgarh road after last night's storm, blocking one lane"},
-      {"t": 40, "category": "pothole", "place": "bahalgarh", "north_m": 50, "east_m": 150, "reporter": "citizen:arjun", "photo": "pothole_2.jpg",
-       "text": "Row of potholes on the GT Road stretch at Bahalgarh, water filling them"},
-      {"t": 55, "category": "water_leak", "place": "rishihood", "north_m": -250, "east_m": -30, "reporter": "citizen:meera", "photo": "water_leak_3.jpg",
-       "text": "Water line leaking under the GT Road service lane south of the university, lane waterlogged"}
+      {"t": 40, "category": "water_leak", "place": "rishihood", "north_m": -250, "east_m": -30, "reporter": "citizen:meera", "photo": "water_leak_3.jpg",
+       "text": "Water line leaking under the GT Road service lane south of the university, lane waterlogged"},
+      {"t": 55, "category": "pothole", "place": "rishihood", "north_m": -170, "east_m": 20, "reporter": "citizen:arjun", "photo": "pothole_2.jpg",
+       "text": "Potholes opening on the GT Road service lane south of the university, road base soft and wet"}
     ]},
-    {"step": 4, "title": "Murthal: garbage behind the dhabas (two reports, sanitation crew on leave), a choked drain, a pothole at Murthal Chowk", "reports": [
+    {"step": 4, "title": "Murthal: garbage behind the dhabas (two reports, sanitation crew on leave); a choked drain at Murthal Chowk with a pothole opening beside it", "reports": [
       {"t": 60, "category": "garbage", "place": "murthal", "north_m": 0, "east_m": 0, "reporter": "citizen:vikram", "photo": "garbage_1.jpg",
        "text": "Garbage dumped behind the Murthal dhabas on GT Road for three days"},
       {"t": 65, "category": "garbage", "place": "murthal", "north_m": 70, "east_m": 15, "reporter": "citizen:meena", "photo": "garbage_2.jpg",
        "text": "Heap of food waste and plastic next to the dhaba parking in Murthal"},
-      {"t": 70, "category": "sewage", "place": "murthal", "north_m": -150, "east_m": -40, "reporter": "citizen:imran", "photo": "sewage_2.jpg",
-       "text": "Drain choked behind the Murthal dhabas, dirty water spilling onto the lane"},
+      {"t": 70, "category": "sewage", "place": "murthal_chowk", "north_m": -40, "east_m": -20, "reporter": "citizen:imran", "photo": "sewage_2.jpg",
+       "text": "Drain choked at Murthal Chowk, dirty water spilling across SH20 and soaking the road edge"},
       {"t": 75, "category": "pothole", "place": "murthal_chowk", "north_m": 0, "east_m": 60, "reporter": "citizen:ravi", "photo": "pothole_3.jpg",
        "text": "Deep pothole at Murthal Chowk on SH20, a scooter nearly had an accident here"}
     ]},
