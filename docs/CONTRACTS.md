@@ -1,6 +1,6 @@
 # Contracts (frozen — change only via CHANNEL.md + PR)
 
-Backend: FastAPI on `http://localhost:8000`. All times are ISO-8601 UTC strings. All IDs are
+Backend: FastAPI on `http://localhost:8001` (local default in this team; 8000 is another project on some machines). All times are ISO-8601 UTC strings. All IDs are
 strings with a prefix (`inc_`, `rep_`, `res_`, `ev_`, `aud_`). The app uses a **simulated clock**
 (`GET /sim/clock`) so SLA deadlines can be demoed; never use wall-clock time in engine logic.
 

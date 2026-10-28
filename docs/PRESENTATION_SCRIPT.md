@@ -63,7 +63,7 @@ Pause after steps 3, 7 and 10 so the judges can read the screen.
 **Citizen moment (optional, 20 seconds, only if the citizen pop-up is merged).** Antriksh opens
 `/citizen` on a phone, files a complaint, and answers "Still broken" with a note. Sarthak says: "The
 operator sees it straight away, in the Citizen activity panel, and gets a pop-up on the dashboard."
-The panel is on the **Incidents** tab. The pop-up is PR #29 and is not yet merged.
+The panel is on the **Incidents** tab. The pop-up alert is live.
 
 ## 4. How it works (Prachi, 3:30)
 
@@ -95,7 +95,7 @@ Answers are in each person's `team/<name>/PRESENTER.md`. Quick answers:
 ## Known limits to state honestly
 
 - Sign-in is demo-grade. Citizen photos are not stored yet. AI is off on the live site.
-- The map covers only the demo area around MG Road.
+- The map covers only the demo area on the Murthal–Sonipat corridor.
 - The live backend sleeps when idle.
 
 ## Rehearsal

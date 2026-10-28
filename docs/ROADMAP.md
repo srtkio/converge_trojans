@@ -1,5 +1,7 @@
 # Roadmap: MVP → v2 → v3 (7 hours left)
 
+> **Status (2026-10-28):** v1, v2 and v3 are on `main`. Current status and next steps: `TEAM_GUIDE.md` section 9.
+
 Builders: **Sarthak + Prachi** (with their Claudes) and the coordinator Claude (`trojans-a0`).
 Antriksh and Poorvi present (see `team/<name>/PRESENTER.md`), they don't build.
 
