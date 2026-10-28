@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  /* One dark theme for every page (landing, operator, citizen). The OS setting doesn't flip it. */
-  color-scheme: dark;
-  --background: #070a12;
-  --foreground: #e6e9f2;
+  /* Dark tokens. Only the landing (.ld-root) applies them for now; other pages stay light. */
+  color-scheme: light;
+  --background: #ffffff;
+  --foreground: #171717;
   --surface: #0d1220;       /* cards, panels */
   --surface-2: #131a2b;     /* raised: popovers, hovered rows */
   --line: rgba(148, 163, 196, 0.14);
@@ -112,6 +112,9 @@ body {
    Native scroll only. Everything that moves animates transform/opacity, and
    nothing moves for people who prefer reduced motion. */
 .ld-root {
+  color-scheme: dark;
+  --background: #070a12;
+  --foreground: #e6e9f2;
   overflow-x: clip;
 }
 
