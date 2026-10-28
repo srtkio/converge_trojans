@@ -281,6 +281,20 @@ menu → Install app. There is no offline mode: the app always shows live data.
 - **Notifications:** escalations and alerts.
 - **Demo controls:** the scripted scenarios and a simulated clock (+1 h, +12 h, +48 h).
 
+### Demo logins
+
+These are demo-only credentials for the hackathon data. They hold no real information.
+
+| Role | Badge ID | Access code | What it can do |
+|---|---|---|---|
+| Officer, water | `OPS-WTR-01` | `water-demo-2026` | Works the water department's cases |
+| Officer, roads | `OPS-RDS-01` | `roads-demo-2026` | Works the roads department's cases |
+| Department head, water | `HEAD-WTR-01` | `water-head-2026` | Everything an officer can do, plus rejecting fake complaints |
+| Department head, roads | `HEAD-RDS-01` | `roads-head-2026` | Everything an officer can do, plus rejecting fake complaints |
+| City command | `CMD-01` | `command-demo-2026` | Sees every case; top of the escalation ladder; can reject |
+
+Citizens need no password: open `/citizen` and sign in with any first name. No email is stored.
+
 ## 7. Tech stack
 
 | Layer | Technology | Version | Purpose |
